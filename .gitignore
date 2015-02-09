@@ -1,0 +1,6 @@
+.DS_Store
+$*
+*.bundle.js
+*.sublime-workspace
+
+/node_modules

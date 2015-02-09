@@ -1,0 +1,9 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns": [".*"],
+			"path": "."
+		}
+	]
+}

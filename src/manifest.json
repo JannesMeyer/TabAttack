@@ -1,0 +1,55 @@
+{
+	"manifest_version": 2,
+	"name": "__MSG_ext_name__",
+	"version": "1.0",
+	"minimum_chrome_version": "40",
+
+	"default_locale": "en",
+	"description": "__MSG_ext_description__",
+	"icons": {
+		"16": "data/icon-h16.png",
+		"48": "data/icon-h48.png",
+		"128": "data/icon-h128.png"
+	},
+
+	"permissions": ["tabs", "storage", "chrome://favicon/", "clipboardWrite"],
+	"background": {
+		"scripts": ["build/background.bundle.js"]
+	},
+	"options_ui": {
+		"page": "options.html",
+		"chrome_style": true
+	},
+
+	"browser_action": {
+			"default_icon": {
+				"19": "data/browser-action.png"
+			},
+		"default_title": "__MSG_icon_tooltip__"
+	},
+	"commands": {
+		"_execute_browser_action": {
+			"suggested_key": { "default": "Ctrl+Shift+S" }
+		},
+		"copy_current_page": {
+			"suggested_key": { "default": "Ctrl+Shift+L" },
+			"description": "Copy the current tab's title and URL as a Markdown link"
+		},
+		"detach_highlighted_pages": {
+			// "suggested_key": { "default": "Ctrl+E" },
+			"description": "Detach all currently highlighted pages"
+		},
+		"pin_tabs": {
+			// "suggested_key": { "default": "Alt+P", "mac": "MacCtrl+P" },
+			"description": "Pin tab"
+		},
+		"move_tab_left": {
+			"suggested_key": { "default": "Ctrl+Shift+Comma" },
+			"description": "Move tab left"
+		},
+		"move_tab_right": {
+			"suggested_key": { "default": "Ctrl+Shift+Period" },
+			"description": "Move tab right"
+		}
+	}
+}
