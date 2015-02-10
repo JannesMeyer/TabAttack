@@ -6,6 +6,7 @@ import { writeClipboard } from './lib-browser/Clipboard';
 import { drawIcon } from './Icon';
 import { showPopup } from './lib-chrome/Popup';
 import { getProtocol } from './lib/URLTools';
+import * as IndexedDB from './lib-browser/IndexedDB';
 
 var doc, iconLocked = false;
 
@@ -51,9 +52,14 @@ Chrome.onCommand('copy_current_page', () => {
 		if (title === null) {
 			return;
 		}
+		var url = new URL(tab.url);
 		if (title === 'd') {
 			// Use domain name as title
-			title = new URL(tab.url).hostname;
+			title = url.hostname;
+		} else
+		if (title !== tab.title) {
+			// TODO: Don't do this in production
+			IndexedDB.logTitleChange(tab.url, url.host, tab.title, title);
 		}
 		// Copy the title and url as a markdown link
 		writeClipboard(markdownLink(title, tab.url));
