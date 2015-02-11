@@ -24,7 +24,10 @@ var Chrome = {
 	sendMessage:          dechromeify(chrome.runtime, chrome.runtime.sendMessage),
 
 	// Runtime
-	getURL:               alias(chrome.runtime, chrome.runtime.getURL)
+	getURL:               alias(chrome.runtime, chrome.runtime.getURL),
+
+	// Management
+	getExtensionInfo:     dechromeify(chrome.management, chrome.management.getSelf)
 };
 var messageHandlers = new Map();
 var commandHandlers = new Map();

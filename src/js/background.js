@@ -6,9 +6,15 @@ import { writeClipboard } from './lib-browser/Clipboard';
 import { drawIcon } from './Icon';
 import { showPopup } from './lib-chrome/Popup';
 import { getProtocol } from './lib/URLTools';
-import * as IndexedDB from './lib-browser/IndexedDB';
 
-var doc, iconLocked = false;
+var doc, iconLocked = false, isDevMode = false;
+
+/*
+ * Check whether this is a development install
+ */
+Chrome.getExtensionInfo().then(info => {
+	isDevMode = (info.installType === 'development');
+});
 
 /*
  * Handle browser action
@@ -57,9 +63,10 @@ Chrome.onCommand('copy_current_page', () => {
 			// Use domain name as title
 			title = url.hostname;
 		} else
-		if (title !== tab.title) {
-			// TODO: Don't do this in production
-			IndexedDB.logTitleChange(tab.url, url.host, tab.title, title);
+		// Record title changes (only in dev mode)
+		if (title !== tab.title && isDevMode) {
+			var TitleChangelog = require('./TitleChangelog');
+			TitleChangelog.logChange(tab.url, url, tab.title, title);
 		}
 		// Copy the title and url as a markdown link
 		writeClipboard(markdownLink(title, tab.url));
