@@ -47,14 +47,12 @@ function log(ev) {
 /**
  * Add a log entry to the database
  */
-export function logChange(url, urlObj, originalTitle, newTitle) {
+export function logChange(url, originalTitle, newTitle) {
 	var entry = {
 		url,
-		protocol: urlObj.protocol,
-		host: urlObj.host,
 		originalTitle,
 		newTitle,
-		created: new Date()
+		lastModified: new Date()
 	};
 	getDB().then(db => {
 		db.transaction('titles', 'readwrite')

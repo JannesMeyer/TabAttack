@@ -55,19 +55,19 @@ Chrome.onCommand('copy_current_page', () => {
 	TabManager.getLastFocusedTab().then(tab => {
 		// Let the user modify the title (or use the domain shortcut)
 		var title = prompt(tab.title, tab.title);
-		if (title === null) {
+		if (title === null || title === '') {
 			return;
 		}
+
 		var url = new URL(tab.url);
 		if (title === 'd') {
-			// Use domain name as title
+			// Shortcut: Use domain name as title
 			title = url.hostname;
-		} else
-		// Record title changes (only in dev mode)
-		if (title !== tab.title && isDevMode) {
-			var TitleChangelog = require('./TitleChangelog');
-			TitleChangelog.logChange(tab.url, url, tab.title, title);
+		} else if (title !== tab.title && isDevMode) {
+			// Record title changes (only in dev mode)
+			require('./TitleChangelog').logChange(tab.url, tab.title, title);
 		}
+
 		// Copy the title and url as a markdown link
 		writeClipboard(markdownLink(title, tab.url));
 	});
