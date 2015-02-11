@@ -1,6 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "__MSG_ext_name__",
+	"homepage_url": "https://github.com/JannesMeyer/TabAttack",
 	"version": "1.0",
 	"minimum_chrome_version": "40",
 
@@ -12,9 +13,10 @@
 		"128": "data/icon-h128.png"
 	},
 
-	"permissions": ["tabs", "storage", "chrome://favicon/", "clipboardWrite"],
+	"permissions": ["tabs", "storage", "clipboardWrite", "chrome://favicon/"],
 	"background": {
-		"scripts": ["build/background.bundle.js"]
+		"scripts": ["build/background.bundle.js"],
+		"persistent": true
 	},
 	"options_ui": {
 		"page": "options.html",
