@@ -90,8 +90,24 @@ Chrome.onCommand('move_tab_right', () => {
 /*
  * Global shortcut: Pin selected tabs
  */
-Chrome.onCommand('pin_tabs', () => {
-	TabManager.toggleTabsPinned();
+Chrome.onCommand('pin_tab', () => {
+	// windowType: 'normal', // Ignore all windows that don't have tabs
+	Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true }).then(tabs => {
+		for (var tab of tabs) {
+			Chrome.updateTab(tab.id, { pinned: !tab.pinned });
+		}
+	});
+});
+
+/*
+ * Global shortcut: Duplicate selected tabs
+ */
+Chrome.onCommand('duplicate_tab', () => {
+	Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true }).then(tabs => {
+		for (var tab of tabs) {
+			Chrome.duplicateTab(tab.id);
+		}
+	});
 });
 
 /*
@@ -106,7 +122,7 @@ Chrome.onMessage('get_document', (message, sender, sendResponse) => {
 });
 
 /*
- * Global shortcut: Detach the selected tabs from the current window
+ * Global shortcut: Send the selected tabs to another window
  */
 Chrome.onCommand('detach_highlighted_pages', () => {
 	Promise.all([

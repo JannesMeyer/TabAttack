@@ -35,15 +35,19 @@
 		},
 		"copy_current_page": {
 			"suggested_key": { "default": "Ctrl+Shift+L" },
-			"description": "Copy the current tab's title and URL as a Markdown link"
+			"description": "Copy tab as a Markdown link"
 		},
 		"detach_highlighted_pages": {
 			// "suggested_key": { "default": "Ctrl+E" },
-			"description": "Detach all currently highlighted pages"
+			"description": "Send tab to another window"
 		},
-		"pin_tabs": {
-			// "suggested_key": { "default": "Alt+P", "mac": "MacCtrl+P" },
+		"pin_tab": {
+			// "suggested_key": { "default": "Ctrl+I" },
 			"description": "Pin tab"
+		},
+		"duplicate_tab": {
+			// "suggested_key": { "default": "Ctrl+J" }, // Like 'duplicate layer' in Photoshop
+			"description": "Duplicate tab"
 		},
 		"move_tab_left": {
 			"suggested_key": { "default": "Ctrl+Shift+Comma" },

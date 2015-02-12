@@ -7,6 +7,7 @@ var Chrome = {
 	queryTabs:            dechromeify(chrome.tabs, chrome.tabs.query),
 	removeTabs:           dechromeify(chrome.tabs, chrome.tabs.remove),
 	updateTab:            dechromeify(chrome.tabs, chrome.tabs.update),
+	duplicateTab:         dechromeify(chrome.tabs, chrome.tabs.duplicate),
 
 	// Windows
 	createWindow:         dechromeify(chrome.windows, chrome.windows.create),

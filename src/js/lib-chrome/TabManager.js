@@ -161,25 +161,3 @@ export function moveHighlightedTabs(direction) {
 		// return tabs.reduce(chainTabMove, Promise.resolve());
 	});
 }
-
-export function toggleTabsPinned() {
-	var queryInfo = {
-		windowType: 'normal', // Ignore all windows that don't have tabs
-		lastFocusedWindow: true,
-		highlighted: true
-	};
-	return Chrome.queryTabs(queryInfo)
-	.then(function(tabs) {
-		if (tabs.length === 0) {
-			throw Error('No highlighted tabs found');
-		}
-
-		var updates = [];
-		for (var i = 0, tab; i < tabs.length; ++i) {
-			tab = tabs[i];
-			var updateProperties = { pinned: !tab.pinned };
-			updates.push(Chrome.updateTab(tab.id, updateProperties));
-		}
-		return Promise.all(updates);
-	});
-}
