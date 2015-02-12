@@ -91,8 +91,7 @@ Chrome.onCommand('move_tab_right', () => {
  * Global shortcut: Pin selected tabs
  */
 Chrome.onCommand('pin_tab', () => {
-	// windowType: 'normal', // Ignore all windows that don't have tabs
-	Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true }).then(tabs => {
+	Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true, windowType: 'normal' }).then(tabs => {
 		for (var tab of tabs) {
 			Chrome.updateTab(tab.id, { pinned: !tab.pinned });
 		}
