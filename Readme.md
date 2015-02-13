@@ -12,7 +12,7 @@ Get the extension from the [Chrome Web Store](https://chrome.google.com/webstore
 
 The extension adds a tab counter to the toolbar:
 
-![Tab counter](https://cloud.githubusercontent.com/assets/704336/6196980/edfac24a-b3de-11e4-92d9-977a6b80c604.png)
+![Tab counter](https://cloud.githubusercontent.com/assets/704336/6197210/0e8e9060-b3e2-11e4-937b-874621b8fc0b.png)
 
 When you click it, you will see an overview of all tabs (organized by window) that you have open:
 
@@ -37,11 +37,11 @@ Close all tabs | ⌘Q | Ctrl+Q
 Open a file | ⌘O | Ctrl+O
 Open all links | ⇧⌘O | Ctrl+Shift+O
 
-Furthermore, there are many keyboard shortcuts for using the Ace editor: [Default Keyboard Shortcuts](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts)
+Furthermore, there are [many keyboard shortcuts for using the Ace editor](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts).
 
 ## Browser keyboard shortcuts
 
-This extension also adds a few useful, general tab management keyboard shortcuts. Most of these have to be configured manually (“Keyboard shortcuts” at the bottom of <chrome://extensions/>).
+This extension also adds a few useful, general tab management keyboard shortcuts. Most of them have to be set manually by going to “Keyboard shortcuts” at the bottom of [chrome://extensions/](chrome://extensions/).
 
 ![Keyboard shortcut overview](https://cloud.githubusercontent.com/assets/704336/6196998/16341fe0-b3df-11e4-8dcb-a58665ffd354.png)
 
