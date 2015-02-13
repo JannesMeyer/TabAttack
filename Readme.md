@@ -12,7 +12,7 @@ Get the extension from the [Chrome Web Store](https://chrome.google.com/webstore
 
 The extension adds a tab counter to the toolbar:
 
-![Tab counter](https://cloud.githubusercontent.com/assets/704336/6197210/0e8e9060-b3e2-11e4-937b-874621b8fc0b.png)
+![Tab counter](https://cloud.githubusercontent.com/assets/704336/6197251/9ea23dbe-b3e2-11e4-9e96-92f5f2783b85.png)
 
 When you click it, you will see an overview of all tabs (organized by window) that you have open:
 
