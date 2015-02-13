@@ -1,6 +1,6 @@
 # TabAttack
 
-Save browser memory by exporting your tabs as Markdown. The extension allows you to edit the document in a text editor as you wish before you save it.
+Save browser memory by exporting your tabs as Markdown. The extension allows you to edit the document in a text editor before you save it.
 
 Later, you can import these Markdown documents and restore all windows exactly like they were before.
 
@@ -37,9 +37,9 @@ Close all tabs | ⌘Q | Ctrl+Q
 Open a file | ⌘O | Ctrl+O
 Open all links | ⇧⌘O | Ctrl+Shift+O
 
-Furthermore, there are [many keyboard shortcuts for using the Ace editor](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts).
+Furthermore, there are [many keyboard shortcuts for text editing inside the Ace editor](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts).
 
-## Browser keyboard shortcuts
+## Tab management keyboard shortcuts
 
 This extension also adds a few useful, general tab management keyboard shortcuts. Most of them have to be set manually by going to “Keyboard shortcuts” at the bottom of [chrome://extensions/](chrome://extensions/).
 
