@@ -4,11 +4,11 @@
 	},
 
 	"ext_description": {
-		"message": "Converts all your open tabs into easily archivable Markdown."
+		"message": "Exports your tabs as easily archivable Markdown."
 	},
 
 	"icon_tooltip": {
-		"message": "Save all tabs as Markdown"
+		"message": "Export tabs as Markdown"
 	},
 
 	"headline_window": {

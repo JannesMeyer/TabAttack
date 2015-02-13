@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "__MSG_ext_name__",
 	"homepage_url": "https://github.com/JannesMeyer/TabAttack",
-	"version": "1.0",
+	"version": "1.1",
 	"minimum_chrome_version": "40",
 
 	"default_locale": "en",
@@ -38,15 +38,12 @@
 			"description": "Copy tab as a Markdown link"
 		},
 		"detach_highlighted_pages": {
-			// "suggested_key": { "default": "Ctrl+E" },
 			"description": "Send tab to another window"
 		},
 		"pin_tab": {
-			// "suggested_key": { "default": "Ctrl+I" },
 			"description": "Pin tab"
 		},
 		"duplicate_tab": {
-			// "suggested_key": { "default": "Ctrl+J" }, // Like 'duplicate layer' in Photoshop
 			"description": "Duplicate tab"
 		},
 		"move_tab_left": {

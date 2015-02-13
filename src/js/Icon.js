@@ -1,6 +1,7 @@
 var size = 19;
 var borderWidth = 2;
 var borderRadius = 3;
+var textPosition = 13;
 
 // http://git.chromium.org/gitweb/?p=chromium/src.git;a=blob;f=chrome/renderer/resources/extensions/set_icon.js;h=f9f2371fe83befca510a118e9c564b343203a2a5;hb=e7cda74cc2dfe47adbf6cbe8c86a0c57b19cad56
 // http://git.chromium.org/gitweb/?p=chromium/src.git;a=blob;f=chrome/test/data/extensions/api_test/browser_action/no_icon/update.js;h=e37a28603ecc6a8fc8a521fcfe7bc5514beda63b;hb=e7cda74cc2dfe47adbf6cbe8c86a0c57b19cad56
@@ -16,7 +17,6 @@ ctx.strokeStyle = '#5c5c5c';
 ctx.fillStyle = '#5c5c5c';
 ctx.lineWidth = borderWidth;
 ctx.textAlign = 'center';
-ctx.textBaseline = 'top';
 
 var innerSize = size - 2 * borderWidth;
 roundedRect(ctx, 0, 0, size, size, borderRadius);
@@ -27,7 +27,7 @@ ctx.fill();
  */
 export function drawIcon(text) {
 	ctx.clearRect(borderWidth, borderWidth, innerSize, innerSize);
-	ctx.fillText(text, size / 2, 5);
+	ctx.fillText(text, size / 2, textPosition);
 	return ctx.getImageData(0, 0, size, size)
 }
 

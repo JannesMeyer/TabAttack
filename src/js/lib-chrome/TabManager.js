@@ -1,7 +1,25 @@
+// Feature detection doesn't work, because Opera pretends to support all chrome.tab APIs
+var isOpera = (navigator.vendor.indexOf('Opera') !== -1);
+
 /**
- * Get active tab in last focused window
+ * Gets all highlighted tabs in the last focused window.
+ * This function is guaranteed to at least return the active
+ * tab of that window.
  */
-export function getLastFocusedTab() {
+export function getHighlightedTabs() {
+	// TODO: file a bug report about this
+	// Opera doesn't have highlighted tabs, so we have to customize the query
+	if (isOpera) {
+		return Chrome.queryTabs({ lastFocusedWindow: true, active: true });
+	} else {
+		return Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true });
+	}
+}
+
+/**
+ * Gets active tab in the last focused window.
+ */
+export function getActiveTab() {
 	return Chrome.queryTabs({ lastFocusedWindow: true, active: true }).then(results => results[0]);
 }
 
@@ -52,19 +70,10 @@ export function getTabCount() {
 }
 
 /**
- * Get a list of all windows (just normal windows, no popups)
- */
-export function getAllWindows(options) {
-	return Chrome.getAllWindows(options).then(windows => {
-		return windows.filter(wnd => wnd.type === 'normal');
-	});
-}
-
-/**
  * Close all other tabs except the specified one
  */
 export function closeOtherTabs(sourceTab) {
-	return getAllWindows({ populate: true }).then(windows => {
+	return Chrome.getAllWindows({ populate: true }).then(windows => {
 		var sourceWindow, promises = [];
 
 		// Close other windows
@@ -115,49 +124,16 @@ export function moveTabsToWindow(tabs, targetWindowId) {
 }
 
 /**
- * Move tabs inside of a window to the left or to the right
+ * Move all highlighted tabs in a window to the left or to the right
  */
-export function moveHighlightedTabs(direction) {
-	return Chrome.getLastFocusedWindow({ populate: true })
-	.then(function(wnd) {
-		if (wnd.type !== 'normal') {
-			throw Error('This is a window without tabs');
-		}
-
-		// Move all highlighted tabs
-		var moves = [];
-		var i, len, tab, newIndex;
-		if (direction > 0) {
-			// Move right, go backwards in array
-			len = wnd.tabs.length;
-			for (i = len - 1; i >= 0; --i) {
-				tab = wnd.tabs[i];
-				if (tab.highlighted) {
-					newIndex = (tab.index + 1) % len;
-					moves.push(Chrome.moveTabs(tab.id, { index: newIndex }));
-				}
-			}
-		} else {
-			// Move left, go forwards in array
-			len = wnd.tabs.length;
-			for (i = 0; i < len; ++i) {
-				tab = wnd.tabs[i];
-				if (tab.highlighted) {
-					newIndex = tab.index - 1;
-					moves.push(Chrome.moveTabs(tab.id, { index: newIndex }));
-				}
+export function moveTabs(direction) {
+	Chrome.getLastFocusedWindow({ populate: true }).then(wnd => {
+		var tabs = (direction > 0 ? wnd.tabs.reverse() : wnd.tabs);
+		for (var tab of tabs) {
+			// Opera doesn't have highlighted tabs, so we also check for .active
+			if (tab.highlighted || tab.active) {
+				Chrome.moveTabs(tab.id, { index: (tab.index + direction) % tabs.length });
 			}
 		}
-		return Promise.all(moves);
-
-		// // Move tabs sequentially (wait for each operation)
-		// function chainTabMove(sequence, tab) {
-		// 	return sequence.then(function() {
-		// 		var newIndex = (tab.index + direction) % numberOfTabs;
-		// 		return Chrome.moveTabs(tab.id, { index: newIndex });
-		// 	});
-		// }
-		// return tabs.reduceRight(chainTabMove, Promise.resolve());
-		// return tabs.reduce(chainTabMove, Promise.resolve());
 	});
 }

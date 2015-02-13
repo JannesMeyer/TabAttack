@@ -1,7 +1,7 @@
 var callback;
 
 /**
- * Opens a popup. There can only be one at a time.
+ * Opens a popup. There should only be one at a time.
  */
 export function showPopup({ url, width, height, parent }, fn) {
 	callback = fn;

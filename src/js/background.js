@@ -7,7 +7,11 @@ import { drawIcon } from './Icon';
 import { showPopup } from './lib-chrome/Popup';
 import { getProtocol } from './lib/URLTools';
 
-var doc, iconLocked = false, isDevMode = false;
+var protocolBlacklist = new Set([ 'chrome-devtools:', 'chrome:', 'chrome-extension:', 'opera:' ]);
+// TODO: Make this list configurable
+// var domainBlacklist = new Set([ 'mail.google.com' ]);
+var doc, iconLocked = false;
+var isDevMode = false;
 
 /*
  * Check whether this is a development install
@@ -21,7 +25,7 @@ Chrome.getExtensionInfo().then(info => {
  */
 Chrome.onBrowserAction(sourceTab => {
 	// TODO: check for tab.status === 'complete' and issue a warning if not
-	TabManager.getAllWindows({ populate: true }).then(windows => {
+	Chrome.getAllWindows({ populate: true }).then(windows => {
 		// Pull a window to the top
 		// TODO: reverse order of windows/tabs completely instead
 		var index = windows.findIndex(w => w.id === sourceTab.windowId);
@@ -30,15 +34,15 @@ Chrome.onBrowserAction(sourceTab => {
 		}
 
 		// Filter some urls
-		var protocolBlacklist = new Set([ 'chrome:', 'chrome-extension:', 'chrome-devtools:' ]);
-		// TODO: Make this a preference
-		var domainBlacklist = new Set([ 'mail.google.com' ]);
 		for (var wnd of windows) {
 			wnd.tabs = wnd.tabs.filter(tab => {
 				var url = new URL(tab.url);
-				return !protocolBlacklist.has(url.protocol) && !domainBlacklist.has(url.hostname);
+				return !protocolBlacklist.has(url.protocol); //!domainBlacklist.has(url.hostname)
 			});
 		}
+
+		// Ignore empty windows
+		windows = windows.filter(wnd => wnd.tabs.length > 0);
 
 		// Create markdown document
 		doc = buildDocument(windows, sourceTab.id);
@@ -52,7 +56,7 @@ Chrome.onBrowserAction(sourceTab => {
  * Global shortcut: Copy current tab as a markdown link
  */
 Chrome.onCommand('copy_current_page', () => {
-	TabManager.getLastFocusedTab().then(tab => {
+	TabManager.getActiveTab().then(tab => {
 		// Let the user modify the title (or use the domain shortcut)
 		var title = prompt(tab.title, tab.title);
 		if (title === null || title === '') {
@@ -77,21 +81,21 @@ Chrome.onCommand('copy_current_page', () => {
  * Global shortcut: Move selected tabs left
  */
 Chrome.onCommand('move_tab_left', () => {
-	TabManager.moveHighlightedTabs(-1);
+	TabManager.moveTabs(-1);
 });
 
 /*
  * Global shortcut: Move selected tabs right
  */
 Chrome.onCommand('move_tab_right', () => {
-	TabManager.moveHighlightedTabs(1);
+	TabManager.moveTabs(+1);
 });
 
 /*
  * Global shortcut: Pin selected tabs
  */
 Chrome.onCommand('pin_tab', () => {
-	Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true, windowType: 'normal' }).then(tabs => {
+	TabManager.getHighlightedTabs().then(tabs => {
 		for (var tab of tabs) {
 			Chrome.updateTab(tab.id, { pinned: !tab.pinned });
 		}
@@ -102,7 +106,7 @@ Chrome.onCommand('pin_tab', () => {
  * Global shortcut: Duplicate selected tabs
  */
 Chrome.onCommand('duplicate_tab', () => {
-	Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true }).then(tabs => {
+	TabManager.getHighlightedTabs().then(tabs => {
 		for (var tab of tabs) {
 			Chrome.duplicateTab(tab.id);
 		}
@@ -125,13 +129,11 @@ Chrome.onMessage('get_document', (message, sender, sendResponse) => {
  */
 Chrome.onCommand('detach_highlighted_pages', () => {
 	Promise.all([
-		Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true }),
+		TabManager.getHighlightedTabs(),
 		Chrome.getAllWindows()
 	]).then(([tabs, windows]) => {
 		var sourceWindow = windows.find(w => w.focused);
-		if (sourceWindow.type !== 'normal') {
-			throw new Error('Not a normal window');
-		}
+		// Get target windows
 		windows = windows.filter(w => w.type === 'normal' && !w.focused);
 		if (windows.length === 0) {
 			// Immediately detach to a new window

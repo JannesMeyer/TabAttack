@@ -101,10 +101,10 @@ body {
 	padding-right: 10px;
 	border: none;
 	outline: 0;
-	background: transparent;
+	background: #d0cfd0;
 	color: #1f68e0;
 	cursor: pointer;
-	font-size: 0;
+	font-size: 18px;
 }
 .m-toolbar button:hover {
 	background: rgba(0, 0, 0, 0.05);
@@ -114,8 +114,9 @@ body {
 }
 .m-toolbar button::before {
 	font-family: 'GeneralFoundicons';
-	font-size: 17px;
 	-webkit-font-smoothing: antialiased;
+	font-size: 15px;
+	margin-right: 3px;
 }
 .m-toolbar button.item-save::before {
 	content: '\f017';
@@ -139,7 +140,7 @@ body {
 	<div class="m-container">
 		<div class="m-toolbar">
 			<input class="m-file-input" type="file" />
-			<button class="item-save" title="Save (⌘S)">Save</button><button class="item-close" title="Close other tabs (⌘Q)">Close other tabs</button><button class="item-load-file" title="Load file (⌘O)">Load file</button><button class="item-open" title="Open links (Shift⌘O)">Open links</button>
+			<button class="item-save" title="Download (⌘S / Ctrl+S)">Download</button><button class="item-close" title="Close all tabs (⌘Q / Ctrl+Q)">Close all tabs</button><button class="item-load-file" title="Load file (⌘O / Ctrl+O)">Load file</button><button class="item-open" title="Open links (⇧⌘O / Ctrl+Shift+O)">Open links</button>
 		</div>
 		<div id="editor"></div>
 	</div>
