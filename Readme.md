@@ -51,15 +51,13 @@ This extension also adds a few useful, general tab management keyboard shortcuts
 Clone the repository including submodules:
 
 ~~~bash
-git clone git@github.com:JannesMeyer/TabAttack.git
-cd TabAttack
-git submodule init
-git submodule update
+git clone --recursive https://github.com/JannesMeyer/TabAttack.git
 ~~~
 
 Install the dependencies:
 
 ~~~bash
+cd TabAttack/
 npm install
 ~~~
 
