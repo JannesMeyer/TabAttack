@@ -65,8 +65,8 @@ Chrome.onCommand('copy_current_page', () => {
 
 		var url = new URL(tab.url);
 		if (title === 'd') {
-			// Shortcut: Use domain name as title
-			title = url.hostname;
+			// Shortcut: Use naked domain name as title
+			title = url.hostname.replace(/^www\./, '');
 		} else if (title !== tab.title && isDevMode) {
 			// Record title changes (only in dev mode)
 			require('./TitleChangelog').logChange(tab.url, tab.title, title);
