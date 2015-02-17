@@ -18,10 +18,7 @@
 		"scripts": ["build/background.bundle.js"],
 		"persistent": true
 	},
-	"options_ui": {
-		"page": "options.html",
-		"chrome_style": true
-	},
+	"offline_enabled": true,
 
 	"browser_action": {
 			"default_icon": {
