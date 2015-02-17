@@ -36,6 +36,7 @@ Download | ⌘S | Ctrl+S
 Close all tabs | ⌘Q | Ctrl+Q
 Open a file | ⌘O | Ctrl+O
 Open all links | ⇧⌘O | Ctrl+Shift+O
+Copy the whole document | ⌘C | Ctrl+C
 
 Furthermore, there are [many keyboard shortcuts for text editing inside the Ace editor](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts).
 
@@ -44,6 +45,36 @@ Furthermore, there are [many keyboard shortcuts for text editing inside the Ace 
 This extension also adds a few useful, general tab management keyboard shortcuts. Most of them have to be set manually by going to “Keyboard shortcuts” at the bottom of [chrome://extensions/](chrome://extensions/).
 
 ![Keyboard shortcut overview](https://cloud.githubusercontent.com/assets/704336/6196998/16341fe0-b3df-11e4-8dcb-a58665ffd354.png)
+
+## Building
+
+Clone the repository including submodules:
+
+~~~bash
+git clone --recursive https://github.com/JannesMeyer/TabAttack.git
+~~~
+
+Install the dependencies:
+
+~~~bash
+cd TabAttack/
+npm install
+~~~
+
+Build and watch for changes (you need to have [webpack](https://www.npmjs.com/package/webpack) installed globally):
+
+~~~bash
+webpack -w
+~~~
+
+## Contributing
+
+Pull requests and bug reports are welcome. If you submit a pull request, please try to match the code formatting of the rest of the project. Some examples:
+
+- Tabs for indentation
+- Spaces before the parentheses of control structures (e.g. `if (true)` instead of `if(true)`)
+- Curly braces on the same line
+- etc.
 
 ## License
 
