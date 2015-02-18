@@ -28,27 +28,35 @@ Chrome.onBrowserAction(sourceTab => {
 	Chrome.getAllWindows({ populate: true }).then(windows => {
 		// Pull a window to the top
 		// TODO: reverse order of windows/tabs completely instead
-		var index = windows.findIndex(w => w.id === sourceTab.windowId);
-		if (index > 0) {
-			windows.unshift(windows.splice(index, 1)[0]);
-		}
+		new Promise(function(resolve) {
+			chrome.storage.sync.get({
+				m_filter: "facebook.com\nmail.google.com",
+		    	ignore_pinned: false
+			}, resolve);
+		}).then(function(items) {
+			var index = windows.findIndex(w => w.id === sourceTab.windowId);
+			if (index > 0) {
+				windows.unshift(windows.splice(index, 1)[0]);
+			}
 
-		// Filter some urls
-		for (var wnd of windows) {
-			wnd.tabs = wnd.tabs.filter(tab => {
-				var url = new URL(tab.url);
-				return !protocolBlacklist.has(url.protocol); //!domainBlacklist.has(url.hostname)
-			});
-		}
+			// Filter some urls
+			for (var wnd of windows) {
+				wnd.tabs = wnd.tabs.filter(tab => {
+					var url = new URL(tab.url);
+					console.log(url, tab.pinned);
+					return !protocolBlacklist.has(url.protocol) && !(items.ignore_pinned && tab.pinned); //!domainBlacklist.has(url.hostname)
+				});
+			}
 
-		// Ignore empty windows
-		windows = windows.filter(wnd => wnd.tabs.length > 0);
+			// Ignore empty windows
+			windows = windows.filter(wnd => wnd.tabs.length > 0);
 
-		// Create markdown document
-		doc = buildDocument(windows, sourceTab.id);
+			// Create markdown document
+			doc = buildDocument(windows, sourceTab.id);
 
-		// Open document in a new tab
-		TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
+			// Open document in a new tab
+			TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
+		});
 	});
 });
 

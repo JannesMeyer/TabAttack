@@ -18,6 +18,8 @@ textarea {
 </head>
 <body>
 
+<div id="status"></div>
+
 <!-- 	<label>Warn after <input type="number" name="tab_threshold" value="30" min="1"> tabs</label>
  	Archive:
 	<label><input type="radio" name="setting" checked> All windows</label>
@@ -25,8 +27,10 @@ textarea {
 	<label><input type="checkbox" name="setting"> Text</label> -->
 
 	Filter out these domains:
-	<textarea class="m-filter">facebook.com
+	<textarea class="m-filter" name="m-filter">facebook.com
 mail.google.com</textarea>
-
+	<input type="checkbox" name="ignore-pinned" value="1" /> Ignore Pinned tabs
+	<button id="save">Save</button>
 </body>
+<script defer src="build/options.bundle.js"></script>
 </html>

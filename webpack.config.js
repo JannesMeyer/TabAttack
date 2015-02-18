@@ -10,7 +10,8 @@ var config = module.exports = {
 	entry: {
 		background: getPath('src', 'js', 'background.js'),
 		output:     getPath('src', 'js', 'output.js'),
-		selection:  getPath('src', 'js', 'selection.js')
+		selection:  getPath('src', 'js', 'selection.js'),
+		options:    getPath('src', 'js', 'options.js')
 	},
 	output: {
 		path: getPath('src', 'build'),
