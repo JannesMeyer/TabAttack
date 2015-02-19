@@ -12,3 +12,5 @@
 
 ### Fixed
 - Fix options saving
+- Use smaller font size in icon for large tab counts (sknebel)
+- Enable query to user if there are unsaved changes (sknebel)
