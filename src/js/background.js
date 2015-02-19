@@ -1,4 +1,4 @@
-import '6to5/polyfill';
+import 'babel/polyfill';
 import defaults from './defaults';
 import debounce from './lib/debounce';
 import * as TabManager from './lib-chrome/TabManager';

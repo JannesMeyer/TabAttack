@@ -24,7 +24,7 @@ var config = module.exports = {
 		loaders: [
 			{
 				test: /\.js$/,
-				loader: '6to5', // ?modules=commonStrict
+				loader: 'babel', // ?modules=commonStrict
 				include: [ getAbsolutePath('src') ],
 				exclude: [ getAbsolutePath('node_modules') ]
 			}
@@ -36,7 +36,6 @@ var config = module.exports = {
 var uglifyConfig = {
 	// This is a regex that never matches so that all comments get deleted
 	comments: / ^/,
-	mangle: { sort: true },
 	compress: { warnings: false }
 };
 

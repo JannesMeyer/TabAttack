@@ -1,20 +1,10 @@
 {
   "name": "TabAttack",
-  "version": "1.0.0",
-  "description": "Converts all your open tabs into easily archivable Markdown",
-  "main": "background.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Jannes Meyer",
-  "license": "GPLv3",
-  "dependencies": {
-    "marked": "^0.3.3",
-    "mousetrap": "^1.4.6",
-    "6to5": "^3.3.7"
-  },
   "devDependencies": {
-    "6to5-loader": "^3.0.0",
-    "webpack": "^1.5.3"
+    "marked": "0.x",
+    "mousetrap": "1.x",
+    "babel": "4.x",
+    "babel-loader": "4.x",
+    "webpack": "1.x"
   }
 }
