@@ -1,40 +1,58 @@
-var size = 19;
+var iconSize = 19;
 var borderWidth = 2;
 var borderRadius = 3;
+
+// Load font
+var bigFont = 'bold 11px Roboto';
+var smallFont = 'bold 10px Roboto Condensed';
 var textPosition = 13;
-var bigFont = 'bold 11px sans-serif';
-var smallFont = 'bold 9px sans-serif';
+var style = document.createElement('style');
+style.innerHTML = `
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roboto Bold'), local('Roboto-Bold'), url(data/Roboto-Bold.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(data/Roboto-Condensed-Bold.woff2) format('woff2');
+}`;
+document.head.appendChild(style);
 
-// http://git.chromium.org/gitweb/?p=chromium/src.git;a=blob;f=chrome/renderer/resources/extensions/set_icon.js;h=f9f2371fe83befca510a118e9c564b343203a2a5;hb=e7cda74cc2dfe47adbf6cbe8c86a0c57b19cad56
-// http://git.chromium.org/gitweb/?p=chromium/src.git;a=blob;f=chrome/test/data/extensions/api_test/browser_action/no_icon/update.js;h=e37a28603ecc6a8fc8a521fcfe7bc5514beda63b;hb=e7cda74cc2dfe47adbf6cbe8c86a0c57b19cad56
-// https://chromium.googlesource.com/experimental/chromium/src/+/master/chrome/common/extensions/docs/examples/extensions/calendar/javascript/background.js?autodive=0%2F
-
+// Create off-screen canvas
 var canvas = document.createElement('canvas');
-canvas.width = size;
-canvas.height = size;
-
+canvas.width = canvas.height = iconSize;
 var ctx = canvas.getContext('2d');
 ctx.strokeStyle = '#5c5c5c';
 ctx.fillStyle = '#5c5c5c';
 ctx.lineWidth = borderWidth;
 ctx.textAlign = 'center';
 
-var innerSize = size - 2 * borderWidth;
-roundedRect(ctx, 0, 0, size, size, borderRadius);
+// Draw the border
+var innerSize = iconSize - (2 * borderWidth);
+roundedRect(ctx, 0, 0, iconSize, iconSize, borderRadius);
 ctx.fill();
 
 /**
- * Draws the icon
+ * Draws the text inside the icon
  */
 export function drawIcon(text) {
 	// Clear the inner part of the icon, without ever redrawing the border
 	ctx.clearRect(borderWidth, borderWidth, innerSize, innerSize);
 
 	// Draw the text
-	ctx.font = (text.length >= 3) ? smallFont : bigFont;
-	ctx.fillText(text, size / 2, textPosition);
+	if (text.length >= 3) {
+		ctx.font = smallFont;
+		ctx.fillText(text, iconSize / 2, textPosition);
+	} else {
+		ctx.font = bigFont;
+		ctx.fillText(text, iconSize / 2, textPosition);
+	}
 
-	return ctx.getImageData(0, 0, size, size)
+	return ctx.getImageData(0, 0, iconSize, iconSize)
 }
 
 /**

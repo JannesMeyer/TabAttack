@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Include Roboto (bold) and use it as the tab counter font
 
 ## [1.3] - 2015-02-19
 ### Added
