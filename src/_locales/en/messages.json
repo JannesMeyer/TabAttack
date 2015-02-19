@@ -11,6 +11,10 @@
 		"message": "Export tabs as Markdown"
 	},
 
+	"options_saved": {
+		"message": "Options saved"
+	},
+
 	"headline_window": {
 		"message": "$x$ tab",
 		"placeholders": { "x": { "content": "$1" } }

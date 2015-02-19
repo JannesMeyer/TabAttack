@@ -17,9 +17,13 @@ var Chrome = {
 	updateWindow:         dechromeify(chrome.windows, chrome.windows.update),
 	removeWindow:         dechromeify(chrome.windows, chrome.windows.remove),
 
-	// Preferences
-	getPreferences:       dechromeify(chrome.storage.sync, chrome.storage.sync.get),
+	// Preferences (see Chrome.setDefaults below)
+	_getPreferences:      dechromeify(chrome.storage.sync, chrome.storage.sync.get),
 	setPreferences:       dechromeify(chrome.storage.sync, chrome.storage.sync.set),
+	clearPreferences:     dechromeify(chrome.storage.sync, chrome.storage.sync.clear),
+	// Useful for testing purposes:
+	// chrome.storage.sync.clear()
+	// chrome.storage.sync.get(function(p) { console.log(p) })
 
 	// Message passing
 	sendMessage:          dechromeify(chrome.runtime, chrome.runtime.sendMessage),
@@ -60,6 +64,39 @@ function dechromeify(myThis, fn) {
 function alias(myThis, fn) {
 	return (...myArgs) => fn.apply(myThis, myArgs);
 }
+
+/**
+ * Inject default values into `Chrome.getPreferences`
+ */
+Chrome.setDefaults = function(defaults) {
+	if (Chrome.getPreferences) {
+		console.warn('Setting the defaults more than once');
+	}
+	Chrome.getPreferences = function(keys) {
+		if (keys === undefined) {
+			return Chrome._getPreferences(defaults);
+		}
+		if (typeof keys === 'string') {
+			keys = [ keys ];
+		}
+		if (!Array.isArray(keys)) {
+			throw new Error('Use defaults.js instead of passing an object');
+		}
+
+		// Fill in the default values
+		var request = {};
+		for (var key of keys) {
+			if (defaults.hasOwnProperty(key)) {
+				request[key] = defaults[key];
+			} else {
+				throw new Error(`No default value for '${key}' found`);
+			}
+		}
+
+		// Return a Promise
+		return Chrome._getPreferences.call(undefined, request);
+	};
+};
 
 /**
  * The message dispatcher

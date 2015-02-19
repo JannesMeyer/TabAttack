@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "__MSG_ext_name__",
 	"homepage_url": "https://github.com/JannesMeyer/TabAttack",
-	"version": "1.2",
+	"version": "1.3",
 	"minimum_chrome_version": "40",
 
 	"default_locale": "en",
@@ -18,12 +18,16 @@
 		"scripts": ["build/background.bundle.js"],
 		"persistent": true
 	},
+	"options_ui": {
+		"page": "options.html",
+		"chrome_style": true
+	},
 	"offline_enabled": true,
 
 	"browser_action": {
-			"default_icon": {
-				"19": "data/browser-action.png"
-			},
+		"default_icon": {
+			"19": "data/browser-action.png"
+		},
 		"default_title": "__MSG_icon_tooltip__"
 	},
 	"commands": {

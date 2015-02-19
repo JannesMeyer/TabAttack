@@ -1,36 +1,86 @@
 <!doctype html>
 <html>
 <head>
-<title>Options</title>
 <meta charset="utf-8">
+<title>Options</title>
 <style>
+.m-toast {
+	pointer-events: none;
+	position: fixed;
+	left: 0;
+	bottom: 25%;
+	width: 100%;
+	text-align: center;
+}
+.m-toast.s-hidden {
+	opacity: 0;
+	transition: opacity 0.2s linear;
+}
+.m-toast > div {
+	display: inline-block;
+	padding: 8px 11px;
+	border-radius: 3px;
+	font-size: 12px;
+
+	background: #262626;
+	color: #f0f0f0;
+	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
+}
+h3 {
+	font-size: 1.2em;
+	margin-bottom: 0.8em;
+	line-height: 1;
+}
 label {
 	display: block;
+	margin: 1em 0;
+	-webkit-user-select: none;
+	clear: both;
 }
 textarea {
 	display: block;
-}
-.m-filter {
 	width: 100%;
-	height: 8em;
+	height: 6em;
+	resize: vertical;
+	margin-top: 3px;
+}
+.button-strip {
+	display: flex;
+	flex-direction: row-reverse;
 }
 </style>
+<script defer src="build/options.bundle.js"></script>
 </head>
 <body>
 
-<div id="status"></div>
+	<div class="m-toast s-hidden"><div> </div></div>
 
-<!-- 	<label>Warn after <input type="number" name="tab_threshold" value="30" min="1"> tabs</label>
- 	Archive:
-	<label><input type="radio" name="setting" checked> All windows</label>
-	<label><input type="radio" name="setting"> Only current window</label>
-	<label><input type="checkbox" name="setting"> Text</label> -->
+	<form>
 
-	Filter out these domains:
-	<textarea class="m-filter" name="m-filter">facebook.com
-mail.google.com</textarea>
-	<input type="checkbox" name="ignore-pinned" value="1" /> Ignore Pinned tabs
-	<button id="save">Save</button>
+		<h3>Export options</h3>
+
+		<label>
+			Format:
+			<select class="m-export-format">
+				<option value="markdown">Markdown</option>
+				<option value="json">JSON</option>
+			</select>
+		</label>
+
+		<label>
+			<input type="checkbox" class="m-ignore-pinned" /> Ignore pinned tabs
+		</label>
+
+		<label>
+			Ignore these domains: (one per line)
+			<textarea class="m-filter"></textarea>
+		</label>
+
+		<div class="button-strip">
+			<button type="submit">Save</button>
+		</div>
+
+	</form>
+
 </body>
-<script defer src="build/options.bundle.js"></script>
 </html>
