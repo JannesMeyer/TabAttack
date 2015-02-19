@@ -35,7 +35,6 @@ Mousetrap.bind(['command+shift+o', 'ctrl+shift+o'], openLinks);
 Mousetrap.stopCallback = () => false;
 
 // Setup ACE
-var unsavedChanges = false;
 var editor = ace.edit('editor');
 editor.setOption('fontSize', '14px');
 editor.setOption('showLineNumbers', false);
@@ -62,8 +61,9 @@ window.addEventListener('copy', ev => {
 });
 
 // Confirm unload
+
 window.addEventListener('beforeunload', ev => {
-	if (unsavedChanges) {
+	if (!editor.session.getUndoManager().isClean()) {
 		var message = Chrome.getString('confirm_unload');
 		ev.returnValue = message;
 		return message;
@@ -76,6 +76,7 @@ window.addEventListener('beforeunload', ev => {
 function downloadAsTextFile(ev) {
 	ev.preventDefault();
 	FileSystem.saveFile(getIsoDateString() + '.md', editor.getValue());
+	editor.session.getUndoManager().markClean();
 }
 
 /**
@@ -92,7 +93,8 @@ function closeOtherTabs(ev) {
  * Replaces the text content of the editor
  */
 function setEditorContent(text, highlightLine = 0) {
-	editor.setValue(text);
+	//session.setvalue: see https://github.com/ajaxorg/ace/issues/1243
+	editor.session.setValue(text);
 	editor.gotoLine(highlightLine);
 	editor.focus();
 }
