@@ -30,7 +30,6 @@ Chrome.onBrowserAction(sourceTab => {
 		Chrome.getPreferences([ 'format', 'ignorePinned', 'domainBlacklist', 'protocolBlacklist' ]),
 		Chrome.getAllWindows({ populate: true })
 	]).then(([ prefs, windows ]) => {
-		console.log(prefs);
 		// Pull a window to the top
 		// TODO: reverse order of windows/tabs completely instead
 		var index = windows.findIndex(w => w.id === sourceTab.windowId);
