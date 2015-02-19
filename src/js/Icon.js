@@ -2,6 +2,8 @@ var size = 19;
 var borderWidth = 2;
 var borderRadius = 3;
 var textPosition = 13;
+var bigFont = 'bold 11px sans-serif';
+var smallFont = 'bold 9px sans-serif';
 
 // http://git.chromium.org/gitweb/?p=chromium/src.git;a=blob;f=chrome/renderer/resources/extensions/set_icon.js;h=f9f2371fe83befca510a118e9c564b343203a2a5;hb=e7cda74cc2dfe47adbf6cbe8c86a0c57b19cad56
 // http://git.chromium.org/gitweb/?p=chromium/src.git;a=blob;f=chrome/test/data/extensions/api_test/browser_action/no_icon/update.js;h=e37a28603ecc6a8fc8a521fcfe7bc5514beda63b;hb=e7cda74cc2dfe47adbf6cbe8c86a0c57b19cad56
@@ -12,7 +14,6 @@ canvas.width = size;
 canvas.height = size;
 
 var ctx = canvas.getContext('2d');
-ctx.font = 'bold 11px sans-serif';
 ctx.strokeStyle = '#5c5c5c';
 ctx.fillStyle = '#5c5c5c';
 ctx.lineWidth = borderWidth;
@@ -30,6 +31,7 @@ export function drawIcon(text) {
 	ctx.clearRect(borderWidth, borderWidth, innerSize, innerSize);
 
 	// Draw the text
+	ctx.font = (text.length >= 3) ? smallFont : bigFont;
 	ctx.fillText(text, size / 2, textPosition);
 
 	return ctx.getImageData(0, 0, size, size)
