@@ -43,6 +43,6 @@
 	},
 
 	"confirm_unload": {
-		"message": "You have unsaved content. Are you sure you want to close this tab?"
+		"message": "You have unsaved changes."
 	}
 }

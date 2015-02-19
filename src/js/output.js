@@ -9,9 +9,6 @@ import * as TabManager from './lib-chrome/TabManager';
 var timeout;
 var toastNode = document.querySelector('.m-toast');
 
-// Localize title
-document.title = Chrome.getString('ext_name');
-
 // Setup toolbar
 var fileInput = document.querySelector('.m-file-input');
 FileSystem.onFile(setEditorContent);
@@ -41,17 +38,18 @@ editor.setOption('showLineNumbers', false);
 editor.setOption('showPrintMargin', false);
 editor.$blockScrolling = Infinity;
 editor.setTheme('ace/theme/kuroir');
-editor.getSession().setMode('ace/mode/markdown');
 
 Chrome.sendMessage({ operation: 'get_document' }).then(res => {
 	if (res.error) {
 		makeToast(res.error);
 	} else {
-		setEditorContent(res.text, res.highlightLine);
+		setEditorContent(res.text, res.format, res.highlightLine);
 	}
 });
 
-// Copy the whole editor's content when nothing is selected
+/*
+ * Copy the whole editor's content when nothing is selected
+ */
 window.addEventListener('copy', ev => {
 	if (ev.clipboardData.getData('text/plain') !== '') {
 		return;
@@ -60,8 +58,9 @@ window.addEventListener('copy', ev => {
 	makeToast('Copied the whole document');
 });
 
-// Confirm unload
-
+/*
+ * Confirm closing the tabs when there are unsaved changes
+ */
 window.addEventListener('beforeunload', ev => {
 	if (!editor.session.getUndoManager().isClean()) {
 		var message = Chrome.getString('confirm_unload');
@@ -91,8 +90,15 @@ function closeOtherTabs(ev) {
 
 /**
  * Replaces the text content of the editor
+ *
+ * @param text
+ * @param mode: possible values are 'markdown' and 'json'
+ * @param highlightLine line in which to place the cursor
  */
-function setEditorContent(text, highlightLine = 0) {
+function setEditorContent(text, mode, highlightLine = 0) {
+	if (mode) {
+		editor.session.setMode('ace/mode/' + mode);
+	}
 	//session.setvalue: see https://github.com/ajaxorg/ace/issues/1243
 	editor.session.setValue(text);
 	editor.gotoLine(highlightLine);

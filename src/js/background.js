@@ -51,8 +51,12 @@ Chrome.onBrowserAction(sourceTab => {
 		// Ignore empty windows
 		windows = windows.filter(wnd => wnd.tabs.length > 0);
 
-		// Create markdown document
-		doc = buildDocument(windows, sourceTab.id);
+		// Create document
+		if (prefs.format === 'json') {
+			doc = buildJSONDocument(windows, sourceTab.id);
+		} else {
+			doc = buildMarkdownDocument(windows, sourceTab.id);
+		}
 
 		// Open document in a new tab
 		TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
@@ -159,7 +163,7 @@ Chrome.onCommand('detach_highlighted_pages', () => {
 /**
  * Build a markdown document from an array of windows
  */
-function buildDocument(windows, sourceTabId) {
+function buildMarkdownDocument(windows, sourceTabId) {
 	var lines = [], highlightLine = 0;
 	for (var wnd of windows) {
 		lines.push('# ' + Chrome.getString('headline_window', wnd.tabs.length));
@@ -174,7 +178,15 @@ function buildDocument(windows, sourceTabId) {
 		lines.push('');
 	}
 	lines.pop();
-	return { text: lines.join('\n'), highlightLine, created: new Date() };
+	return { format: 'markdown', text: lines.join('\n'), highlightLine };
+}
+
+/**
+ * Build a pretty-printed JSON document
+ */
+function buildJSONDocument(windows, sourceTabId) {
+	windows = windows.map(w => w.tabs.map(t => ({ title: t.title, url: t.url })));
+	return { format: 'json', text: JSON.stringify(windows, undefined, 2) };
 }
 
 /**
