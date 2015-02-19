@@ -9,25 +9,11 @@ var isOpera = (navigator.vendor.indexOf('Opera') !== -1);
 export function getHighlightedTabs() {
 	// TODO: file a bug report about this
 	// Opera doesn't have highlighted tabs, so we have to customize the query
-	return new Promise(function(resolve) {
-		chrome.storage.sync.get({
-			m_filter: "facebook.com\nmail.google.com",
-	    	ignore_pinned: false
-		}, resolve);
-	}).then(function(items) {
-		var opts = { lastFocusedWindow: true };
-		if(items.ignore_pinned) {
-			opts.pinned = false;
-		}
-		if (isOpera) {
-			opts.active = true;
-			return Chrome.queryTabs(opts);
-		} else {
-			opts.highlighted = true;
-			return Chrome.queryTabs(opts);
-		}
-	});
-	
+	if (isOpera) {
+		return Chrome.queryTabs({ lastFocusedWindow: true, active: true });
+	} else {
+		return Chrome.queryTabs({ lastFocusedWindow: true, highlighted: true });
+	}
 }
 
 /**
@@ -80,18 +66,7 @@ export function restoreWindows(windows) {
  * Return the number of tabs that are open
  */
 export function getTabCount() {
-	return new Promise(function(resolve) {
-		chrome.storage.sync.get({
-			m_filter: "facebook.com\nmail.google.com",
-	    	ignore_pinned: false
-		}, resolve);
-	}).then(function(items) {
-		var opts = { windowType: 'normal' };
-		if(items.ignore_pinned) {
-			opts.pinned = false;
-		}
-		return Chrome.queryTabs(opts).then(tabs => tabs.length);
-	});
+	return Chrome.queryTabs({ windowType: 'normal' }).then(tabs => tabs.length);
 }
 
 /**
