@@ -25,7 +25,8 @@ var config = module.exports = {
 			{
 				test: /\.js$/,
 				loader: '6to5', // ?modules=commonStrict
-				include: [ getAbsolutePath('src') ]
+				include: [ getAbsolutePath('src') ],
+				exclude: [ getAbsolutePath('node_modules') ]
 			}
 		]
 	}
@@ -36,7 +37,7 @@ var uglifyConfig = {
 	// This is a regex that never matches so that all comments get deleted
 	comments: / ^/,
 	mangle: { sort: true },
-	compress: { drop_console: true, hoist_vars: true, warnings: false }
+	compress: { warnings: false }
 };
 
 // Add extra plugins in production
