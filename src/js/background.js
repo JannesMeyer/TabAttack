@@ -1,5 +1,5 @@
 import 'babel/polyfill';
-import defaults from './defaults';
+import './setDefaults';
 import debounce from './lib/debounce';
 import * as TabManager from './lib-chrome/TabManager';
 import { markdownLink } from './lib/Markdown';
@@ -11,8 +11,6 @@ import { getProtocol } from './lib/URLTools';
 var doc;
 var iconLocked = false;
 var isDevMode = false;
-
-Chrome.setDefaults(defaults);
 
 /*
  * Check whether this is a development install

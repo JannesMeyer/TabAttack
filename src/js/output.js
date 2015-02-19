@@ -1,3 +1,7 @@
+import ace from 'brace';
+import 'brace/mode/json';
+import 'brace/mode/markdown';
+import './setDefaults';
 import marked from 'marked';
 import Mousetrap from 'mousetrap';
 import { getIsoDateString } from './lib/DateTime';
@@ -37,8 +41,14 @@ editor.setOption('fontSize', '14px');
 editor.setOption('showLineNumbers', false);
 editor.setOption('showPrintMargin', false);
 editor.$blockScrolling = Infinity;
-editor.setTheme('ace/theme/kuroir');
 
+// Set theme according to preferences
+Chrome.getPreferences([ 'editorTheme' ]).then(items => {
+	require('brace/theme/' + items.editorTheme);
+	editor.setTheme('ace/theme/' + items.editorTheme);
+});
+
+// Set content
 Chrome.sendMessage({ operation: 'get_document' }).then(res => {
 	if (res.error) {
 		makeToast(res.error);

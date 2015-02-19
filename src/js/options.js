@@ -1,13 +1,20 @@
-import defaults from './defaults';
+import './setDefaults';
+import { lightThemes, darkThemes } from './lib-browser/aceThemeList';
+
+console.log('lightThemes', Object.keys(lightThemes).length);
+console.log('darkThemes', Object.keys(darkThemes).length);
 
 // Setup
-Chrome.setDefaults(defaults);
-
 var toastNode = document.querySelector('.m-toast');
 var formatSelect = document.querySelector('.m-export-format');
 var ignorePinnedCheckbox = document.querySelector('.m-ignore-pinned');
 var blacklistTextarea = document.querySelector('.m-filter');
+var editorThemeSelect = document.querySelector('.m-editor-theme');
 updateFormState();
+
+// Useful for testing purposes:
+// chrome.storage.sync.clear()
+// chrome.storage.sync.get(function(p) { console.log(p) })
 
 /*
  * Submit handler: Save options to chrome.storage.sync
@@ -17,7 +24,8 @@ document.querySelector('form').addEventListener('submit', ev => {
 	Chrome.setPreferences({
 		format: formatSelect.value,
 		ignorePinned: ignorePinnedCheckbox.checked,
-		domainBlacklist: blacklistTextarea.value.split('\n').map(v => v.trim()).filter(v => v !== '')
+		domainBlacklist: blacklistTextarea.value.split('\n').map(v => v.trim()).filter(v => v !== ''),
+		editorTheme: editorThemeSelect.value
 	}).then(() => {
 		// Let the user know the options were saved
 		showToast(Chrome.getString('options_saved'));

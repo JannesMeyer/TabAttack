@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Include Roboto (bold) and use it as the tab counter font
+- Add theme select in options
 
 ## [1.3] - 2015-02-19
 ### Added

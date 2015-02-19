@@ -21,9 +21,6 @@ var Chrome = {
 	_getPreferences:      dechromeify(chrome.storage.sync, chrome.storage.sync.get),
 	setPreferences:       dechromeify(chrome.storage.sync, chrome.storage.sync.set),
 	clearPreferences:     dechromeify(chrome.storage.sync, chrome.storage.sync.clear),
-	// Useful for testing purposes:
-	// chrome.storage.sync.clear()
-	// chrome.storage.sync.get(function(p) { console.log(p) })
 
 	// Message passing
 	sendMessage:          dechromeify(chrome.runtime, chrome.runtime.sendMessage),
