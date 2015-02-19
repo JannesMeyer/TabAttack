@@ -26,8 +26,12 @@ ctx.fill();
  * Draws the icon
  */
 export function drawIcon(text) {
+	// Clear the inner part of the icon, without ever redrawing the border
 	ctx.clearRect(borderWidth, borderWidth, innerSize, innerSize);
+
+	// Draw the text
 	ctx.fillText(text, size / 2, textPosition);
+
 	return ctx.getImageData(0, 0, size, size)
 }
 
