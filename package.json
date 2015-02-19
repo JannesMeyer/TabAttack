@@ -1,5 +1,8 @@
 {
   "name": "TabAttack",
+  "scripts": {
+  	"build": "rm build.zip; zip -vr build.zip src/ -x '*.DS_Store'"
+	},
   "devDependencies": {
     "marked": "0.x",
     "mousetrap": "1.x",
