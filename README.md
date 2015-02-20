@@ -48,10 +48,10 @@ This extension also adds a few useful, general tab management keyboard shortcuts
 
 ## Building
 
-Clone the repository including submodules:
+Clone the repository:
 
 ~~~bash
-git clone --recursive https://github.com/JannesMeyer/TabAttack.git
+git clone https://github.com/JannesMeyer/TabAttack.git
 ~~~
 
 Install the dependencies:
