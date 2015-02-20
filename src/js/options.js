@@ -17,7 +17,8 @@ var strings = {
 var Page = React.createClass({
 
 	componentWillMount() {
-		Chrome.getPreferences().then(p => this.replaceState(p));
+		document.title = Chrome.getString('options');
+		Chrome.getPreferences().then(p => this.setState(p));
 	},
 
 	componentWillUpdate(nextProps, nextState) {

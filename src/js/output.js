@@ -23,7 +23,8 @@ class Page extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { doc: null };
+		this.state = { doc: props.doc };
+
 		this.downloadAsTextFile = this.downloadAsTextFile.bind(this);
 		this.closeOtherTabs = this.closeOtherTabs.bind(this);
 		this.loadFile = this.loadFile.bind(this);
@@ -31,14 +32,8 @@ class Page extends React.Component {
 	}
 
 	componentDidMount() {
-		// Set title
+		console.timeEnd('lol');
 		document.title = Chrome.getString('ext_name');
-
-		// Request document
-		Chrome.sendMessage({ operation: 'get_document' })
-			.then(res => this.setState({ doc: res }))
-			.catch(err => makeToast(err));
-
 		// File loading
 		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text } }));
 		FileSystem.setupFileInput(this.refs.fileInput.getDOMNode());
@@ -56,28 +51,30 @@ class Page extends React.Component {
 	 * Action: Download the editor's content as a text file
 	 */
 	downloadAsTextFile(ev) {
-		ev.preventDefault();
-		var filename = getIsoDateString() + '.md';
+		var doc = this.state.doc;
+		var ext = (doc && doc.format === 'json') ? '.json' : '.md';
+		var filename = getIsoDateString() + ext;
 		var text = this.refs.editor.getContent();
 		FileSystem.saveTextFile(filename, text);
+		ev.preventDefault();
 	}
 
 	/**
 	 * Action: Close all tabs
 	 */
 	closeOtherTabs(ev) {
-		ev.preventDefault();
 		Chrome.getCurrentTab().then(tab => {
 			TabManager.closeOtherTabs(tab);
 		});
+		ev.preventDefault();
 	}
 
 	/**
 	 * Action: Load file
 	 */
 	loadFile(ev) {
-		ev.preventDefault();
 		this.refs.fileInput.getDOMNode().click();
+		ev.preventDefault();
 	}
 
 	/**
@@ -105,6 +102,7 @@ class Page extends React.Component {
 	}
 
 	render() {
+		var openButton = this.state.doc.format === 'markdown' && <button onClick={this.openLinks} className="item-open" title={strings.openLinks}>{strings.openLinks}</button>;
 		return (
 			<div className="m-container">
 				<div className="m-toolbar">
@@ -112,7 +110,7 @@ class Page extends React.Component {
 					<button onClick={this.downloadAsTextFile} className="item-save" title={strings.save}>{strings.save}</button>
 					<button onClick={this.closeOtherTabs} className="item-close" title={strings.close}>{strings.close}</button>
 					<button onClick={this.loadFile} className="item-load-file" title={strings.loadFile}>{strings.loadFile}</button>
-					<button onClick={this.openLinks} className="item-open" title={strings.openLinks}>{strings.openLinks}</button>
+					{openButton}
 				</div>
 				<Editor ref="editor" doc={this.state.doc} />
 			</div>
@@ -121,4 +119,9 @@ class Page extends React.Component {
 
 }
 
-React.render(<Page />, document.body);
+Chrome.sendMessage({ operation: 'get_document' }).then(response => {
+	React.render(<Page doc={response} />, document.body);
+}).catch(err => {
+	makeToast(err);
+	React.render(<Page />, document.body);
+});

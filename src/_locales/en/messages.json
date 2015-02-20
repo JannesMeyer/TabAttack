@@ -36,6 +36,9 @@
 		"placeholders": { "x": { "content": "$1" } }
 	},
 
+	"options": {
+		"message": "Options"
+	},
 	"options_export": {
 		"message": "Export"
 	},
