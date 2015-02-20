@@ -9,7 +9,7 @@ var MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 megabytes
  * https://github.com/eligrey/FileSaver.js
  * http://html5-demos.appspot.com/static/a.download.html
  */
-export function saveFile(filename, text) {
+export function saveTextFile(filename, text) {
 	if (a === undefined) { a = document.createElement('a'); }
 	var objectUrl = URL.createObjectURL(new Blob([ text ], { type: 'text/plain' }));
 	a.href = objectUrl;

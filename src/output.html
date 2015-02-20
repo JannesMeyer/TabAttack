@@ -1,7 +1,6 @@
 <!doctype html>
 <html>
 <head>
-<title>TabAttack</title>
 <meta charset="utf-8">
 <style>
 @font-face {
@@ -37,11 +36,6 @@ body.s-dnd-hover::after {
 	right: 7px;
 	bottom: 7px;
 	border: 5px dashed #1f68e0;
-}
-
-/* Hide file input */
-.m-file-input {
-	display: none;
 }
 
 /* Remove underlines, especially from URLs */
@@ -136,15 +130,5 @@ body {
 <script defer src="build/output.bundle.js"></script>
 </head>
 <body>
-
-	<div class="m-toast s-hidden"> </div>
-	<div class="m-container">
-		<div class="m-toolbar">
-			<input class="m-file-input" type="file" />
-			<button class="item-save" title="Download (⌘S / Ctrl+S)">Download</button><button class="item-close" title="Close all tabs (⌘Q / Ctrl+Q)">Close all tabs</button><button class="item-load-file" title="Load file (⌘O / Ctrl+O)">Load file</button><button class="item-open" title="Open links (⇧⌘O / Ctrl+Shift+O)">Open links</button>
-		</div>
-		<div id="editor"></div>
-	</div>
-
 </body>
 </html>

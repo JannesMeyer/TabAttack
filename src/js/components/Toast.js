@@ -37,3 +37,21 @@ var Toast = React.createClass({
 });
 
 export default Toast;
+
+
+// // Setup toast
+// var timeout;
+// var toastNode = document.querySelector('.m-toast');
+// /**
+//  * Show a toast
+//  */
+// function makeToast(text) {
+// 	toastNode.firstChild.nodeValue = text;
+// 	toastNode.classList.remove('s-hidden');
+
+// 	// Refresh the time-to-hide
+// 	if (timeout !== undefined) {
+// 		clearTimeout(timeout);
+// 	}
+// 	timeout = setTimeout(() => toastNode.classList.add('s-hidden'), 4000);
+// }

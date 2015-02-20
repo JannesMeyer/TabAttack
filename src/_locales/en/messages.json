@@ -44,5 +44,20 @@
 
 	"confirm_unload": {
 		"message": "You have unsaved changes."
+	},
+	"action_save": {
+		"message": "Download"
+	},
+	"action_close_tabs": {
+		"message": "Close all tabs"
+	},
+	"action_load_file": {
+		"message": "Load file"
+	},
+	"action_open_links": {
+		"message": "Open links"
+	},
+	"link_outside_list_error": {
+		"message": "Not all links are inside of a list"
 	}
 }

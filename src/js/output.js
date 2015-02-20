@@ -9,149 +9,186 @@ import { getTags, parseHTML } from './lib-browser/DOMHelpers'
 import * as FileSystem from './lib-browser/FileSystem';
 import * as TabManager from './lib-chrome/TabManager';
 
-// Setup toast
-var timeout;
-var toastNode = document.querySelector('.m-toast');
-
-// Setup toolbar
-var fileInput = document.querySelector('.m-file-input');
-FileSystem.onFile(setEditorContent);
-FileSystem.setupFileInput(fileInput);
-FileSystem.setupFileTarget(document.body);
-
-var saveButton = document.querySelector('.item-save');
-var closeButton = document.querySelector('.item-close');
-var loadButton = document.querySelector('.item-load-file');
-var openButton = document.querySelector('.item-open');
-saveButton.addEventListener('click', downloadAsTextFile);
-closeButton.addEventListener('click', closeOtherTabs);
-loadButton.addEventListener('click', loadFile);
-openButton.addEventListener('click', openLinks);
-
-// Make keyboard shortcuts
-Mousetrap.bind(['command+s', 'ctrl+s'], downloadAsTextFile);
-Mousetrap.bind(['command+q', 'ctrl+q'], closeOtherTabs);
-Mousetrap.bind(['command+o', 'ctrl+o'], loadFile);
-Mousetrap.bind(['command+shift+o', 'ctrl+shift+o'], openLinks);
-Mousetrap.stopCallback = () => false;
-
-// Setup ACE
-var editor = ace.edit('editor');
-editor.setOption('fontSize', '14px');
-editor.setOption('showLineNumbers', false);
-editor.setOption('showPrintMargin', false);
-editor.$blockScrolling = Infinity;
-
-// Set theme according to preferences
-Chrome.getPreferences([ 'editorTheme' ]).then(items => {
-	require('brace/theme/' + items.editorTheme);
-	editor.setTheme('ace/theme/' + items.editorTheme);
-});
-
-// Set content
-Chrome.sendMessage({ operation: 'get_document' }).then(res => {
-	if (res.error) {
-		makeToast(res.error);
-	} else {
-		setEditorContent(res.text, res.format, res.highlightLine);
-	}
-});
-
-/*
- * Copy the whole editor's content when nothing is selected
+/**
+ * Ace editor component
  */
-window.addEventListener('copy', ev => {
-	if (ev.clipboardData.getData('text/plain') !== '') {
-		return;
-	}
-	ev.clipboardData.setData('text/plain', editor.getValue());
-	makeToast('Copied the whole document');
-});
+var Editor = React.createClass({
 
-/*
- * Confirm closing the tabs when there are unsaved changes
- */
-window.addEventListener('beforeunload', ev => {
-	if (!editor.session.getUndoManager().isClean()) {
+	editor: null,
+
+	componentDidMount() {
+		this.editor = ace.edit('editor');
+		this.editor.setOption('fontSize', '14px');
+		this.editor.setOption('showLineNumbers', false);
+		this.editor.setOption('showPrintMargin', false);
+		this.editor.$blockScrolling = Infinity;
+		Chrome.getPreferences([ 'editorTheme' ]).then(items => {
+			require('brace/theme/' + items.editorTheme);
+			this.editor.setTheme('ace/theme/' + items.editorTheme);
+		});
+		this.updateContent();
+
+		window.addEventListener('beforeunload', this.handleUnload);
+		window.addEventListener('copy', this.handleCopy);
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener('beforeunload', this.handleUnload);
+		window.removeEventListener('copy', this.handleCopy);
+	},
+
+	componentDidUpdate(prevProps, prevState) {
+		this.updateContent();
+	},
+
+	updateContent() {
+		var doc = this.props.doc;
+		if (!doc) {
+			return;
+		}
+		if (doc.format) {
+			this.editor.session.setMode('ace/mode/' + doc.format);
+		}
+		if (doc.text !== undefined) {
+			// session.setValue: see https://github.com/ajaxorg/ace/issues/1243
+			this.editor.session.setValue(doc.text);
+			this.editor.gotoLine(doc.highlightLine || 0);
+			this.editor.focus();
+		}
+	},
+
+	getContent() {
+		this.editor.session.getUndoManager().markClean();
+		return this.editor.getValue();
+	},
+
+	handleUnload(ev) {
+		if (this.editor.session.getUndoManager().isClean()) {
+			return;
+		}
 		var message = Chrome.getString('confirm_unload');
 		ev.returnValue = message;
 		return message;
+	},
+
+	handleCopy(ev) {
+		if (ev.clipboardData.getData('text/plain') !== '') {
+			return;
+		}
+		ev.clipboardData.setData('text/plain', this.getContent());
+		// makeToast('Copied the whole document');
+	},
+
+	render() {
+		return <div id="editor" />;
 	}
+
 });
 
-/**
- * Download the editor's content as a text file
- */
-function downloadAsTextFile(ev) {
-	ev.preventDefault();
-	FileSystem.saveFile(getIsoDateString() + '.md', editor.getValue());
-	editor.session.getUndoManager().markClean();
-}
 
-/**
- * Close all tabs except the current one
- */
-function closeOtherTabs(ev) {
-	ev.preventDefault();
-	Chrome.getCurrentTab().then(tab => {
-		TabManager.closeOtherTabs(tab);
-	});
-}
-
-/**
- * Replaces the text content of the editor
- *
- * @param text
- * @param mode: possible values are 'markdown' and 'json'
- * @param highlightLine line in which to place the cursor
- */
-function setEditorContent(text, mode, highlightLine = 0) {
-	if (mode) {
-		editor.session.setMode('ace/mode/' + mode);
-	}
-	//session.setvalue: see https://github.com/ajaxorg/ace/issues/1243
-	editor.session.setValue(text);
-	editor.gotoLine(highlightLine);
-	editor.focus();
-}
 
 
 /**
- * Show an 'Open File' dialog
+ * OutputPage component
  */
-function loadFile(ev) {
-	ev.preventDefault();
-	fileInput.click();
-}
+var OutputPage = React.createClass({
 
-/**
- * Open all links in the editor
- */
-function openLinks(ev) {
-	ev.preventDefault();
-	var doc = parseHTML(marked(editor.getValue()));
-	var windows = getTags(doc, 'ul').map(ul => {
-		ul.parentNode.removeChild(ul);
-		return getTags(ul, 'a').map(a => a.href);
-	});
+	strings: {
+		save: Chrome.getString('action_save'), // ⌘S / Ctrl+S
+		close: Chrome.getString('action_close_tabs'), // ⌘Q / Ctrl+Q
+		loadFile: Chrome.getString('action_load_file'), // ⌘O / Ctrl+O
+		openLinks: Chrome.getString('action_open_links') // ⇧⌘O / Ctrl+Shift+O
+	},
 
-	if (getTags(doc, 'a').length > 0) {
-		makeToast('Not all links are inside of a list');
-	} else {
+	getInitialState() {
+		return { doc: null };
+	},
+
+	componentWillMount() {
+		document.title = Chrome.getString('ext_name');
+
+		Chrome.sendMessage({ operation: 'get_document' }).then(res => {
+			// TODO: better error handling
+			if (res.error) {
+				makeToast(res.error);
+				return;
+			}
+			this.setState({ doc: res });
+		});
+	},
+
+	componentDidMount() {
+		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text } }));
+		FileSystem.setupFileInput(this.refs.fileInput.getDOMNode());
+		FileSystem.setupFileTarget(document.body);
+
+		// Set keyboard shortcuts
+		Mousetrap.bind(['command+s', 'ctrl+s'], this.downloadAsTextFile);
+		Mousetrap.bind(['command+q', 'ctrl+q'], this.closeOtherTabs);
+		Mousetrap.bind(['command+o', 'ctrl+o'], this.loadFile);
+		Mousetrap.bind(['command+shift+o', 'ctrl+shift+o'], this.openLinks);
+		Mousetrap.stopCallback = () => false;
+	},
+
+	/**
+	 * Download the editor's content as a text file
+	 */
+	downloadAsTextFile(ev) {
+		ev.preventDefault();
+		var filename = getIsoDateString() + '.md';
+		var text = this.refs.editor.getContent();
+		FileSystem.saveTextFile(filename, text);
+	},
+
+	closeOtherTabs(ev) {
+		ev.preventDefault();
+		Chrome.getCurrentTab().then(tab => {
+			TabManager.closeOtherTabs(tab);
+		});
+	},
+
+	loadFile(ev) {
+		ev.preventDefault();
+		this.refs.fileInput.getDOMNode().click();
+	},
+
+	openLinks(ev) {
+		ev.preventDefault();
+		// Markdown → HTML → DOM
+		var text = this.refs.editor.getContent();
+		var doc = parseHTML(marked(text));
+
+		// Get all links inside of an <ul>
+		var windows = getTags(doc, 'ul').map(ul => {
+			ul.parentNode.removeChild(ul);
+			return getTags(ul, 'a').map(a => a.href);
+		});
+
+		// Check for leftovers
+		if (getTags(doc, 'a').length > 0) {
+			makeToast(Chrome.getString('link_outside_list_error'));
+			return;
+		}
+
 		TabManager.restoreWindows(windows);
-	}
-}
+	},
 
-/**
- * Show a toast
- */
-function makeToast(text) {
-	toastNode.firstChild.nodeValue = text;
-	toastNode.classList.remove('s-hidden');
-
-	// Refresh the time-to-hide
-	if (timeout !== undefined) {
-		clearTimeout(timeout);
+	render() {
+		var strings = this.strings;
+		return (
+			<div className="m-container">
+				<div className="m-toolbar">
+					<input type="file" ref="fileInput" style={{display: 'none'}} />
+					<button onClick={this.downloadAsTextFile} className="item-save" title={strings.save}>{strings.save}</button>
+					<button onClick={this.closeOtherTabs} className="item-close" title={strings.close}>{strings.close}</button>
+					<button onClick={this.loadFile} className="item-load-file" title={strings.loadFile}>{strings.loadFile}</button>
+					<button onClick={this.openLinks} className="item-open" title={strings.openLinks}>{strings.openLinks}</button>
+				</div>
+				<Editor ref="editor" doc={this.state.doc} />
+			</div>
+		);
 	}
-	timeout = setTimeout(() => toastNode.classList.add('s-hidden'), 4000);
-}
+
+});
+
+React.render(<OutputPage />, document.body)
