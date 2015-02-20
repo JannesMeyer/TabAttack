@@ -18,7 +18,10 @@ var config = module.exports = {
 		filename: '[name].bundle.js'
 	},
 	plugins: [
-		new webpack.ProvidePlugin({ Chrome: getAbsolutePath('src/js/lib-chrome/Chrome.js') })
+		new webpack.ProvidePlugin({
+			React: 'react',
+			Chrome: getAbsolutePath('src/js/lib-chrome/Chrome.js')
+		})
 	],
 	module: {
 		loaders: [

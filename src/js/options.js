@@ -1,56 +1,103 @@
 import './setDefaults';
 import { lightThemes, darkThemes } from './lib-browser/aceThemeList';
 
-console.log('lightThemes', Object.keys(lightThemes).length);
-console.log('darkThemes', Object.keys(darkThemes).length);
-
-// Setup
-var toastNode = document.querySelector('.m-toast');
-var formatSelect = document.querySelector('.m-export-format');
-var ignorePinnedCheckbox = document.querySelector('.m-ignore-pinned');
-var blacklistTextarea = document.querySelector('.m-filter');
-var editorThemeSelect = document.querySelector('.m-editor-theme');
-updateFormState();
-
 // Useful for testing purposes:
 // chrome.storage.sync.clear()
 // chrome.storage.sync.get(function(p) { console.log(p) })
 
-/*
- * Submit handler: Save options to chrome.storage.sync
- */
-document.querySelector('form').addEventListener('submit', ev => {
-	ev.preventDefault();
-	Chrome.setPreferences({
-		format: formatSelect.value,
-		ignorePinned: ignorePinnedCheckbox.checked,
-		domainBlacklist: blacklistTextarea.value.split('\n').map(v => v.trim()).filter(v => v !== ''),
-		editorTheme: editorThemeSelect.value
-	}).then(() => {
-		// Let the user know the options were saved
-		showToast(Chrome.getString('options_saved'));
-	});
+var Page = React.createClass({
+
+	componentWillMount() {
+		Chrome.getPreferences().then(p => this.replaceState(p));
+	},
+
+	componentWillUpdate(nextProps, nextState) {
+		Chrome.setPreferences(nextState);
+	},
+
+	handleCheckedChange(field, ev) {
+		this.setState({ [field]: ev.target.checked });
+	},
+
+	handleValueChange(field, ev) {
+		this.setState({ [field]: ev.target.value });
+	},
+
+	addDomain(ev) {
+		ev.preventDefault();
+		var input = this.refs.domainInput.getDOMNode();
+		var domainBlacklist = this.state.domainBlacklist;
+		if (domainBlacklist.indexOf(input.value) === -1) {
+			domainBlacklist.unshift(input.value);
+			this.setState({ domainBlacklist });
+			input.value = '';
+		} else {
+			alert('Already exists');
+		}
+	},
+
+	deleteDomain(index, ev) {
+		ev.preventDefault();
+		var domainBlacklist = this.state.domainBlacklist;
+		domainBlacklist.splice(index, 1);
+		this.setState({ domainBlacklist });
+	},
+
+	showSavedMessage() {
+		this.refs.toast.show(Chrome.getString('options_saved'));
+	},
+
+	render() {
+		var s = this.state || {};
+		return (
+			<div>
+
+				<h3>Export options</h3>
+
+				<label>
+					Format:
+					<select value={s.format} onChange={this.handleValueChange.bind(this, 'format')}>
+						<option value="markdown">Markdown</option>
+						<option value="json">JSON</option>
+					</select>
+				</label>
+
+				<label>
+					Ignore these domains:
+					<div className="settings-list" ref="domainBlacklist">
+						<div className="row editing"><form onSubmit={this.addDomain}><input type="text" ref="domainInput" placeholder="Add a domain" required /></form></div>
+						{s.domainBlacklist && s.domainBlacklist.map((domain, i) =>
+							<div className="row" key={domain}><span>{domain}</span><a className="delete-button" href="" onClick={this.deleteDomain.bind(this, i)} /></div>
+						)}
+					</div>
+				</label>
+
+				<label>
+					<input type="checkbox" checked={s.ignorePinned} onChange={this.handleCheckedChange.bind(this, 'ignorePinned')} />
+					Ignore pinned tabs
+				</label>
+
+				<h3>Editor options</h3>
+
+				<label>
+					Default theme:
+					<select ref="editorTheme" value={s.editorTheme} onChange={this.handleValueChange.bind(this, 'editorTheme')}>
+						<optgroup label="Light">
+						{lightThemes.map(t =>
+							<option value={t.name} key={t.name}>{t.caption}</option>
+						)}
+						</optgroup>
+						<optgroup label="Dark">
+						{darkThemes.map(t =>
+							<option value={t.name} key={t.name}>{t.caption}</option>
+						)}
+						</optgroup>
+					</select>
+				</label>
+
+			</div>
+		);
+	}
 });
 
-/**
- * Restore form state with data from chrome.storage.sync
- */
-function updateFormState() {
-	Chrome.getPreferences().then(prefs => {
-		formatSelect.value = prefs.format;
-		ignorePinnedCheckbox.checked = prefs.ignorePinned;
-		blacklistTextarea.value = prefs.domainBlacklist.join('\n');
-	});
-}
-
-/**
- * Show a toast
- *
- * @param text
- * @param duration in seconds
- */
-function showToast(text, duration = 2) {
-	toastNode.firstChild.firstChild.nodeValue = text;
-	toastNode.classList.remove('s-hidden');
-	setTimeout(() => toastNode.classList.add('s-hidden'), duration * 1000);
-}
+React.render(<Page />, document.body);

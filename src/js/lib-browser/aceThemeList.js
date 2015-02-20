@@ -1,37 +1,37 @@
-export var lightThemes = {
-	chrome:          'Chrome',
-	clouds:          'Clouds',
-	crimson_editor:  'Crimson Editor',
-	dawn:            'Dawn',
-	dreamweaver:     'Dreamweaver',
-	eclipse:         'Eclipse',
-	github:          'GitHub',
-	solarized_light: 'Solarized Light',
-	textmate:        'TextMate',
-	tomorrow:        'Tomorrow',
-	xcode:           'XCode',
-	kuroir:          'Kuroir',
-	katzenmilch:     'KatzenMilch'
-};
+export var lightThemes = [
+	{ name: 'chrome',          caption: 'Chrome' },
+	{ name: 'clouds',          caption: 'Clouds' },
+	{ name: 'crimson_editor',  caption: 'Crimson Editor' },
+	{ name: 'dawn',            caption: 'Dawn' },
+	{ name: 'dreamweaver',     caption: 'Dreamweaver' },
+	{ name: 'eclipse',         caption: 'Eclipse' },
+	{ name: 'github',          caption: 'GitHub' },
+	{ name: 'solarized_light', caption: 'Solarized Light' },
+	{ name: 'textmate',        caption: 'TextMate' },
+	{ name: 'tomorrow',        caption: 'Tomorrow' },
+	{ name: 'xcode',           caption: 'XCode' },
+	{ name: 'kuroir',          caption: 'Kuroir' },
+	{ name: 'katzenmilch',     caption: 'KatzenMilch' }
+];
 
-export var darkThemes = {
-	ambiance: 'Ambiance',
-	chaos: 'Chaos',
-	clouds_midnight: 'Clouds Midnight',
-	cobalt: 'Cobalt',
-	idle_fingers: 'idle Fingers',
-	kr_theme: 'krTheme',
-	merbivore: 'Merbivore',
-	merbivore_soft: 'Merbivore Soft',
-	mono_industrial: 'Mono Industrial',
-	monokai: 'Monokai',
-	pastel_on_dark: 'Pastel on dark',
-	solarized_dark: 'Solarized Dark',
-	terminal: 'Terminal',
-	tomorrow_night: 'Tomorrow Night',
-	tomorrow_night_blue: 'Tomorrow Night Blue',
-	tomorrow_night_bright: 'Tomorrow Night Bright',
-	tomorrow_night_eighties: 'Tomorrow Night 80s',
-	twilight: 'Twilight',
-	vibrant_ink: 'Vibrant Ink'
-};
+export var darkThemes = [
+	{ name: 'ambiance',                caption: 'Ambiance' },
+	{ name: 'chaos',                   caption: 'Chaos' },
+	{ name: 'clouds_midnight',         caption: 'Clouds Midnight' },
+	{ name: 'cobalt',                  caption: 'Cobalt' },
+	{ name: 'idle_fingers',            caption: 'idle Fingers' },
+	{ name: 'kr_theme',                caption: 'krTheme' },
+	{ name: 'merbivore',               caption: 'Merbivore' },
+	{ name: 'merbivore_soft',          caption: 'Merbivore Soft' },
+	{ name: 'mono_industrial',         caption: 'Mono Industrial' },
+	{ name: 'monokai',                 caption: 'Monokai' },
+	{ name: 'pastel_on_dark',          caption: 'Pastel on dark' },
+	{ name: 'solarized_dark',          caption: 'Solarized Dark' },
+	{ name: 'terminal',                caption: 'Terminal' },
+	{ name: 'tomorrow_night',          caption: 'Tomorrow Night' },
+	{ name: 'tomorrow_night_blue',     caption: 'Tomorrow Night Blue' },
+	{ name: 'tomorrow_night_bright',   caption: 'Tomorrow Night Bright' },
+	{ name: 'tomorrow_night_eighties', caption: 'Tomorrow Night 80s' },
+	{ name: 'twilight',                caption: 'Twilight' },
+	{ name: 'vibrant_ink',             caption: 'Vibrant Ink' }
+];

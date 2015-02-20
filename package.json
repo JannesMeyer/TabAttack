@@ -1,18 +1,19 @@
 {
-	"name": "TabAttack",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/JannesMeyer/TabAttack.git"
-	},
-	"scripts": {
-		"build": "rm '$build.zip'; zip -vr '$build.zip' src/ -x '*.DS_Store'"
-	},
-	"devDependencies": {
-		"babel": "4.x",
-		"babel-loader": "4.x",
-		"brace": "^0.4.1",
-		"marked": "0.x",
-		"mousetrap": "1.x",
-		"webpack": "1.x"
-	}
+  "name": "TabAttack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JannesMeyer/TabAttack.git"
+  },
+  "scripts": {
+    "build": "rm '$build.zip'; zip -vr '$build.zip' src/ -x '*.DS_Store'"
+  },
+  "devDependencies": {
+    "babel": "4.x",
+    "babel-loader": "4.x",
+    "brace": "0.x",
+    "marked": "0.x",
+    "mousetrap": "1.x",
+    "react": "0.x",
+    "webpack": "1.x"
+  }
 }

@@ -1,31 +1,56 @@
 <!doctype html>
-<html>
-<head>
 <meta charset="utf-8">
-<title>Options</title>
 <style>
-.m-toast {
-	pointer-events: none;
-	position: fixed;
-	left: 0;
-	bottom: 25%;
+.settings-list {
+	height: 149px;
+	overflow: auto;
+	margin: 0;
+	margin-top: 4px;
+	padding: 0;
+	border: 1px solid #d9d9d9;
+	border-radius: 2px;
+}
+.settings-list > .row {
+	padding: 7px;
+	display: flex;
+}
+.settings-list > .row:hover {
+	background-color: rgb(228, 236, 247);
+}
+.settings-list > .row > *:first-child {
+	flex: 1 0 auto;
+}
+.settings-list > .row.editing {
+	padding: 0;
+}
+.settings-list input {
 	width: 100%;
-	text-align: center;
+	padding: 7px;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	color: #000;
 }
-.m-toast.s-hidden {
-	opacity: 0;
-	transition: opacity 0.2s linear;
+.settings-list input:valid {
+	background: #e6f7c5;
 }
-.m-toast > div {
-	display: inline-block;
-	padding: 8px 11px;
-	border-radius: 3px;
-	font-size: 12px;
+.settings-list > .row > .delete-button {
+	visibility: hidden;
+	display: block;
+	flex: 0 0 16px;
+	cursor: default;
+	height: 16px;
+	width: 16px;
+	background-image: -webkit-image-set( url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAiElEQVR42r2RsQrDMAxEBRdl8SDcX8lQPGg1GBI6lvz/h7QyRRXV0qUULwfvwZ1tenw5PxToRPWMC52eA9+WDnlh3HFQ/xBQl86NFYJqeGflkiogrOvVlIFhqURFVho3x1moGAa3deMs+LS30CAhBN5nNxeT5hbJ1zwmji2k+aF6NENIPf/hs54f0sZFUVAMigAAAABJRU5ErkJggg==') 1x, url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAAA9UlEQVR4Xu3UsWrCUByH0fMEouiuhrg4xohToJVGH0CHLBncEwfx/VvIFHLJBWmHDvKbv7PcP9f3L/fXwBsApZSRpUpEgbOnxwiReng6x4AvjdrNXRLkibubWqMcB9Yujk7qjhjmtZOji/U4wELuoBwQXa50kFsQA5jK+kQ/l5kSA4ZEK5Fo+3kcCIlGM8ijQEhUqkEeBUKiUPTyl4C5vZ1cbmdv/iqwclXY6aZwtXoFSLQqhVwmkytUWglxAMG7T0yCu4gD0v7ZBKeVxoEwFxIxYBPmIWEzDnyEeUj4HAfYdvmMcGYdsSUGsOzlIbHEv/uV38APrreiBRBIs3QAAAAASUVORK5CYII=') 2x);
+}
+.settings-list > .row:hover > .delete-button {
+	visibility: visible;
+}
+.settings-list > .row:hover > .delete-button:hover {
+	background-image: -webkit-image-set( url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAqUlEQVR4XqWRMQqEMBBF/1E8Ra6x6V3FRnS9QbCxtJg6Z7CzE9lTiIXXyUb3C8EULixDIMM8Zt4kcDfxM5A45U+cgeXnC1tREgkzAgob3hiq3CUHvGLG4FTQoSgxQGDrzN8WTLBGnx2IVDksen9GH7Z9hA5E6uxABMJyCHDMCEGHzugLQPPlBCBNGq+5YtpnGw1Bv+te15ypljTpVzdak5Opy+z+qf//zQ+Lg+07ay5KsgAAAABJRU5ErkJggg==') 1x, url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAAB4UlEQVR42u2VsWoCQRBAh+MUFP0C1V9QD4NEOxs9xBQHQVCwSJFWVBAtBNXCxk6wTkBJYUTwEwQLC61E8QP0NzZzt5g5726DkC7EYWHZ8T3WndkV2C/jLwn4hwVYBIdLn9vkLp79QcBCTDMiy3w2gQ9XeTYkEHA8vqj2rworXu3HF1YFfSWgp5QFnKVLvYvzDEKEZ5hW70oXOCtcEbQLIkx7+IQtfMBSOjU6XEF4oyOdYInZbXyOuajjDlpNeQgleIUJKUz4BDMledhqOu/AzVSmzZ49CUjCC0yvim98iqtJT2L2jKsqczsdok9XrHNexaww415lnTNwn6CM/KxJIR8bnUZHPhLO6yMoIyk2pNjLewFuE5AiY1KMMQx8Q7hQYFek4AkjxXFe1rsF84I/BTFQMGL+1Lxwl4DwdtM1gjwKohgxyLtG7SYpxALqugOMcfOKN+bFXeBsLB1uulNcRqq7/tt36k41zoL6QlxGjtd6lrahiqCi1iOFYyvXuxY8yzK33VnvUivbLlOlj/jktm0s3YnXrNIXXufHNxuOGasi8S68zkwrlnV8ZcJJsTIUxbLgQcFZWE8N0gau2p40VVcM0gYeFpSRK6445UhBuKiRgiyKw+34rLt59nb1/7+RwReVkaFtqvNBuwAAAABJRU5ErkJggg==') 2x);
+}
 
-	background: #262626;
-	color: #f0f0f0;
-	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
-}
+
 h3 {
 	font-size: 1.2em;
 	margin-bottom: 0.8em;
@@ -35,96 +60,12 @@ label {
 	display: block;
 	margin: 1em 0;
 	-webkit-user-select: none;
-	clear: both;
 }
-textarea {
-	display: block;
-	width: 100%;
-	height: 6em;
-	resize: vertical;
-	margin-top: 3px;
+input[type=checkbox] {
+	margin-right: 4px;
 }
-.button-strip {
-	display: flex;
-	flex-direction: row-reverse;
+select {
+	margin-left: 4px;
 }
 </style>
 <script defer src="build/options.bundle.js"></script>
-</head>
-<body>
-
-	<div class="m-toast s-hidden"><div> </div></div>
-
-	<form>
-
-		<h3>Export options</h3>
-
-		<label>
-			Format:
-			<select class="m-export-format">
-				<option value="markdown">Markdown</option>
-				<option value="json">JSON</option>
-			</select>
-		</label>
-
-		<label>
-			<input type="checkbox" class="m-ignore-pinned" /> Ignore pinned tabs
-		</label>
-
-		<label>
-			Ignore these domains: (one per line)
-			<textarea class="m-filter"></textarea>
-		</label>
-
-		<h3>Editor options</h3>
-
-		<label>
-			Default theme:
-			<select class="m-editor-theme">
-				<optgroup label="Light">
-					<option value="kuroir">kuroir</option>
-					<option value="katzenmilch">katzenmilch</option>
-					<option value="clouds">clouds</option>
-					<option value="solarized_light">solarized_light</option>
-					<option value="tomorrow">tomorrow</option>
-					<option value="dawn">dawn</option>
-					<option value="textmate">textmate</option>
-					<option value="xcode">xcode</option>
-					<option value="github">github</option>
-					<option value="eclipse">eclipse</option>
-					<option value="dreamweaver">dreamweaver</option>
-					<option value="chrome">chrome</option>
-					<option value="crimson_editor">crimson_editor</option>
-				</optgroup>
-				<optgroup label="Dark">
-					<option value="clouds_midnight">clouds_midnight</option>
-					<option value="pastel_on_dark">pastel_on_dark</option>
-					<option value="solarized_dark">solarized_dark</option>
-					<option value="tomorrow_night">tomorrow_night</option>
-					<option value="idle_fingers">idle_fingers</option>
-					<option value="cobalt">cobalt</option>
-					<option value="ambiance">ambiance</option>
-					<option value="chaos">chaos</option>
-					<option value="kr_theme">kr_theme</option>
-					<option value="merbivore">merbivore</option>
-					<option value="merbivore_soft">merbivore_soft</option>
-					<option value="mono_industrial">mono_industrial</option>
-					<option value="monokai">monokai</option>
-					<option value="terminal">terminal</option>
-					<option value="tomorrow_night_blue">tomorrow_night_blue</option>
-					<option value="tomorrow_night_bright">tomorrow_night_bright</option>
-					<option value="tomorrow_night_eighties">tomorrow_night_eighties</option>
-					<option value="twilight">twilight</option>
-					<option value="vibrant_ink">vibrant_ink</option>
-				</optgroup>
-			</select>
-		</label>
-
-		<div class="button-strip">
-			<button type="submit">Save</button>
-		</div>
-
-	</form>
-
-</body>
-</html>
