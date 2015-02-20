@@ -10,7 +10,7 @@
 		"message": "Copy Link as Markdown"
 	},
 	"prompt_title_change": {
-		"message": "Edit the title of the link, if you wish:\n$title$",
+		"message": "Edit the title of the link, if you wish:\n\n$title$",
 		"placeholders": { "title": { "content": "$1" } }
 	},
 
