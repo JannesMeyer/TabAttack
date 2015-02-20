@@ -6,6 +6,14 @@
 		"message": "Exports your tabs as easily archivable Markdown."
 	},
 
+	"context_menu": {
+		"message": "Copy Link as Markdown"
+	},
+	"prompt_title_change": {
+		"message": "Edit the title of the link, if you wish:\n$title$",
+		"placeholders": { "title": { "content": "$1" } }
+	},
+
 	"icon_tooltip": {
 		"message": "Export tabs"
 	},
@@ -28,12 +36,12 @@
 		"message": "Not all links are inside of a list"
 	},
 	"headline_window": {
-		"message": "$x$ tab",
-		"placeholders": { "x": { "content": "$1" } }
+		"message": "$num$ tab",
+		"placeholders": { "num": { "content": "$1" } }
 	},
 	"headline_windows": {
-		"message": "$x$ tabs",
-		"placeholders": { "x": { "content": "$1" } }
+		"message": "$num$ tabs",
+		"placeholders": { "num": { "content": "$1" } }
 	},
 
 	"options": {
@@ -59,19 +67,19 @@
 	},
 
 	"move_tab": {
-		"message": "Move $x$ tab to…",
-		"placeholders": { "x": { "content": "$1" } }
+		"message": "Move $num$ tab to…",
+		"placeholders": { "num": { "content": "$1" } }
 	},
 	"move_tabs": {
-		"message": "Move $x$ tabs to…",
-		"placeholders": { "x": { "content": "$1" } }
+		"message": "Move $num$ tabs to…",
+		"placeholders": { "num": { "content": "$1" } }
 	},
 	"window_with_tab": {
-		"message": "Window with $x$ tab",
-		"placeholders": { "x": { "content": "$1" } }
+		"message": "Window with $num$ tab",
+		"placeholders": { "num": { "content": "$1" } }
 	},
 	"window_with_tabs": {
-		"message": "Window with $x$ tabs",
-		"placeholders": { "x": { "content": "$1" } }
+		"message": "Window with $num$ tabs",
+		"placeholders": { "num": { "content": "$1" } }
 	}
 }

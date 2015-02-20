@@ -1,5 +1,64 @@
 var database;
 
+if (process.env.NODE_ENV !== 'production') {
+	window.print = console.log.bind(console);
+	window.getEntry = getEntry;
+	window.getAll = getAll;
+	window.deleteEntry = deleteEntry;
+}
+
+function handleSuccess(ev) {
+	if (ev.target.error) {
+		this.reject(ev.target.error);
+	} else {
+		this.resolve(ev.target.result);
+	}
+}
+
+function getEntry(key) {
+	var entry = Promise.defer();
+	getDB().then(db => {
+		db.transaction('titles').objectStore('titles').get(key).onsuccess = handleSuccess.bind(entry);
+	});
+	return entry.promise;
+}
+
+function getAll() {
+	var deferred = Promise.defer();
+	var entries = [];
+	getDB().then(db => {
+		db.transaction('titles').objectStore('titles').openCursor().onsuccess = (ev) => {
+			var cursor = ev.target.result;
+			if (cursor) {
+				entries.push(cursor.value);
+				cursor.continue();
+			} else {
+				deferred.resolve(entries);
+			}
+		};
+	});
+	return deferred.promise;
+}
+
+function deleteEntry(key) {
+	getDB().then(db => {
+		db.transaction('titles', 'readwrite').objectStore('titles').delete(key);
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Open a database (create it if it doesn't exist yet)
  */
@@ -14,71 +73,28 @@ function getDB() {
 		var openRequest = indexedDB.open('title_changes', 7);
 		openRequest.onerror = reject;
 		openRequest.onupgradeneeded = event => {
-			console.log('Upgrading database…');
-			database = openRequest.result;
+			database = event.target.result;
 			database.onerror = reject;
-
+			console.log('Upgrading database…');
 			// database.deleteObjectStore('titles');
 			database.createObjectStore('titles', { keyPath: 'url' });
-
-			// store.createIndex('created', 'created', { unique: false });
-			// db.createObjectStore('array-keypath', { keyPath: ['a', 'c'] });
-			// db.createObjectStore('dotted-keypath', { keyPath: 'a.b' });
-			// store.put({ a: 6, b: 6, c: 7 }, [5, 6]);
-			// store.createIndex('by_ac', ['a', 'c']);
 		};
 		openRequest.onsuccess = event => {
-			console.log('Database opened.');
-			database = openRequest.result;
-			database.onerror = log;
+			database = event.target.result;
+			database.onerror = function(ev) {
+				console.log(ev.target.constructor.name + ': ' + ev.target.error);
+			};
 			resolve(database);
 		};
 	});
 }
 
 /**
- * Error callback: Log the event to the console
- */
-function log(ev) {
-	var req = ev.target;
-	console.log(req.constructor.name + ': ' + ev.type, req.result || req.error || null);
-}
-
-/**
  * Add a log entry to the database
  */
-export function logChange(url, originalTitle, newTitle) {
-	var entry = {
-		url,
-		originalTitle,
-		newTitle,
-		lastModified: new Date()
-	};
+export function logChange(originalTitle, newTitle, url) {
+	var entry = { url, originalTitle, newTitle, lastModified: new Date() };
 	getDB().then(db => {
-		db.transaction('titles', 'readwrite')
-		  .objectStore('titles')
-		  .put(entry)
-		  .onsuccess = log;
-	});
-}
-
-/**
- * Read the list of title changes
- */
-export function getChanges(callback) {
-	var titleChanges = [];
-	getDB().then(db => {
-		db.transaction('titles')
-		  .objectStore('titles')
-		  .openCursor()
-		  .onsuccess = event => {
-				var cursor = event.target.result;
-				if (cursor) {
-					titleChanges.push(cursor.value);
-					cursor.continue();
-				} else {
-					callback(titleChanges);
-				}
-			};
+		db.transaction('titles', 'readwrite').objectStore('titles').put(entry);
 	});
 }

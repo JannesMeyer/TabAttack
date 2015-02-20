@@ -146,11 +146,10 @@ Chrome.onBrowserAction = function(handler) {
  */
 Chrome.getString = function(name, substitution) {
 	if (substitution !== undefined) {
-		if (substitution === 1) {
-			return chrome.i18n.getMessage(name, [ substitution ]);
-		} else {
+		if (typeof substitution === 'number' && substitution > 1) {
 			return chrome.i18n.getMessage(name + 's', [ substitution ]);
 		}
+		return chrome.i18n.getMessage(name, [ substitution ]);
 	}
 	return chrome.i18n.getMessage(name);
 };

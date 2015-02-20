@@ -1,3 +1,6 @@
+import './defaults';
+import { drawIcon } from './Icon';
+import * as TitleChangelog from './TitleChangelog';
 import 'babel/polyfill';
 import debounce from './lib/debounce';
 import * as TabManager from './lib-chrome/TabManager';
@@ -6,10 +9,9 @@ import { writeClipboard } from './lib-browser/Clipboard';
 import { showPopup } from './lib-chrome/Popup';
 import { getProtocol } from './lib/URLTools';
 
-import './defaults';
-import { drawIcon } from './Icon';
-import * as TitleChangelog from './TitleChangelog';
-
+/**
+ * The last generated document
+ */
 var doc;
 
 /*
@@ -51,28 +53,19 @@ Chrome.onBrowserAction(sourceTab => {
 });
 
 /*
- * Global shortcut: Copy current tab as a markdown link
+ * Context menu: Copy link as Markdown
+ */
+chrome.contextMenus.create({
+	title: Chrome.getString('context_menu'),
+	contexts: [ 'link' ],
+	onclick: info => copyLink(info.selectionText, info.linkUrl, 'linkTitle')
+});
+
+/*
+ * Global shortcut: Copy current tab as a Markdown link
  */
 Chrome.onCommand('copy_current_page', () => {
-	TabManager.getActiveTab().then(tab => {
-		// Let the user modify the title (or use the domain shortcut)
-		var title = prompt('Edit the title of the link before it is copied, if you wish:\n\n' + tab.title, tab.title);
-		if (title === null || title === '') {
-			return;
-		}
-
-		// Shortcut: Use the naked domain name
-		if (title === 'd') {
-			title = new URL(tab.url).hostname.replace(/^www\./, '');
-		} else
-		// Log changes. This will not trigger in production.
-		if (title !== tab.title && process.env.NODE_ENV !== 'production') {
-			TitleChangelog.logChange(tab.url, tab.title, title);
-		}
-
-		// Copy the title and url as a Markdown link
-		writeClipboard(markdownLink(title, tab.url));
-	});
+	TabManager.getActiveTab().then(tab => copyLink(tab.title, tab.url, 'documentTitle'));
 });
 
 /*
@@ -145,6 +138,30 @@ Chrome.onCommand('detach_highlighted_pages', () => {
 		}
 	});
 });
+
+/**
+ * Let the user modify link title and then copy it as Markdown
+ */
+function copyLink(originalTitle, url, type) {
+		// Let the user modify the title
+		var title = prompt(Chrome.getString('prompt_title_change', originalTitle), originalTitle);
+		if (title === null || title === '') {
+			// Cancel
+			return;
+		}
+
+		// Shortcut: Use the naked domain name
+		if (title === 'd') {
+			title = new URL(url).hostname.replace(/^www\./, '');
+		} else
+		// Log changes. This will not trigger in production.
+		if (type === 'documentTitle' && title !== originalTitle && process.env.NODE_ENV !== 'production') {
+			TitleChangelog.logChange(originalTitle, title, url);
+		}
+
+		// Copy the title and URL as a Markdown link
+		writeClipboard(markdownLink(title, url));
+}
 
 /**
  * Build a markdown document from an array of windows
