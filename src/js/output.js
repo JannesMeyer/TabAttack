@@ -8,17 +8,26 @@ import * as TabManager from './lib-chrome/TabManager';
 import Editor from './components/Editor';
 
 var strings = {
-	save: Chrome.getString('action_save'), // ⌘S / Ctrl+S
-	close: Chrome.getString('action_close_tabs'), // ⌘Q / Ctrl+Q
-	loadFile: Chrome.getString('action_load_file'), // ⌘O / Ctrl+O
+	save:      Chrome.getString('action_save'), // ⌘S / Ctrl+S
+	close:     Chrome.getString('action_close_tabs'), // ⌘Q / Ctrl+Q
+	loadFile:  Chrome.getString('action_load_file'), // ⌘O / Ctrl+O
 	openLinks: Chrome.getString('action_open_links') // ⇧⌘O / Ctrl+Shift+O
 };
+
+// TODO: fix this
+function makeToast(text) {
+	alert(text);
+}
 
 class Page extends React.Component {
 
 	constructor(props) {
 		super(props);
 		this.state = { doc: null };
+		this.downloadAsTextFile = this.downloadAsTextFile.bind(this);
+		this.closeOtherTabs = this.closeOtherTabs.bind(this);
+		this.loadFile = this.loadFile.bind(this);
+		this.openLinks = this.openLinks.bind(this);
 	}
 
 	componentDidMount() {
@@ -26,14 +35,9 @@ class Page extends React.Component {
 		document.title = Chrome.getString('ext_name');
 
 		// Request document
-		Chrome.sendMessage({ operation: 'get_document' }).then(res => {
-			// TODO: better error handling
-			if (res.error) {
-				makeToast(res.error);
-				return;
-			}
-			this.setState({ doc: res });
-		});
+		Chrome.sendMessage({ operation: 'get_document' })
+			.then(res => this.setState({ doc: res }))
+			.catch(err => makeToast(err));
 
 		// File loading
 		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text } }));

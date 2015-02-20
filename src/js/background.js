@@ -1,23 +1,16 @@
 import 'babel/polyfill';
-import './setDefaults';
 import debounce from './lib/debounce';
 import * as TabManager from './lib-chrome/TabManager';
 import { markdownLink } from './lib/Markdown';
 import { writeClipboard } from './lib-browser/Clipboard';
-import { drawIcon } from './Icon';
 import { showPopup } from './lib-chrome/Popup';
 import { getProtocol } from './lib/URLTools';
 
-var doc;
-var iconLocked = false;
-var isDevMode = false;
+import './setDefaults';
+import { drawIcon } from './Icon';
+import * as TitleChangelog from './TitleChangelog';
 
-/*
- * Check whether this is a development install
- */
-Chrome.getExtensionInfo().then(info => {
-	isDevMode = (info.installType === 'development');
-});
+var doc;
 
 /*
  * Handle browser action
@@ -49,11 +42,8 @@ Chrome.onBrowserAction(sourceTab => {
 		windows = windows.filter(wnd => wnd.tabs.length > 0);
 
 		// Create document
-		if (prefs.format === 'json') {
-			doc = buildJSONDocument(windows, sourceTab.id);
-		} else {
-			doc = buildMarkdownDocument(windows, sourceTab.id);
-		}
+		var buildDocument = (prefs.format === 'json') ? buildJSONDocument : buildMarkdownDocument;
+		doc = buildDocument(windows, sourceTab.id);
 
 		// Open document in a new tab
 		TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
@@ -71,17 +61,16 @@ Chrome.onCommand('copy_current_page', () => {
 			return;
 		}
 
-		var url = new URL(tab.url);
+		// Shortcut: Use the naked domain name
 		if (title === 'd') {
-			// Shortcut: Use the naked domain name as title
-			title = url.hostname.replace(/^www\./, '');
-		} else if (title !== tab.title && isDevMode) {
-			// Record title changes
-			// This will not trigger if the extension was installed from the Chrome Web Store!
-			require('./TitleChangelog').logChange(tab.url, tab.title, title);
+			title = new URL(tab.url).hostname.replace(/^www\./, '');
+		} else
+		// Log changes. This will not trigger in production.
+		if (title !== tab.title && process.env.NODE_ENV !== 'production') {
+			TitleChangelog.logChange(tab.url, tab.title, title);
 		}
 
-		// Copy the title and url as a markdown link
+		// Copy the title and url as a Markdown link
 		writeClipboard(markdownLink(title, tab.url));
 	});
 });
@@ -127,7 +116,7 @@ Chrome.onCommand('duplicate_tab', () => {
  */
 Chrome.onMessage('get_document', (message, sender, sendResponse) => {
 	if (doc) {
-		sendResponse(doc)
+		sendResponse(doc);
 	} else {
 		sendResponse({ error: 'No document found' });
 	}
@@ -190,21 +179,16 @@ function buildJSONDocument(windows, sourceTabId) {
  * Update icon with the current tab count
  */
 function updateIcon() {
-	if (iconLocked) {
-		return;
-	}
-	iconLocked = true;
 	TabManager.getTabCount().then(count => {
-		chrome.browserAction.setIcon({ imageData: drawIcon(count.toString()) });
-		iconLocked = false;
+		chrome.browserAction.setIcon({ imageData: drawIcon(count) });
 	});
 }
 
 /**
  * Debounced version of updateIcon()
  */
-var onTabChange = debounce(updateIcon, 200);
+var handleTabChange = debounce(updateIcon, 200);
 
 updateIcon();
-chrome.tabs.onCreated.addListener(onTabChange);
-chrome.tabs.onRemoved.addListener(onTabChange);
+chrome.tabs.onCreated.addListener(handleTabChange);
+chrome.tabs.onRemoved.addListener(handleTabChange);

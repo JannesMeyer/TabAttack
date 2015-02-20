@@ -2,7 +2,6 @@
 	"ext_name": {
 		"message": "TabAttack"
 	},
-
 	"ext_description": {
 		"message": "Exports your tabs as easily archivable Markdown."
 	},
@@ -10,9 +9,42 @@
 	"icon_tooltip": {
 		"message": "Export tabs"
 	},
+	"confirm_unload": {
+		"message": "You have unsaved changes."
+	},
+	"action_save": {
+		"message": "Download"
+	},
+	"action_close_tabs": {
+		"message": "Close all tabs"
+	},
+	"action_load_file": {
+		"message": "Load file"
+	},
+	"action_open_links": {
+		"message": "Open links"
+	},
+	"link_outside_list_error": {
+		"message": "Not all links are inside of a list"
+	},
 
-	"options_saved": {
-		"message": "Options saved"
+	"options_export": {
+		"message": "Export"
+	},
+	"options_export_format": {
+		"message": "Format:"
+	},
+	"options_export_ignore_domains": {
+		"message": "Ignore these domains:"
+	},
+	"options_export_ignore_pinned": {
+		"message": "Ignore pinned tabs"
+	},
+	"options_editor": {
+		"message": "Editor"
+	},
+	"options_editor_theme": {
+		"message": "Theme:"
 	},
 
 	"headline_window": {
@@ -40,24 +72,5 @@
 	"window_with_tabs": {
 		"message": "Window with $x$ tabs",
 		"placeholders": { "x": { "content": "$1" } }
-	},
-
-	"confirm_unload": {
-		"message": "You have unsaved changes."
-	},
-	"action_save": {
-		"message": "Download"
-	},
-	"action_close_tabs": {
-		"message": "Close all tabs"
-	},
-	"action_load_file": {
-		"message": "Load file"
-	},
-	"action_open_links": {
-		"message": "Open links"
-	},
-	"link_outside_list_error": {
-		"message": "Not all links are inside of a list"
 	}
 }

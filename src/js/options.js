@@ -5,6 +5,15 @@ import { lightThemes, darkThemes } from './lib-browser/aceThemeList';
 // chrome.storage.sync.clear()
 // chrome.storage.sync.get(function(p) { console.log(p) })
 
+var strings = {
+	exportHeadline:      Chrome.getString('options_export'),
+	exportFormat:        Chrome.getString('options_export_format'),
+	exportIgnoreDomains: Chrome.getString('options_export_ignore_domains'),
+	exportIgnorePinned:  Chrome.getString('options_export_ignore_pinned'),
+	editorHeadline:      Chrome.getString('options_editor'),
+	editorTheme:         Chrome.getString('options_editor_theme')
+};
+
 var Page = React.createClass({
 
 	componentWillMount() {
@@ -48,10 +57,10 @@ var Page = React.createClass({
 		return (
 			<div>
 
-				<h3>Export</h3>
+				<h3>{strings.exportHeadline}</h3>
 
 				<label>
-					Format:
+					{strings.exportFormat}
 					<select value={s.format} onChange={this.handleValueChange.bind(this, 'format')}>
 						<option value="markdown">Markdown</option>
 						<option value="json">JSON</option>
@@ -59,7 +68,7 @@ var Page = React.createClass({
 				</label>
 
 				<label>
-					Ignore these domains:
+					{strings.exportIgnoreDomains}
 					<div className="settings-list" ref="domainBlacklist">
 						<div className="row editing"><form onSubmit={this.addDomain}><input type="text" ref="domainInput" placeholder="Add a domain" required /></form></div>
 						{s.domainBlacklist && s.domainBlacklist.map((domain, i) =>
@@ -70,13 +79,13 @@ var Page = React.createClass({
 
 				<label>
 					<input type="checkbox" checked={s.ignorePinned} onChange={this.handleCheckedChange.bind(this, 'ignorePinned')} />
-					Ignore pinned tabs
+					{strings.exportIgnorePinned}
 				</label>
 
-				<h3>Editor</h3>
+				<h3>{strings.editorHeadline}</h3>
 
 				<label>
-					Theme:
+					{strings.editorTheme}
 					<select ref="editorTheme" value={s.editorTheme} onChange={this.handleValueChange.bind(this, 'editorTheme')}>
 						<optgroup label="Light">
 						{lightThemes.map(t =>

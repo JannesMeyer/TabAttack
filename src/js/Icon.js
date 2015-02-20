@@ -38,6 +38,8 @@ ctx.fill();
 
 /**
  * Draws the text inside the icon
+ *
+ * @param text: text to draw (String or Number)
  */
 export function drawIcon(text) {
 	// Clear the inner part of the icon, without ever redrawing the border

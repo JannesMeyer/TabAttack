@@ -34,17 +34,28 @@ import 'brace/theme/tomorrow_night_eighties';
 import 'brace/theme/twilight';
 import 'brace/theme/vibrant_ink';
 
+// TODO: fix this
+function makeToast(text) {
+	alert(text);
+}
+
 /**
- * Ace editor component
+ * Ace editor
  */
 export default class Editor extends React.Component {
+
+	constructor() {
+		super();
+		this.handleUnload = this.handleUnload.bind(this);
+		this.handleCopy = this.handleCopy.bind(this);
+	}
 
 	componentDidMount() {
 		this.editor = ace.edit('editor');
 		this.editor.setOption('fontSize', '14px');
 		this.editor.setOption('showLineNumbers', false);
 		this.editor.setOption('showPrintMargin', false);
-		Chrome.getPreferences([ 'editorTheme' ]).then(items => {
+		Chrome.getPreferences(['editorTheme']).then(items => {
 			this.editor.setTheme('ace/theme/' + items.editorTheme);
 		});
 		this.updateContent();
@@ -72,7 +83,7 @@ export default class Editor extends React.Component {
 			return;
 		}
 		ev.clipboardData.setData('text/plain', this.getContent());
-		// makeToast('Copied the whole document');
+		makeToast('Copied the whole document');
 	}
 
 	componentDidUpdate(prevProps, prevState) {

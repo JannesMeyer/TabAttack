@@ -1,7 +1,6 @@
-import { startsWith } from '../lib/StringTools';
-
-var a, listeners;
-var MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 megabytes
+var a;
+var listeners;
+var MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 megabyte
 
 /**
  * Download a given text as a file
@@ -72,14 +71,10 @@ function handleFileChange(ev) {
 	if (!file) {
 		return;
 	}
-	if (!startsWith(file.type, 'text/')) {
-		// TODO: Don't use alert() but return an error instead
-		alert('Not a text document (' + file.type + ')');
-		return;
-	}
+	console.log(`File: '${file.name}' / '${file.type}' / ${Math.round(file.size / 1024)} KB`);
 	if (file.size > MAX_FILE_SIZE) {
 		// TODO: Don't use alert() but return an error instead
-		alert('The selected file is bigger than 50 MB.');
+		alert('The selected file is bigger than 1 MB.');
 		return;
 	}
 

@@ -55,3 +55,31 @@ export default Toast;
 // 	}
 // 	timeout = setTimeout(() => toastNode.classList.add('s-hidden'), 4000);
 // }
+
+
+
+
+
+// body {
+// 	text-align: center;
+// }
+// .m-toast {
+// 	display: inline-block;
+// 	pointer-events: none;
+// 	position: relative;
+// 	top: 72%;
+// 	z-index: 100;
+// 	padding: 8px 11px;
+
+// 	cursor: default;
+// 	font-size: 12px;
+// 	background: #262626;
+// 	color: #f0f0f0;
+// 	border-radius: 3px;
+// 	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
+// }
+// .m-toast.s-hidden {
+// 	visibility: hidden;
+// 	opacity: 0;
+// 	transition: visibility 0 0.2s, opacity 0.2s ease-in-out;
+// }

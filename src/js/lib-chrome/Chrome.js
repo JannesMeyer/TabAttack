@@ -23,7 +23,7 @@ var Chrome = {
 	clearPreferences:     dechromeify(chrome.storage.sync, chrome.storage.sync.clear),
 
 	// Message passing
-	sendMessage:          dechromeify(chrome.runtime, chrome.runtime.sendMessage),
+	sendMessage:          dechromeify(chrome.runtime, chrome.runtime.sendMessage, { responseErrors: true }),
 
 	// Runtime
 	getURL:               alias(chrome.runtime, chrome.runtime.getURL),
@@ -37,13 +37,17 @@ var commandHandlers = new Map();
 /**
  * Convert an async Chrome function into one that returns a Promise
  */
-function dechromeify(myThis, fn) {
+function dechromeify(myThis, fn, opts = {}) {
 	return (...myArgs) => {
 		return new Promise((resolve, reject) => {
 			// Callback for Chrome
 			myArgs.push(function() {
 				if (chrome.runtime.lastError) {
-					reject(chrome.runtime.lastError);
+					// Chrome API error
+					reject.call(this, chrome.runtime.lastError);
+				} else if (opts.responseErrors && arguments[0].error !== undefined) {
+					// Call value error
+					reject.call(this, arguments[0].error);
 				} else {
 					resolve.apply(this, arguments);
 				}
@@ -73,11 +77,8 @@ Chrome.setDefaults = function(defaults) {
 		if (keys === undefined) {
 			return Chrome._getPreferences(defaults);
 		}
-		if (typeof keys === 'string') {
-			keys = [ keys ];
-		}
 		if (!Array.isArray(keys)) {
-			throw new Error('Use defaults.js instead of passing an object');
+			throw new Error('Not an array');
 		}
 
 		// Fill in the default values
