@@ -27,6 +27,14 @@
 	"link_outside_list_error": {
 		"message": "Not all links are inside of a list"
 	},
+	"headline_window": {
+		"message": "$x$ tab",
+		"placeholders": { "x": { "content": "$1" } }
+	},
+	"headline_windows": {
+		"message": "$x$ tabs",
+		"placeholders": { "x": { "content": "$1" } }
+	},
 
 	"options_export": {
 		"message": "Export"
@@ -47,15 +55,6 @@
 		"message": "Theme:"
 	},
 
-	"headline_window": {
-		"message": "$x$ tab",
-		"placeholders": { "x": { "content": "$1" } }
-	},
-	"headline_windows": {
-		"message": "$x$ tabs",
-		"placeholders": { "x": { "content": "$1" } }
-	},
-
 	"move_tab": {
 		"message": "Move $x$ tab to…",
 		"placeholders": { "x": { "content": "$1" } }
@@ -64,7 +63,6 @@
 		"message": "Move $x$ tabs to…",
 		"placeholders": { "x": { "content": "$1" } }
 	},
-
 	"window_with_tab": {
 		"message": "Window with $x$ tab",
 		"placeholders": { "x": { "content": "$1" } }
