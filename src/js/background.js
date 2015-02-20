@@ -6,7 +6,7 @@ import { writeClipboard } from './lib-browser/Clipboard';
 import { showPopup } from './lib-chrome/Popup';
 import { getProtocol } from './lib/URLTools';
 
-import './setDefaults';
+import './defaults';
 import { drawIcon } from './Icon';
 import * as TitleChangelog from './TitleChangelog';
 

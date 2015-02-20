@@ -1,4 +1,4 @@
-import './setDefaults';
+import './defaults';
 import { lightThemes, darkThemes } from './lib-browser/aceThemeList';
 
 // Useful for testing purposes:

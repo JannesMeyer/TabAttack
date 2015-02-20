@@ -1,4 +1,4 @@
-import './setDefaults';
+import './defaults';
 import marked from 'marked';
 import Mousetrap from 'mousetrap';
 import { getIsoDateString } from './lib/DateTime';
@@ -7,6 +7,8 @@ import * as FileSystem from './lib-browser/FileSystem';
 import * as TabManager from './lib-chrome/TabManager';
 import Editor from './components/Editor';
 
+// Load strings
+document.title = Chrome.getString('ext_name');
 var strings = {
 	save:      Chrome.getString('action_save'), // ⌘S / Ctrl+S
 	close:     Chrome.getString('action_close_tabs'), // ⌘Q / Ctrl+Q
@@ -14,11 +16,18 @@ var strings = {
 	openLinks: Chrome.getString('action_open_links') // ⇧⌘O / Ctrl+Shift+O
 };
 
-// TODO: fix this
-function makeToast(text) {
-	alert(text);
-}
+// Load document
+Chrome.sendMessage({ operation: 'get_document' }).then(response => {
+	React.render(<Page doc={response} />, document.body);
+}).catch(err => {
+	// TODO: Toast instead of alert
+	alert(err);
+	React.render(<Page />, document.body);
+});
 
+/**
+ * Page component
+ */
 class Page extends React.Component {
 
 	constructor(props) {
@@ -92,7 +101,8 @@ class Page extends React.Component {
 
 		// Check for leftovers
 		if (getTags(doc, 'a').length > 0) {
-			makeToast(Chrome.getString('link_outside_list_error'));
+			// TODO: Toast instead of alert
+			alert(Chrome.getString('link_outside_list_error'));
 			return;
 		}
 
@@ -100,7 +110,8 @@ class Page extends React.Component {
 	}
 
 	render() {
-		var openButton = this.state.doc.format === 'markdown' && <button onClick={this.openLinks} className="item-open" title={strings.openLinks}>{strings.openLinks}</button>;
+		var doc = this.state.doc;
+		var openButton = doc && doc.format === 'markdown' && <button onClick={this.openLinks} className="item-open" title={strings.openLinks}>{strings.openLinks}</button>;
 		return (
 			<div className="m-container">
 				<div className="m-toolbar">
@@ -110,18 +121,9 @@ class Page extends React.Component {
 					<button onClick={this.loadFile} className="item-load-file" title={strings.loadFile}>{strings.loadFile}</button>
 					{openButton}
 				</div>
-				<Editor ref="editor" doc={this.state.doc} />
+				<Editor ref="editor" doc={doc} />
 			</div>
 		);
 	}
 
 }
-
-// Load
-document.title = Chrome.getString('ext_name');
-Chrome.sendMessage({ operation: 'get_document' }).then(response => {
-	React.render(<Page doc={response} />, document.body);
-}).catch(err => {
-	makeToast(err);
-	React.render(<Page />, document.body);
-});

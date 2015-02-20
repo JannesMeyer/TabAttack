@@ -34,13 +34,8 @@ import 'brace/theme/tomorrow_night_eighties';
 import 'brace/theme/twilight';
 import 'brace/theme/vibrant_ink';
 
-// TODO: fix this
-function makeToast(text) {
-	alert(text);
-}
-
 /**
- * Ace editor
+ * Ace editor component
  */
 export default class Editor extends React.Component {
 
@@ -83,7 +78,8 @@ export default class Editor extends React.Component {
 			return;
 		}
 		ev.clipboardData.setData('text/plain', this.getContent());
-		makeToast('Copied the whole document');
+		// TODO: Toast instead of alert
+		alert('Copied the whole document');
 	}
 
 	componentDidUpdate(prevProps, prevState) {
