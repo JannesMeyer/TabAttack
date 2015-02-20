@@ -5,7 +5,7 @@
     "url": "https://github.com/JannesMeyer/TabAttack.git"
   },
   "scripts": {
-    "build": "rm '$build.zip'; zip -vr '$build.zip' src/ -x '*.DS_Store'"
+    "build": "NODE_ENV=production webpack; rm '$build.zip'; zip -vr '$build.zip' src/ -x '*.DS_Store'"
   },
   "devDependencies": {
     "babel": "4.x",

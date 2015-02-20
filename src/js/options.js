@@ -43,16 +43,12 @@ var Page = React.createClass({
 		this.setState({ domainBlacklist });
 	},
 
-	showSavedMessage() {
-		this.refs.toast.show(Chrome.getString('options_saved'));
-	},
-
 	render() {
 		var s = this.state || {};
 		return (
 			<div>
 
-				<h3>Export options</h3>
+				<h3>Export</h3>
 
 				<label>
 					Format:
@@ -77,10 +73,10 @@ var Page = React.createClass({
 					Ignore pinned tabs
 				</label>
 
-				<h3>Editor options</h3>
+				<h3>Editor</h3>
 
 				<label>
-					Default theme:
+					Theme:
 					<select ref="editorTheme" value={s.editorTheme} onChange={this.handleValueChange.bind(this, 'editorTheme')}>
 						<optgroup label="Light">
 						{lightThemes.map(t =>

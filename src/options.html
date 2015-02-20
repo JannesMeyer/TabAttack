@@ -1,8 +1,12 @@
 <!doctype html>
 <meta charset="utf-8">
 <style>
+body {
+	padding: 0.8em;
+	padding-left: 1.8em;
+}
 .settings-list {
-	height: 149px;
+	height: 139px;
 	overflow: auto;
 	margin: 0;
 	margin-top: 4px;
@@ -11,7 +15,7 @@
 	border-radius: 2px;
 }
 .settings-list > .row {
-	padding: 7px;
+	padding: 6px 7px;
 	display: flex;
 }
 .settings-list > .row:hover {
@@ -25,7 +29,7 @@
 }
 .settings-list input {
 	width: 100%;
-	padding: 7px;
+	padding: 6px 7px;
 	border: 0;
 	border-radius: 0;
 	background: transparent;
@@ -53,13 +57,20 @@
 
 h3 {
 	font-size: 1.2em;
+	margin-top: 1.8em;
 	margin-bottom: 0.8em;
-	line-height: 1;
+	margin-left: -1em;
+}
+h3:first-child {
+	margin-top: 0;
 }
 label {
 	display: block;
-	margin: 1em 0;
+	margin: 0.8em 0;
 	-webkit-user-select: none;
+}
+label:last-child {
+	margin-bottom: 0;
 }
 input[type=checkbox] {
 	margin-right: 4px;

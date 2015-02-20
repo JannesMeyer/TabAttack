@@ -4,6 +4,9 @@
 ### Added
 - Include Roboto (bold) and use it as the tab counter font
 - Add theme select in options
+- Use React for options page
+- Options autosave on change
+- Better-looking options
 
 ## [1.3] - 2015-02-19
 ### Added
