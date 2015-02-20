@@ -32,8 +32,6 @@ class Page extends React.Component {
 	}
 
 	componentDidMount() {
-		console.timeEnd('lol');
-		document.title = Chrome.getString('ext_name');
 		// File loading
 		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text } }));
 		FileSystem.setupFileInput(this.refs.fileInput.getDOMNode());
@@ -119,6 +117,8 @@ class Page extends React.Component {
 
 }
 
+// Load
+document.title = Chrome.getString('ext_name');
 Chrome.sendMessage({ operation: 'get_document' }).then(response => {
 	React.render(<Page doc={response} />, document.body);
 }).catch(err => {
