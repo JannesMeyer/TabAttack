@@ -1,6 +1,3 @@
-import ace from 'brace';
-import 'brace/mode/json';
-import 'brace/mode/markdown';
 import './setDefaults';
 import marked from 'marked';
 import Mousetrap from 'mousetrap';
@@ -8,105 +5,27 @@ import { getIsoDateString } from './lib/DateTime';
 import { getTags, parseHTML } from './lib-browser/DOMHelpers'
 import * as FileSystem from './lib-browser/FileSystem';
 import * as TabManager from './lib-chrome/TabManager';
+import Editor from './components/Editor';
 
-/**
- * Ace editor component
- */
-var Editor = React.createClass({
+var strings = {
+	save: Chrome.getString('action_save'), // ⌘S / Ctrl+S
+	close: Chrome.getString('action_close_tabs'), // ⌘Q / Ctrl+Q
+	loadFile: Chrome.getString('action_load_file'), // ⌘O / Ctrl+O
+	openLinks: Chrome.getString('action_open_links') // ⇧⌘O / Ctrl+Shift+O
+};
 
-	editor: null,
+class Page extends React.Component {
 
-	componentDidMount() {
-		this.editor = ace.edit('editor');
-		this.editor.setOption('fontSize', '14px');
-		this.editor.setOption('showLineNumbers', false);
-		this.editor.setOption('showPrintMargin', false);
-		this.editor.$blockScrolling = Infinity;
-		Chrome.getPreferences([ 'editorTheme' ]).then(items => {
-			require('brace/theme/' + items.editorTheme);
-			this.editor.setTheme('ace/theme/' + items.editorTheme);
-		});
-		this.updateContent();
-
-		window.addEventListener('beforeunload', this.handleUnload);
-		window.addEventListener('copy', this.handleCopy);
-	},
-
-	componentWillUnmount() {
-		window.removeEventListener('beforeunload', this.handleUnload);
-		window.removeEventListener('copy', this.handleCopy);
-	},
-
-	componentDidUpdate(prevProps, prevState) {
-		this.updateContent();
-	},
-
-	updateContent() {
-		var doc = this.props.doc;
-		if (!doc) {
-			return;
-		}
-		if (doc.format) {
-			this.editor.session.setMode('ace/mode/' + doc.format);
-		}
-		if (doc.text !== undefined) {
-			// session.setValue: see https://github.com/ajaxorg/ace/issues/1243
-			this.editor.session.setValue(doc.text);
-			this.editor.gotoLine(doc.highlightLine || 0);
-			this.editor.focus();
-		}
-	},
-
-	getContent() {
-		this.editor.session.getUndoManager().markClean();
-		return this.editor.getValue();
-	},
-
-	handleUnload(ev) {
-		if (this.editor.session.getUndoManager().isClean()) {
-			return;
-		}
-		var message = Chrome.getString('confirm_unload');
-		ev.returnValue = message;
-		return message;
-	},
-
-	handleCopy(ev) {
-		if (ev.clipboardData.getData('text/plain') !== '') {
-			return;
-		}
-		ev.clipboardData.setData('text/plain', this.getContent());
-		// makeToast('Copied the whole document');
-	},
-
-	render() {
-		return <div id="editor" />;
+	constructor(props) {
+		super(props);
+		this.state = { doc: null };
 	}
 
-});
-
-
-
-
-/**
- * OutputPage component
- */
-var OutputPage = React.createClass({
-
-	strings: {
-		save: Chrome.getString('action_save'), // ⌘S / Ctrl+S
-		close: Chrome.getString('action_close_tabs'), // ⌘Q / Ctrl+Q
-		loadFile: Chrome.getString('action_load_file'), // ⌘O / Ctrl+O
-		openLinks: Chrome.getString('action_open_links') // ⇧⌘O / Ctrl+Shift+O
-	},
-
-	getInitialState() {
-		return { doc: null };
-	},
-
-	componentWillMount() {
+	componentDidMount() {
+		// Set title
 		document.title = Chrome.getString('ext_name');
 
+		// Request document
 		Chrome.sendMessage({ operation: 'get_document' }).then(res => {
 			// TODO: better error handling
 			if (res.error) {
@@ -115,9 +34,8 @@ var OutputPage = React.createClass({
 			}
 			this.setState({ doc: res });
 		});
-	},
 
-	componentDidMount() {
+		// File loading
 		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text } }));
 		FileSystem.setupFileInput(this.refs.fileInput.getDOMNode());
 		FileSystem.setupFileTarget(document.body);
@@ -128,30 +46,39 @@ var OutputPage = React.createClass({
 		Mousetrap.bind(['command+o', 'ctrl+o'], this.loadFile);
 		Mousetrap.bind(['command+shift+o', 'ctrl+shift+o'], this.openLinks);
 		Mousetrap.stopCallback = () => false;
-	},
+	}
 
 	/**
-	 * Download the editor's content as a text file
+	 * Action: Download the editor's content as a text file
 	 */
 	downloadAsTextFile(ev) {
 		ev.preventDefault();
 		var filename = getIsoDateString() + '.md';
 		var text = this.refs.editor.getContent();
 		FileSystem.saveTextFile(filename, text);
-	},
+	}
 
+	/**
+	 * Action: Close all tabs
+	 */
 	closeOtherTabs(ev) {
 		ev.preventDefault();
 		Chrome.getCurrentTab().then(tab => {
 			TabManager.closeOtherTabs(tab);
 		});
-	},
+	}
 
+	/**
+	 * Action: Load file
+	 */
 	loadFile(ev) {
 		ev.preventDefault();
 		this.refs.fileInput.getDOMNode().click();
-	},
+	}
 
+	/**
+	 * Action: Open all links in tabs
+	 */
 	openLinks(ev) {
 		ev.preventDefault();
 		// Markdown → HTML → DOM
@@ -171,10 +98,9 @@ var OutputPage = React.createClass({
 		}
 
 		TabManager.restoreWindows(windows);
-	},
+	}
 
 	render() {
-		var strings = this.strings;
 		return (
 			<div className="m-container">
 				<div className="m-toolbar">
@@ -189,6 +115,6 @@ var OutputPage = React.createClass({
 		);
 	}
 
-});
+}
 
-React.render(<OutputPage />, document.body)
+React.render(<Page />, document.body);

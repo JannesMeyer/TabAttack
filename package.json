@@ -13,7 +13,7 @@
     "brace": "0.x",
     "marked": "0.x",
     "mousetrap": "1.x",
-    "react": "0.x",
+    "react": "^0.13.0-beta.2",
     "webpack": "1.x"
   }
 }
