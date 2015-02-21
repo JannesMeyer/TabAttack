@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [1.4] - 21.02.2015
 ### Added
 - Include Roboto (bold) and use it as the tab counter font
 - Option page looks much better
@@ -9,7 +11,7 @@
 - Autosave for options
 - Add 'Copy Link as Markdown' to the context menu of links
 
-## [1.3] - 2015-02-19
+## [1.3] - 19.02.2015
 ### Added
 - JSON export format
 - Ignore pinned tabs when exporting (can be disabled in options)
