@@ -145,8 +145,9 @@ Chrome.onCommand('detach_highlighted_pages', () => {
 function copyLink(originalTitle, url, type) {
 		// Let the user modify the title
 		var title = prompt(Chrome.getString('prompt_title_change', originalTitle), originalTitle);
+
+		// Cancelled?
 		if (title === null || title === '') {
-			// Cancel
 			return;
 		}
 
