@@ -1,4 +1,4 @@
-import Mousetrap from 'mousetrap';
+import KeyPress from './lib-browser/KeyPress';
 import { parseQuery } from './lib/URLTools';
 import { removeChildren } from './lib-browser/DOMHelpers';
 import * as TabManager from './lib-chrome/TabManager';
@@ -30,29 +30,29 @@ Promise.all(targets.map(id => Chrome.getWindow(id, { populate: true }))).then(wi
 	buttons[0].focus();
 });
 
-Mousetrap.bind(['shift+tab', 'up'], ev => {
-	ev.preventDefault();
-	moveFocus(-1);
-});
-Mousetrap.bind(['tab', 'down'], ev => {
-	ev.preventDefault();
-	moveFocus(+1);
-});
+KeyPress('tab', ['shift']).addListener(moveFocus.bind(null, -1));
+KeyPress('up').addListener(moveFocus.bind(null, -1));
+KeyPress('tab').addListener(moveFocus.bind(null, 1));
+KeyPress('down').addListener(moveFocus.bind(null, 1));
 
-Mousetrap.bind('esc', window.close);
-window.addEventListener('blur', window.close, false);
-// function close(ev) {
-// 	Chrome.sendMessage({ operation: 'popup_close' });
-// 	window.close();
-// }
-// window.addEventListener('unload', close, false);
+KeyPress('esc').addListener(close);
+window.addEventListener('blur', close);
+window.addEventListener('unload', close);
+
+/**
+ * Close the popup without returning anything
+ */
+function close(ev) {
+	Chrome.sendMessage({ operation: 'popup_close' });
+	window.close();
+}
 
 /**
  * Button click handler
  */
 function clickHandler(ev) {
 	var windowId = listState[focusIndex].returnValue;
-	Chrome.sendMessage({ operation: 'popup_close', windowId });
+	Chrome.sendMessage({ operation: 'popup_return', windowId });
 	window.close();
 }
 

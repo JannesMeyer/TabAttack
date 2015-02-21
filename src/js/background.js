@@ -132,9 +132,9 @@ Chrome.onCommand('detach_highlighted_pages', () => {
 		} else {
 			// Ask the user what to do
 			var url = chrome.runtime.getURL('selection.html') + '?tabs=' + tabs.length + '&windows=' + windows.map(w => w.id).join(';');
-			showPopup({ url, parent: sourceWindow, width: 220, height: 300 }, response => {
-				TabManager.moveTabsToWindow(tabs, response.windowId);
-			});
+			showPopup({ url, parent: sourceWindow, width: 220, height: 300 }).then(message => {
+				TabManager.moveTabsToWindow(tabs, message.windowId);
+			}).catch(message => {});
 		}
 	});
 });

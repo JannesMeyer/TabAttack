@@ -1,6 +1,6 @@
 import './defaults';
 import marked from 'marked';
-import Mousetrap from 'mousetrap';
+import KeyPress from './lib-browser/KeyPress';
 import { getIsoDateString } from './lib/DateTime';
 import { getTags, parseHTML } from './lib-browser/DOMHelpers'
 import * as FileSystem from './lib-browser/FileSystem';
@@ -10,10 +10,10 @@ import Editor from './components/Editor';
 // Load strings
 document.title = Chrome.getString('ext_name');
 var strings = {
-	save:      Chrome.getString('action_save'), // ⌘S / Ctrl+S
-	close:     Chrome.getString('action_close_tabs'), // ⌘Q / Ctrl+Q
-	loadFile:  Chrome.getString('action_load_file'), // ⌘O / Ctrl+O
-	openLinks: Chrome.getString('action_open_links') // ⇧⌘O / Ctrl+Shift+O
+	save:      Chrome.getString('action_save'),
+	close:     Chrome.getString('action_close_tabs'),
+	loadFile:  Chrome.getString('action_load_file'),
+	openLinks: Chrome.getString('action_open_links')
 };
 
 // Load document
@@ -47,11 +47,10 @@ class Page extends React.Component {
 		FileSystem.setupFileTarget(document.body);
 
 		// Set keyboard shortcuts
-		Mousetrap.bind(['command+s', 'ctrl+s'], this.downloadAsTextFile);
-		Mousetrap.bind(['command+q', 'ctrl+q'], this.closeOtherTabs);
-		Mousetrap.bind(['command+o', 'ctrl+o'], this.loadFile);
-		Mousetrap.bind(['command+shift+o', 'ctrl+shift+o'], this.openLinks);
-		Mousetrap.stopCallback = () => false;
+		KeyPress('S', ['ctrl']).addListener(this.downloadAsTextFile, true);
+		KeyPress('Q', ['ctrl']).addListener(this.closeOtherTabs, true);
+		KeyPress('O', ['ctrl']).addListener(this.loadFile, true);
+		KeyPress('O', ['ctrl', 'shift']).addListener(this.openLinks, true);
 	}
 
 	/**

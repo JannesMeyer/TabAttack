@@ -1,3 +1,4 @@
+// TODO: Lazy initialization
 var Chrome = {
 	// Tabs
 	createTab:            dechromeify(chrome.tabs, chrome.tabs.create),
