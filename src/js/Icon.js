@@ -49,7 +49,7 @@ export function drawIcon(text) {
 	// Draw the text
 	if (text.length >= 3) {
 		ctx.font = smallFont;
-		ctx.fillText(text, iconSize / 2, textPosition);
+		ctx.fillText(text, iconSize / 2, textPosition, innerSize);
 	} else {
 		ctx.font = bigFont;
 		ctx.fillText(text, iconSize / 2, textPosition);
