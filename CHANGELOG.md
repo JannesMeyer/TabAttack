@@ -1,6 +1,11 @@
 # Change Log
 
-## [Unreleased]
+## [1.5] - 21.02.2015
+### Added
+- Option to remove the context menu item for links
+
+### Fixed
+- Three-digit tab count
 
 ## [1.4] - 21.02.2015
 ### Added
