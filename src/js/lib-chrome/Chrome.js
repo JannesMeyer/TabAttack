@@ -42,13 +42,13 @@ function dechromeify(myThis, fn, opts = {}) {
 	return (...myArgs) => {
 		return new Promise((resolve, reject) => {
 			// Callback for Chrome
-			myArgs.push(function() {
+			myArgs.push(function(one) {
 				if (chrome.runtime.lastError) {
 					// Chrome API error
 					reject.call(this, chrome.runtime.lastError);
-				} else if (opts.responseErrors && arguments[0].error !== undefined) {
+				} else if (opts.responseErrors && one !== undefined && one.error !== undefined) {
 					// Call value error
-					reject.call(this, arguments[0].error);
+					reject.call(this, one.error);
 				} else {
 					resolve.apply(this, arguments);
 				}
@@ -74,26 +74,47 @@ Chrome.setDefaults = function(defaults) {
 	if (Chrome.getPreferences) {
 		console.warn('Setting the defaults more than once');
 	}
+
+	/**
+	 * Create request object with default values for the keys
+	 *
+	 * @param keys: Array of String
+	 */
+	function objectWithDefaults(keys) {
+		if (!Array.isArray(keys)) {
+			throw new Error('Not an array');
+		}
+		var request = {};
+		for (var key of keys) {
+			if (!defaults.hasOwnProperty(key)) {
+				throw new Error(`No default value for '${key}' found`);
+			}
+			request[key] = defaults[key];
+		}
+		return request;
+	}
+
+	/**
+	 * Request several preference values
+	 *
+	 * @param keys: Array of String
+	 * @returns a promise that resolves to an object with the items
+	 */
 	Chrome.getPreferences = function(keys) {
 		if (keys === undefined) {
 			return Chrome._getPreferences(defaults);
 		}
-		if (!Array.isArray(keys)) {
-			throw new Error('Not an array');
-		}
+		return Chrome._getPreferences(objectWithDefaults(keys));
+	};
 
-		// Fill in the default values
-		var request = {};
-		for (var key of keys) {
-			if (defaults.hasOwnProperty(key)) {
-				request[key] = defaults[key];
-			} else {
-				throw new Error(`No default value for '${key}' found`);
-			}
-		}
-
-		// Return a Promise
-		return Chrome._getPreferences.call(undefined, request);
+	/**
+	 * Request one preference value
+	 *
+	 * @param key: String
+	 * @returns a promise that resolves to the vale
+	 */
+	Chrome.getPreference = function(key) {
+		return Chrome._getPreferences(objectWithDefaults([ key ])).then(items => items[key]);
 	};
 };
 

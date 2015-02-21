@@ -14,6 +14,11 @@ import { getProtocol } from './lib/URLTools';
  */
 var doc;
 
+/**
+ * ID of the created context menu item
+ */
+var contextMenuId;
+
 /*
  * Handle browser action
  */
@@ -52,14 +57,24 @@ Chrome.onBrowserAction(sourceTab => {
 	});
 });
 
+function addContextMenuItem() {
+	contextMenuId = chrome.contextMenus.create({
+		title: Chrome.getString('context_menu'),
+		contexts: [ 'link' ],
+		onclick: info => copyLink(info.selectionText, info.linkUrl, 'linkTitle')
+	});
+}
+
+function removeContextMenuItem() {
+	chrome.contextMenus.remove(contextMenuId);
+}
+
 /*
  * Context menu: Copy link as Markdown
  */
-chrome.contextMenus.create({
-	title: Chrome.getString('context_menu'),
-	contexts: [ 'link' ],
-	onclick: info => copyLink(info.selectionText, info.linkUrl, 'linkTitle')
-});
+Chrome.getPreference('showCopyLinkAsMarkdown').then(show => show ? addContextMenuItem() : undefined);
+Chrome.onMessage('add_context_menu', addContextMenuItem);
+Chrome.onMessage('remove_context_menu', removeContextMenuItem);
 
 /*
  * Global shortcut: Copy current tab as a Markdown link

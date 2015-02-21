@@ -29,7 +29,6 @@ Chrome.sendMessage({ operation: 'get_document' }).then(response => {
  * Page component
  */
 class Page extends React.Component {
-
 	constructor(props) {
 		super(props);
 		this.state = { doc: props.doc };
@@ -58,7 +57,7 @@ class Page extends React.Component {
 	 */
 	downloadAsTextFile(ev) {
 		var doc = this.state.doc;
-		var ext = (doc && doc.format === 'json') ? '.json' : '.md';
+		var ext = (doc.format === 'json' ? '.json' : '.md');
 		var filename = getIsoDateString() + ext;
 		var text = this.refs.editor.getContent();
 		FileSystem.saveTextFile(filename, text);
@@ -110,7 +109,7 @@ class Page extends React.Component {
 
 	render() {
 		var doc = this.state.doc;
-		var openButton = doc && doc.format === 'markdown' && <button onClick={this.openLinks} className="item-open" title={strings.openLinks}>{strings.openLinks}</button>;
+		var openButton = (doc.format === 'markdown' && <button onClick={this.openLinks} className="item-open" title={strings.openLinks}>{strings.openLinks}</button>);
 		return (
 			<div className="m-container">
 				<div className="m-toolbar">
@@ -124,5 +123,4 @@ class Page extends React.Component {
 			</div>
 		);
 	}
-
 }

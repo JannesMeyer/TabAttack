@@ -50,8 +50,8 @@ export default class Editor extends React.Component {
 		this.editor.setOption('fontSize', '14px');
 		this.editor.setOption('showLineNumbers', false);
 		this.editor.setOption('showPrintMargin', false);
-		Chrome.getPreferences(['editorTheme']).then(items => {
-			this.editor.setTheme('ace/theme/' + items.editorTheme);
+		Chrome.getPreference('editorTheme').then(theme => {
+			this.editor.setTheme('ace/theme/' + theme);
 		});
 		this.updateContent();
 
@@ -87,18 +87,14 @@ export default class Editor extends React.Component {
 	}
 
 	updateContent() {
-		if (!this.props.doc) { return; }
-
 		var doc = this.props.doc;
-		if (doc.format !== undefined) {
-			this.editor.session.setMode('ace/mode/' + doc.format);
-		}
-		if (doc.text !== undefined) {
-			// session.setValue: see https://github.com/ajaxorg/ace/issues/1243
-			this.editor.session.setValue(doc.text);
-			this.editor.gotoLine(doc.highlightLine || 0);
-			this.editor.focus();
-		}
+		if (!doc) { return; }
+
+		this.editor.session.setMode('ace/mode/' + doc.format);
+		// session.setValue: see https://github.com/ajaxorg/ace/issues/1243
+		this.editor.session.setValue(doc.text);
+		this.editor.gotoLine(doc.highlightLine || 0);
+		this.editor.focus();
 	}
 
 	getContent() {

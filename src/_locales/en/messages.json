@@ -65,6 +65,12 @@
 	"options_editor_theme": {
 		"message": "Theme:"
 	},
+	"options_context_menu": {
+		"message": "Context menu"
+	},
+	"options_show_copy_link": {
+		"message": "Show item to copy links as Markdown"
+	},
 
 	"move_tab": {
 		"message": "Move $num$ tab to…",
