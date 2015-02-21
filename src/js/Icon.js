@@ -42,13 +42,14 @@ ctx.fill();
  * @param text: text to draw (String or Number)
  */
 export function drawIcon(text) {
+	text = text.toString();
 	// Clear the inner part of the icon, without ever redrawing the border
 	ctx.clearRect(borderWidth, borderWidth, innerSize, innerSize);
 
 	// Draw the text
 	if (text.length >= 3) {
 		ctx.font = smallFont;
-		ctx.fillText(text, iconSize / 2, textPosition);
+		ctx.fillText(text, iconSize / 2, textPosition, innerSize);
 	} else {
 		ctx.font = bigFont;
 		ctx.fillText(text, iconSize / 2, textPosition);
