@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Fixed
+- When opening only windows (no tabs), don't restore focus to the original window
+
 ## [1.5] - 21.02.2015
 ### Added
 - Option to remove the context menu item for links

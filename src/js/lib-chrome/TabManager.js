@@ -44,6 +44,7 @@ export function show(tab, url) {
  */
 export function restoreWindows(windows) {
 	Chrome.getLastFocusedWindow({ populate: true }).then(wnd => {
+		// New tabs to create in the CURRENT window
 		var newTabs = (wnd.tabs.length === 1) ? windows.shift() : [];
 
 		// Open new windows
@@ -52,7 +53,9 @@ export function restoreWindows(windows) {
 		}
 
 		// Restore focus
-		Chrome.updateWindow(wnd.id, { focused: true });
+		if (newTabs.length > 0) {
+			Chrome.updateWindow(wnd.id, { focused: true });
+		}
 
 		// Re-use current window
 		for (var url of newTabs) {
