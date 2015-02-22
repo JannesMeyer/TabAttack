@@ -185,7 +185,8 @@ function copyLink(originalTitle, url, type) {
 function buildMarkdownDocument(windows, sourceTabId) {
 	var lines = [], highlightLine = 0;
 	for (var wnd of windows) {
-		lines.push('# ' + Chrome.getString('headline_window', wnd.tabs.length));
+		var name = (wnd.incognito ? 'headline_incognito_window' : 'headline_window');
+		lines.push('# ' + Chrome.getString(name, wnd.tabs.length));
 		lines.push('');
 		for (var tab of wnd.tabs) {
 			lines.push('- ' + markdownLink(tab.title, tab.url));

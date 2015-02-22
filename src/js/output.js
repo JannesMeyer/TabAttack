@@ -61,7 +61,6 @@ class Page extends React.Component {
 		var filename = getIsoDateString() + ext;
 		var text = this.refs.editor.getContent();
 		FileSystem.saveTextFile(filename, text);
-		ev.preventDefault();
 	}
 
 	/**
@@ -71,7 +70,6 @@ class Page extends React.Component {
 		Chrome.getCurrentTab().then(tab => {
 			TabManager.closeOtherTabs(tab);
 		});
-		ev.preventDefault();
 	}
 
 	/**
@@ -79,14 +77,12 @@ class Page extends React.Component {
 	 */
 	loadFile(ev) {
 		this.refs.fileInput.getDOMNode().click();
-		ev.preventDefault();
 	}
 
 	/**
 	 * Action: Open all links in tabs
 	 */
 	openLinks(ev) {
-		ev.preventDefault();
 		// Markdown → HTML → DOM
 		var text = this.refs.editor.getContent();
 		var doc = parseHTML(marked(text));

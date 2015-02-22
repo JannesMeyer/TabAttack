@@ -43,6 +43,14 @@
 		"message": "$num$ tabs",
 		"placeholders": { "num": { "content": "$1" } }
 	},
+	"headline_incognito_window": {
+		"message": "$num$ tab – Incognito",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+	"headline_incognito_windows": {
+		"message": "$num$ tabs – Incognito",
+		"placeholders": { "num": { "content": "$1" } }
+	},
 
 	"options": {
 		"message": "Options"
