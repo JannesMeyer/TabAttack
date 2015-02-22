@@ -10,6 +10,7 @@ document.title = Chrome.getString('options');
 var strings = {
 	exportHeadline:      Chrome.getString('options_export'),
 	exportFormat:        Chrome.getString('options_export_format'),
+	exportAddDomain:     Chrome.getString('options_export_add_domain'),
 	exportIgnoreDomains: Chrome.getString('options_export_ignore_domains'),
 	exportIgnorePinned:  Chrome.getString('options_export_ignore_pinned'),
 	editorHeadline:      Chrome.getString('options_editor'),
@@ -90,7 +91,7 @@ class Page extends React.Component {
 				<label>
 					{strings.exportIgnoreDomains}
 					<div className="settings-list" ref="domainBlacklist">
-						<div className="row editing"><form onSubmit={this.addDomain}><input type="text" ref="domainInput" placeholder="Add a domain" required /></form></div>
+						<div className="row editing"><form onSubmit={this.addDomain}><input type="text" ref="domainInput" placeholder={strings.exportAddDomain} required /></form></div>
 						{s.domainBlacklist && s.domainBlacklist.map((domain, i) =>
 							<div className="row" key={domain}><span>{domain}</span><a className="delete-button" href="" onClick={this.deleteDomain.bind(this, i)} /></div>
 						)}

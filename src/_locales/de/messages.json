@@ -1,59 +1,56 @@
 {
-	"ext_name": {
-		"message": "TabAttack"
-	},
 	"ext_description": {
-		"message": "Exports your tabs as easily archivable Markdown."
+		"message": "Exportiert Tabs als Markdown-Datei."
 	},
 
 	"context_menu": {
-		"message": "Copy Link as Markdown"
+		"message": "Link als Markdown kopieren"
 	},
 	"prompt_title_change": {
-		"message": "Edit the title of the link:\n\n$title$",
+		"message": "Titel des Links bearbeiten:\n\n$title$",
 		"placeholders": { "title": { "content": "$1" } }
 	},
 
 	"icon_tooltip": {
-		"message": "Export tabs"
+		"message": "Tabs exportieren"
 	},
 	"confirm_unload": {
-		"message": "You have unsaved changes."
+		"message": "Es gibt ungespeicherte Änderungen."
 	},
 	"action_save": {
 		"message": "Download"
 	},
 	"action_close_tabs": {
-		"message": "Close all tabs"
+		"message": "Alle Tabs schließen"
 	},
 	"action_load_file": {
-		"message": "Load file"
+		"message": "Datei laden"
 	},
 	"action_open_links": {
-		"message": "Open links"
+		"message": "Alle Links öffnen"
 	},
 	"link_outside_list_error": {
-		"message": "Not all links are inside of a list"
+		"message": "Nicht alle Links befinden sich in einer Liste"
 	},
 	"headline_window": {
-		"message": "$num$ tab",
+		"message": "$num$ Tab",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"headline_windows": {
-		"message": "$num$ tabs",
+		"message": "$num$ Tabs",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"headline_incognito_window": {
-		"message": "$num$ tab – Incognito",
+		"message": "$num$ Tab – Inkognito",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"headline_incognito_windows": {
-		"message": "$num$ tabs – Incognito",
+		"message": "$num$ Tabs – Inkognito",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 
 	"options": {
-		"message": "Options"
+		"message": "Optionen"
 	},
 	"options_export": {
 		"message": "Export"
@@ -62,63 +59,63 @@
 		"message": "Format:"
 	},
 	"options_export_ignore_domains": {
-		"message": "Ignore these domains:"
+		"message": "Diese Domains ignorieren:"
 	},
 	"options_export_add_domain": {
-		"message": "Add a domain"
+		"message": "Domain hinzufügen"
 	},
 	"options_export_ignore_pinned": {
-		"message": "Ignore pinned tabs"
+		"message": "Angeheftete Tabs ignorieren"
 	},
 	"options_editor": {
 		"message": "Editor"
 	},
 	"options_editor_theme": {
-		"message": "Color scheme:"
+		"message": "Farbschema:"
 	},
 	"options_context_menu": {
-		"message": "Context menu"
+		"message": "Kontextmenü"
 	},
 	"options_show_copy_link": {
-		"message": "Show item to copy links as Markdown"
+		"message": "Zeige „Link als Markdown kopieren“"
 	},
 
 	"shortcut_copy_tab_as_markdown": {
-		"message": "Copy tab as [title](url)"
+		"message": "Tab als [titel](url) kopieren"
 	},
 	"shortcut_send_tab": {
-		"message": "Send tab to another window"
+		"message": "Tab in anderes Fenster verschieben"
 	},
 	"shortcut_pin_tab": {
-		"message": "Pin tab"
+		"message": "Tab anheften"
 	},
 	"shortcut_duplicate_tab": {
-		"message": "Duplicate tab"
+		"message": "Tab duplizieren"
 	},
 	"shortcut_move_tab_left": {
-		"message": "Move tab left"
+		"message": "Tab nach links bewegen"
 	},
 	"shortcut_move_tab_right": {
-		"message": "Move tab right"
+		"message": "Tab nach rechts bewegen"
 	},
 
 	"move_tab": {
-		"message": "Send $num$ tab to…",
+		"message": "Schicke $num$ Tab an…",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"move_tabs": {
-		"message": "Send $num$ tabs to…",
+		"message": "Schicke $num$ Tabs an…",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"new_window": {
-		"message": "New window"
+		"message": "Neues Fenster"
 	},
 	"window_with_tab": {
-		"message": "Window with $num$ tab",
+		"message": "Fenster mit $num$ Tab",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"window_with_tabs": {
-		"message": "Window with $num$ tabs",
+		"message": "Fenster mit $num$ Tabs",
 		"placeholders": { "num": { "content": "$1" } }
 	}
 }

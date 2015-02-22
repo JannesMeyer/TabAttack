@@ -77,28 +77,28 @@ Chrome.onMessage('add_context_menu', addContextMenuItem);
 Chrome.onMessage('remove_context_menu', removeContextMenuItem);
 
 /*
- * Global shortcut: Copy current tab as a Markdown link
+ * Global shortcut: Copy active tab as a Markdown link
  */
-Chrome.onCommand('copy_current_page', () => {
+Chrome.onCommand('copy_tab_as_markdown', () => {
 	TabManager.getActiveTab().then(tab => copyLink(tab.title, tab.url, 'documentTitle'));
 });
 
 /*
- * Global shortcut: Move selected tabs left
+ * Global shortcut: Move highlighted tabs left
  */
 Chrome.onCommand('move_tab_left', () => {
 	TabManager.moveTabs(-1);
 });
 
 /*
- * Global shortcut: Move selected tabs right
+ * Global shortcut: Move highlighted tabs right
  */
 Chrome.onCommand('move_tab_right', () => {
 	TabManager.moveTabs(+1);
 });
 
 /*
- * Global shortcut: Pin selected tabs
+ * Global shortcut: Pin highlighted tabs
  */
 Chrome.onCommand('pin_tab', () => {
 	TabManager.getHighlightedTabs().then(tabs => {
@@ -109,7 +109,7 @@ Chrome.onCommand('pin_tab', () => {
 });
 
 /*
- * Global shortcut: Duplicate selected tabs
+ * Global shortcut: Duplicate highlighted tabs
  */
 Chrome.onCommand('duplicate_tab', () => {
 	TabManager.getHighlightedTabs().then(tabs => {
@@ -131,9 +131,9 @@ Chrome.onMessage('get_document', (message, sender, sendResponse) => {
 });
 
 /*
- * Global shortcut: Send the selected tabs to another window
+ * Global shortcut: Send the highlighted tabs to another window
  */
-Chrome.onCommand('detach_highlighted_pages', () => {
+Chrome.onCommand('send_tab', () => {
 	Promise.all([
 		TabManager.getHighlightedTabs(),
 		Chrome.getAllWindows()
@@ -147,7 +147,7 @@ Chrome.onCommand('detach_highlighted_pages', () => {
 		} else {
 			// Ask the user what to do
 			var url = chrome.runtime.getURL('selection.html') + '?tabs=' + tabs.length + '&windows=' + windows.map(w => w.id).join(';');
-			showPopup({ url, parent: sourceWindow, width: 220, height: 300 }).then(message => {
+			showPopup({ url, parent: sourceWindow, width: 240, height: 400 }).then(message => {
 				TabManager.moveTabsToWindow(tabs, message.windowId);
 			}).catch(message => {});
 		}

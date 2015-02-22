@@ -34,26 +34,26 @@
 		"_execute_browser_action": {
 			"suggested_key": { "default": "Ctrl+Shift+S" }
 		},
-		"copy_current_page": {
+		"copy_tab_as_markdown": {
 			"suggested_key": { "default": "Ctrl+Shift+L" },
-			"description": "Copy tab as a Markdown link"
+			"description": "__MSG_shortcut_copy_tab_as_markdown__"
 		},
-		"detach_highlighted_pages": {
-			"description": "Send tab to another window"
+		"send_tab": {
+			"description": "__MSG_shortcut_send_tab__"
 		},
 		"pin_tab": {
-			"description": "Pin tab"
+			"description": "__MSG_shortcut_pin_tab__"
 		},
 		"duplicate_tab": {
-			"description": "Duplicate tab"
+			"description": "__MSG_shortcut_duplicate_tab__"
 		},
 		"move_tab_left": {
 			"suggested_key": { "default": "Ctrl+Shift+Comma" },
-			"description": "Move tab left"
+			"description": "__MSG_shortcut_move_tab_left__"
 		},
 		"move_tab_right": {
 			"suggested_key": { "default": "Ctrl+Shift+Period" },
-			"description": "Move tab right"
+			"description": "__MSG_shortcut_move_tab_right__"
 		}
 	}
 }

@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Incognito window marker in exported file (only if "Allow in incognito is activated")
+- German and Spanish locales
 
 ### Fixed
 - When opening only windows (no tabs), don't restore focus to the original window

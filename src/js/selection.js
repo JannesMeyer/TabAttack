@@ -13,7 +13,7 @@ document.title = Chrome.getString('move_tab', numTabs);
 
 // Build DOM
 var listState = [{
-	name: 'New window',
+	name: Chrome.getString('new_window'),
 	returnValue: undefined
 }];
 var buttons;

@@ -1,124 +1,121 @@
 {
-	"ext_name": {
-		"message": "TabAttack"
-	},
 	"ext_description": {
-		"message": "Exports your tabs as easily archivable Markdown."
+		"message": "Exportar pestañas como Markdown."
 	},
 
 	"context_menu": {
-		"message": "Copy Link as Markdown"
+		"message": "Copiar enlace como Markdown"
 	},
 	"prompt_title_change": {
-		"message": "Edit the title of the link:\n\n$title$",
+		"message": "Editar el título de la enlace:\n\n$title$",
 		"placeholders": { "title": { "content": "$1" } }
 	},
 
 	"icon_tooltip": {
-		"message": "Export tabs"
+		"message": "Exportar pestañas"
 	},
 	"confirm_unload": {
-		"message": "You have unsaved changes."
+		"message": "Hay cambios no guardados."
 	},
 	"action_save": {
-		"message": "Download"
+		"message": "Descargar"
 	},
 	"action_close_tabs": {
-		"message": "Close all tabs"
+		"message": "Cerrar todas las pestañas"
 	},
 	"action_load_file": {
-		"message": "Load file"
+		"message": "Cargar archivo"
 	},
 	"action_open_links": {
-		"message": "Open links"
+		"message": "Abrir enlaces"
 	},
 	"link_outside_list_error": {
-		"message": "Not all links are inside of a list"
+		"message": "No todas las enlaces estan dentro de una lista"
 	},
 	"headline_window": {
-		"message": "$num$ tab",
+		"message": "$num$ pestaña",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"headline_windows": {
-		"message": "$num$ tabs",
+		"message": "$num$ pestañas",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"headline_incognito_window": {
-		"message": "$num$ tab – Incognito",
+		"message": "$num$ pestaña – Incógnito",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"headline_incognito_windows": {
-		"message": "$num$ tabs – Incognito",
+		"message": "$num$ pestañas – Incógnito",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 
 	"options": {
-		"message": "Options"
+		"message": "Configuración"
 	},
 	"options_export": {
-		"message": "Export"
+		"message": "Exportación"
 	},
 	"options_export_format": {
-		"message": "Format:"
+		"message": "Formato:"
 	},
 	"options_export_ignore_domains": {
-		"message": "Ignore these domains:"
+		"message": "Ignorar esos dominios:"
 	},
 	"options_export_add_domain": {
-		"message": "Add a domain"
+		"message": "Añadir un dominio"
 	},
 	"options_export_ignore_pinned": {
-		"message": "Ignore pinned tabs"
+		"message": "Ignorar pestañas fijadas"
 	},
 	"options_editor": {
 		"message": "Editor"
 	},
 	"options_editor_theme": {
-		"message": "Color scheme:"
+		"message": "Esquema de color:"
 	},
 	"options_context_menu": {
-		"message": "Context menu"
+		"message": "Menú contextual"
 	},
 	"options_show_copy_link": {
-		"message": "Show item to copy links as Markdown"
+		"message": "Mostrar “Copiar enlace como Markdown”"
 	},
 
 	"shortcut_copy_tab_as_markdown": {
-		"message": "Copy tab as [title](url)"
+		"message": "Copiar página como [título](url)"
 	},
 	"shortcut_send_tab": {
-		"message": "Send tab to another window"
+		"message": "Enviar pestaña a otra ventana"
 	},
 	"shortcut_pin_tab": {
-		"message": "Pin tab"
+		"message": "Fijar pestaña"
 	},
 	"shortcut_duplicate_tab": {
-		"message": "Duplicate tab"
+		"message": "Duplicar pestaña"
 	},
 	"shortcut_move_tab_left": {
-		"message": "Move tab left"
+		"message": "Mover pestaña hacia la izquierda"
 	},
 	"shortcut_move_tab_right": {
-		"message": "Move tab right"
+		"message": "Mover pestaña hacia la derecha"
 	},
 
 	"move_tab": {
-		"message": "Send $num$ tab to…",
+		"message": "Enviar $num$ pestaña a…",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"move_tabs": {
-		"message": "Send $num$ tabs to…",
+		"message": "Enviar $num$ pestañas a…",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"new_window": {
-		"message": "New window"
+		"message": "Nueva ventana"
 	},
 	"window_with_tab": {
-		"message": "Window with $num$ tab",
+		"message": "Ventana con $num$ pestaña",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"window_with_tabs": {
-		"message": "Window with $num$ tabs",
+		"message": "Ventana con $num$ pestañas",
 		"placeholders": { "num": { "content": "$1" } }
 	}
 }
