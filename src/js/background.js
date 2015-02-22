@@ -61,7 +61,24 @@ function addContextMenuItem() {
 	contextMenuId = chrome.contextMenus.create({
 		title: Chrome.getString('context_menu'),
 		contexts: [ 'link' ],
-		onclick: info => copyLink(info.selectionText, info.linkUrl, 'linkTitle')
+		onclick: (info, tab) => {
+			if (info.selectionText) {
+				copyLink(info.selectionText, info.linkUrl, 'linkTitle');
+				return;
+			}
+
+			// Attention: textContent includes text from hidden elements
+			var linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
+			chrome.tabs.executeScript({ code: linkProbe, allFrames: true }, results => {
+				// Get the first element of the array that is not falsy
+				var title = results.filter(Boolean)[0];
+				if (typeof title === 'string') {
+					title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
+				}
+				// Copy the link, whether we have a title or not
+				copyLink(title, info.linkUrl, 'linkTitle');
+			});
+		}
 	});
 }
 

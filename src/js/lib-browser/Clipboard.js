@@ -12,7 +12,6 @@ export function writeClipboard(text) {
 
 // var textarea = document.createElement('textarea');
 // document.body.appendChild(textarea);
-
 // export function writeClipboard(text) {
 // 	textarea.value = text;
 // 	textarea.select();

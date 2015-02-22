@@ -4,6 +4,8 @@
 ### Added
 - Incognito window marker in exported file (only if "Allow in incognito is activated")
 - German and Spanish locales
+- Improve tab counter responsiveness
+- Improve the accuracy of the link text when copying from the context menu
 
 ### Fixed
 - When opening only windows (no tabs), don't restore focus to the original window

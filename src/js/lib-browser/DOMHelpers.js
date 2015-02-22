@@ -36,3 +36,27 @@ export function removeChildren(node) {
 export function isInputElement(el) {
 	return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable;
 }
+
+/**
+ * Finds the nearest ancestor element with the specified tag name
+ */
+export function findNode(el, nodeName) {
+	nodeName = nodeName.toUpperCase();
+	do {
+		if (el.nodeName === nodeName) {
+			return el;
+		}
+		el = el.parentNode;
+	} while (el !== null);
+}
+
+/**
+ * Select a node's contents
+ */
+export function selectNodeContents(node) {
+	var selection = window.getSelection();
+	selection.removeAllRanges();
+	var range = document.createRange();
+	range.selectNodeContents(node); // TODO: better than selectNode()?
+	selection.addRange(range);
+}
