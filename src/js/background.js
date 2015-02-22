@@ -2,7 +2,7 @@ import './defaults';
 import { drawIcon } from './Icon';
 import * as TitleChangelog from './TitleChangelog';
 import 'babel/polyfill';
-import debounce from './lib/debounce';
+import { throttle } from './lib/DateTime';
 import * as TabManager from './lib-chrome/TabManager';
 import { markdownLink } from './lib/Markdown';
 import { writeClipboard } from './lib-browser/Clipboard';
@@ -221,7 +221,7 @@ function updateIcon() {
 /**
  * Debounced version of updateIcon()
  */
-var handleTabChange = debounce(updateIcon, 200);
+var handleTabChange = throttle(updateIcon, 500);
 
 updateIcon();
 chrome.tabs.onCreated.addListener(handleTabChange);
