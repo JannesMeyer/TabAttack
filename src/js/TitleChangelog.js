@@ -1,32 +1,47 @@
+import { saveTextFile } from './lib-browser/FileSystem';
+
 var database;
 
 if (process.env.NODE_ENV !== 'production') {
-	window.print = console.log.bind(console);
-	window.getEntry = getEntry;
-	window.getAll = getAll;
-	window.deleteEntry = deleteEntry;
+	window.getEntry = getEntry.bind(undefined, 'titles');
+	window.updateEntry = updateEntry.bind(undefined, 'titles');
+	window.deleteEntry = deleteEntry.bind(undefined, 'titles');
+	window.exportChangeLog = exportChangeLog;
 }
 
 function handleSuccess(ev) {
-	if (ev.target.error) {
-		this.reject(ev.target.error);
-	} else {
-		this.resolve(ev.target.result);
-	}
+	console.log(ev.target.result);
+	this.resolve(ev.target.result);
 }
 
-function getEntry(key) {
-	var entry = Promise.defer();
-	getDB().then(db => {
-		db.transaction('titles').objectStore('titles').get(key).onsuccess = handleSuccess.bind(entry);
-	});
-	return entry.promise;
-}
-
-function getAll() {
+function getEntry(store, key) {
 	var deferred = Promise.defer();
-	var entries = [];
 	getDB().then(db => {
+		db.transaction(store).objectStore(store).get(key).onsuccess = handleSuccess.bind(deferred);
+	});
+	return deferred.promise;
+}
+
+function updateEntry(store, entry) {
+	var deferred = Promise.defer();
+	getDB().then(db => {
+		db.transaction(store, 'readwrite').objectStore(store).put(entry).onsuccess = handleSuccess.bind(deferred);
+	});
+	return deferred.promise;
+}
+
+function deleteEntry(store, key) {
+	var deferred = Promise.defer();
+	getDB().then(db => {
+		db.transaction(store, 'readwrite').objectStore(store).delete(key).onsuccess = handleSuccess.bind(deferred);
+	});
+	return deferred.promise;
+}
+
+function getAll(store) {
+	return function(db) {
+		var deferred = Promise.defer();
+		var entries = [];
 		db.transaction('titles').objectStore('titles').openCursor().onsuccess = (ev) => {
 			var cursor = ev.target.result;
 			if (cursor) {
@@ -36,17 +51,20 @@ function getAll() {
 				deferred.resolve(entries);
 			}
 		};
-	});
-	return deferred.promise;
+		return deferred.promise;
+	};
 }
 
-function deleteEntry(key) {
-	getDB().then(db => {
-		db.transaction('titles', 'readwrite').objectStore('titles').delete(key);
+function exportChangeLog(download = true) {
+	getDB().then(getAll('titles')).then(items => {
+		var text = JSON.stringify(items, undefined, '\t');
+		if (download) {
+			saveTextFile('title-change-log.json', text);
+		} else {
+			console.log(text);
+		}
 	});
 }
-
-
 
 
 
@@ -92,9 +110,13 @@ function getDB() {
 /**
  * Add a log entry to the database
  */
-export function logChange(originalTitle, newTitle, url) {
-	var entry = { url, originalTitle, newTitle, lastModified: new Date() };
-	getDB().then(db => {
-		db.transaction('titles', 'readwrite').objectStore('titles').put(entry);
+export function logChange(originalTitle, newTitle, url, type) {
+	return updateEntry('titles', {
+		url,
+		originalTitle,
+		newTitle,
+		type,
+		changed: (originalTitle !== newTitle),
+		lastModified: new Date()
 	});
 }

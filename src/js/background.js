@@ -216,10 +216,11 @@ function copyLink(originalTitle, url, type) {
 		// Shortcut: Use the naked domain name
 		if (title === '') {
 			title = new URL(url).hostname.replace(/^www\./, '');
-		} else
-		// Log changes. This will not trigger in production.
-		if (isDev && type === 'documentTitle' && title !== originalTitle) {
-			TitleChangelog.logChange(originalTitle, title, url);
+		}
+
+		// Log title changes. This will not happen in production.
+		if (isDev) {
+			TitleChangelog.logChange(originalTitle, title, url, type);
 		}
 
 		// Copy the title and URL as a Markdown link

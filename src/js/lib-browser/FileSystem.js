@@ -1,5 +1,5 @@
 var a;
-var listeners;
+var listeners = [];
 var MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 megabyte
 
 /**
@@ -21,7 +21,6 @@ export function saveTextFile(filename, text) {
  * Add file listener
  */
 export function onFile(callback) {
-	if (listeners === undefined) { listeners = []; }
 	listeners.push(callback);
 }
 
