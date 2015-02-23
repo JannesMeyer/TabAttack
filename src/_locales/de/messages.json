@@ -3,7 +3,10 @@
 		"message": "Exportiert Tabs als Markdown-Datei."
 	},
 
-	"context_menu": {
+	"context_menu_copy_page": {
+		"message": "Als Markdown-Link kopieren…"
+	},
+	"context_menu_copy_link": {
 		"message": "Link als Markdown kopieren"
 	},
 	"prompt_title_change": {

@@ -6,5 +6,6 @@ Chrome.setDefaults({
 	domainBlacklist: [ 'mail.google.com', 'inbox.google.com' ],
 	ignorePinned: false,
 	editorTheme: 'kuroir',
-	showCopyLinkAsMarkdown: true
+	showCopyLinkAsMarkdown: true,
+	showCopyPageAsMarkdown: false
 });

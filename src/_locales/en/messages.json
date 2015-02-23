@@ -6,8 +6,11 @@
 		"message": "Exports your tabs as easily archivable Markdown."
 	},
 
-	"context_menu": {
-		"message": "Copy Link as Markdown"
+	"context_menu_copy_page": {
+		"message": "Copy Page As Markdown Link…"
+	},
+	"context_menu_copy_link": {
+		"message": "Copy Link As Markdown…"
 	},
 	"prompt_title_change": {
 		"message": "Edit the title of the link:\n\n$title$",

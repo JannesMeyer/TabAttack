@@ -62,46 +62,65 @@ Chrome.onBrowserAction(sourceTab => {
 	});
 });
 
-function addContextMenuItem() {
-	contextMenuId = chrome.contextMenus.create({
-		title: Chrome.getString('context_menu'),
-		contexts: [ 'link' ],
-		onclick: (info, tab) => {
-			if (info.selectionText) {
-				copyLink(info.selectionText, info.linkUrl, 'linkTitle');
-				return;
-			}
-
-			// Attention: textContent includes text from hidden elements
-			var linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
-			// Inserting the link probe...
-			chrome.tabs.executeScript({ code: linkProbe, allFrames: true }, results => {
-				var title;
-				if (results) {
-					// Get the first element of the array that is not falsy
-					title = results.filter(Boolean)[0];
-					if (title) {
-						// Do the same processing that a browser does when displaying links
-						title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
-					}
-				}
-				// Copy the link, whether we have a title or not
-				copyLink(title, info.linkUrl, 'linkTitle');
-			});
-		}
-	});
-}
-
-function removeContextMenuItem() {
-	chrome.contextMenus.remove(contextMenuId);
+/**
+ * Add context menu item
+ */
+function addContextMenuItem(name, contexts, onclick) {
+	var title = Chrome.getString('context_menu_' + name)
+	return chrome.contextMenus.create({ title, contexts, onclick });
 }
 
 /*
  * Context menu: Copy link as Markdown
  */
-Chrome.getPreference('showCopyLinkAsMarkdown').then(show => show ? addContextMenuItem() : undefined);
-Chrome.onMessage('add_context_menu', addContextMenuItem);
-Chrome.onMessage('remove_context_menu', removeContextMenuItem);
+Chrome.getPreference('showCopyLinkAsMarkdown').then(show => {
+	if (!show) { return; }
+	contextMenuId = addContextMenuItem('copy_link', ['link'], handleCopyLinkAsMarkdown);
+});
+Chrome.onMessage('add_context_menu', () => {
+	contextMenuId = addContextMenuItem('copy_link', ['link'], handleCopyLinkAsMarkdown);
+});
+Chrome.onMessage('remove_context_menu', () => {
+	chrome.contextMenus.remove(contextMenuId);
+});
+
+/**
+ * Context menu: Copy page as Markdown link
+ */
+Chrome.getPreference('showCopyPageAsMarkdown').then(show => {
+	if (!show && !isDev) { return; }
+	// TODO: make this configurable in the options and release it
+	addContextMenuItem('copy_page', ['page'], (info, tab) => {
+		copyLink(tab.title, tab.url, 'documentTitle')
+	});
+});
+
+/**
+ * Copy link as markdown
+ */
+function handleCopyLinkAsMarkdown(info, tab) {
+	if (info.selectionText) {
+		copyLink(info.selectionText, info.linkUrl, 'linkTitle');
+		return;
+	}
+
+	// Attention: textContent includes text from hidden elements
+	var linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
+	// Inserting the link probe...
+	chrome.tabs.executeScript({ code: linkProbe, allFrames: true }, results => {
+		var title;
+		if (results) {
+			// Get the first element of the array that is not falsy
+			title = results.filter(Boolean)[0];
+			if (title) {
+				// Do the same processing that a browser does when displaying links
+				title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
+			}
+		}
+		// Copy the link, whether we have a title or not
+		copyLink(title, info.linkUrl, 'linkTitle');
+	});
+}
 
 /*
  * Global shortcut: Copy active tab as a Markdown link

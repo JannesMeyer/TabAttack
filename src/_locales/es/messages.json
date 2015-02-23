@@ -3,8 +3,11 @@
 		"message": "Exportar pestañas como Markdown."
 	},
 
-	"context_menu": {
-		"message": "Copiar enlace como Markdown"
+	"context_menu_copy_page": {
+		"message": "Copiar página como enlace…"
+	},
+	"context_menu_copy_link": {
+		"message": "Copiar enlace como Markdown…"
 	},
 	"prompt_title_change": {
 		"message": "Editar el título de la enlace:\n\n$title$",
