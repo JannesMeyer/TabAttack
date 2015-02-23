@@ -19,6 +19,11 @@ var doc;
  */
 var contextMenuId;
 
+/**
+ * Boolean that says whether we are in development mode or not
+ */
+var isDev = (process.env.NODE_ENV !== 'production');
+
 /*
  * Handle browser action
  */
@@ -69,11 +74,16 @@ function addContextMenuItem() {
 
 			// Attention: textContent includes text from hidden elements
 			var linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
+			// Inserting the link probe...
 			chrome.tabs.executeScript({ code: linkProbe, allFrames: true }, results => {
-				// Get the first element of the array that is not falsy
-				var title = results.filter(Boolean)[0];
-				if (typeof title === 'string') {
-					title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
+				var title;
+				if (results) {
+					// Get the first element of the array that is not falsy
+					title = results.filter(Boolean)[0];
+					if (title) {
+						// Do the same processing that a browser does when displaying links
+						title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
+					}
 				}
 				// Copy the link, whether we have a title or not
 				copyLink(title, info.linkUrl, 'linkTitle');
@@ -179,16 +189,17 @@ function copyLink(originalTitle, url, type) {
 		var title = prompt(Chrome.getString('prompt_title_change', originalTitle), originalTitle);
 
 		// Cancelled?
-		if (title === null || title === '') {
+		if (title === null) {
 			return;
 		}
+		title = title.trim();
 
 		// Shortcut: Use the naked domain name
-		if (title === 'd') {
+		if (title === '') {
 			title = new URL(url).hostname.replace(/^www\./, '');
 		} else
 		// Log changes. This will not trigger in production.
-		if (type === 'documentTitle' && title !== originalTitle && process.env.NODE_ENV !== 'production') {
+		if (isDev && type === 'documentTitle' && title !== originalTitle) {
 			TitleChangelog.logChange(originalTitle, title, url);
 		}
 
