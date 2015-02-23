@@ -1,5 +1,9 @@
 var parser;
 
+// Create an easy way to iterate HTMLCollections and NodeLists
+// HTMLCollection.prototype.forEach = Array.prototype.forEach;
+// NodeList.prototype.forEach = Array.prototype.forEach;
+
 /**
  * Use element.getElementsByTagName() and convert the result into an Array
  */
