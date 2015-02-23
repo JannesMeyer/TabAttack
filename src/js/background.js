@@ -167,10 +167,10 @@ Chrome.onCommand('send_tab', () => {
 	]).then(([tabs, windows]) => {
 		var sourceWindow = windows.find(w => w.focused);
 		// Get target windows
-		windows = windows.filter(w => w.type === 'normal' && !w.focused);
+		windows = windows.filter(w => w.type === 'normal' && !w.focused && sourceWindow.incognito === w.incognito);
 		if (windows.length === 0) {
 			// Immediately detach to a new window
-			TabManager.moveTabsToWindow(tabs);
+			TabManager.moveTabsToWindow(tabs, undefined, sourceWindow.incognito);
 		} else {
 			// Ask the user what to do
 			var url = chrome.runtime.getURL('selection.html') + '?tabs=' + tabs.length + '&windows=' + windows.map(w => w.id).join(';');

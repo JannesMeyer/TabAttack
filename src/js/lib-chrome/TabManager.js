@@ -27,11 +27,11 @@ export function getActiveTab() {
  * Show a URL by either opening it in a new tab or by
  * navigating to it in another tab if it contains the NTP.
  */
-export function show(tab, url) {
-	if (tab.url === 'chrome://newtab/') {
-		return Promise.all([ Chrome.createTab({ url }), Chrome.removeTabs(tab.id) ]);
+export function show(openerTab, url) {
+	if (openerTab.url === 'chrome://newtab/' && !openerTab.incognito) {
+		return Promise.all([ Chrome.createTab({ url }), Chrome.removeTabs(openerTab.id) ]);
 	} else {
-		return Chrome.createTab({ url, openerTabId: tab.id });
+		return Chrome.createTab({ url, openerTabId: openerTab.id });
 	}
 }
 
@@ -101,7 +101,7 @@ export function closeOtherTabs(sourceTab) {
  * Move tabs from a source to a target window.
  * If targetWindowId is undefined, create new window.
  */
-export function moveTabsToWindow(tabs, targetWindowId) {
+export function moveTabsToWindow(tabs, targetWindowId, incognito) {
 	var tabIds = tabs.map(tab => tab.id);
 	var activeTab = tabs.find(tab => tab.active);
 
@@ -109,7 +109,7 @@ export function moveTabsToWindow(tabs, targetWindowId) {
 		// Create a new window
 		setTimeout(() => {
 			// Use the first tab, so that we don't get a NTP
-			Chrome.createWindow({ tabId: tabIds.shift(), focused: true }).then(wnd => {
+			Chrome.createWindow({ tabId: tabIds.shift(), focused: true, incognito }).then(wnd => {
 				if (tabIds.length > 0) {
 					Chrome.moveTabs(tabIds, { windowId: wnd.id, index: -1 }).then(() => {
 						Chrome.updateTab(activeTab.id, { active: true });

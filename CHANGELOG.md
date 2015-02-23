@@ -2,13 +2,16 @@
 
 ## [Unreleased]
 ### Added
-- Incognito window marker in exported file (only if "Allow in incognito is activated")
+- Mark incognito windows when exporting tabs
 - German and Spanish locales
 - Improve tab counter responsiveness
 - Improve the accuracy of the link text when copying from the context menu
+- Use the naked domain name when not entering a title for a link before copying
 
 ### Fixed
 - When opening only windows (no tabs), don't restore focus to the original window
+- Don't close the openerTab if it is from an incognito window
+- Don't offer to send incognito tabs to non-incognito windows and vice versa
 
 ## [1.5] - 21.02.2015
 ### Added
