@@ -138,6 +138,7 @@ export function moveTabs(direction) {
 				continue;
 			}
 
+			// TODO: make this more efficient with many tabs
 			var newIndex = tab.index;
 			do {
 				// Moving pinned tabs into non-pinned tabs (and vice-versa) is impossible,
