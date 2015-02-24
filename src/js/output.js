@@ -25,9 +25,9 @@ var ctrlShiftO = KeyPress('O', ['ctrl', 'shift']);
 
 // Load document
 Chrome.sendMessage({ operation: 'get_document' }).then(response => {
-	React.render(<Page doc={response} />, document.body);
+	React.render(<Page doc={response} message={response.message} />, document.body);
 }).catch(err => {
-	React.render(<Page error={err} />, document.body);
+	React.render(<Page message={err} />, document.body);
 });
 
 /**
@@ -36,7 +36,10 @@ Chrome.sendMessage({ operation: 'get_document' }).then(response => {
 class Page extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { doc: props.doc, toastMessage: props.error };
+		this.state = {
+			doc: props.doc,
+			toastMessage: props.message
+		};
 
 		this.showToast = this.showToast.bind(this);
 		this.downloadAsTextFile = this.downloadAsTextFile.bind(this);
@@ -51,7 +54,10 @@ class Page extends React.Component {
 
 	componentDidMount() {
 		// File loading
-		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text }, toastMessage: undefined }));
+		FileSystem.onFile(text => this.setState({
+			doc: { format: 'markdown', text },
+			toastMessage: undefined
+		}));
 		FileSystem.setupFileInput(this.refs.fileInput.getDOMNode());
 		FileSystem.setupFileTarget(document.body);
 	}
@@ -118,7 +124,7 @@ class Page extends React.Component {
 					{doc.format === 'markdown' &&
 					<ActionButton className="item-open" onClick={this.openLinks} keyPress={ctrlShiftO} title={strings.openLinks} />}
 				</div>
-				<Toast>{this.state.toastMessage}</Toast>
+				<Toast duration={4}>{this.state.toastMessage}</Toast>
 				<Editor ref="editor" doc={doc} showToast={this.showToast} />
 			</div>
 		);

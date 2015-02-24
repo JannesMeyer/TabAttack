@@ -7,7 +7,8 @@
 - Improve tab counter responsiveness
 - Improve the accuracy of the link text when copying from the context menu
 - Use the naked domain name when not entering a title for a link before copying
-- Add keyboard shortcut hints to the button's tooltips
+- Keyboard shortcut hints to the button's tooltips
+- Warn if there are no tabs to export or some tabs are still loading
 
 ### Fixed
 - When opening only windows (no tabs), don't restore focus to the original window

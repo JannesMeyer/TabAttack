@@ -35,10 +35,25 @@
 	"action_open_links": {
 		"message": "Open links"
 	},
+	"toast_no_tabs": {
+		// TODO
+		"message": "No tabs to export"
+	},
+	"toast_loading_tab": {
+		// TODO
+		"message": "$num$ Tab is still loading, its [Title] might be wrong",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+	"toast_loading_tabs": {
+		// TODO
+		"message": "$num$ Tabs are still loading, their [Title] might be wrong",
+		"placeholders": { "num": { "content": "$1" } }
+	},
 	"link_outside_list_error": {
 		"message": "Not all links are inside of a list"
 	},
 	"toast_copied_document": {
+		// TODO
 		"message": "Copied the whole document"
 	},
 	"headline_window": {

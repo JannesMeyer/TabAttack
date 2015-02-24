@@ -28,7 +28,6 @@ var isDev = (process.env.NODE_ENV !== 'production');
  * Handle browser action
  */
 Chrome.onBrowserAction(sourceTab => {
-	// TODO: check for tab.status === 'complete' and issue a warning if not
 	Promise.all([
 		Chrome.getPreferences([ 'format', 'ignorePinned', 'domainBlacklist', 'protocolBlacklist' ]),
 		Chrome.getAllWindows({ populate: true })
@@ -40,6 +39,8 @@ Chrome.onBrowserAction(sourceTab => {
 			windows.unshift(windows.splice(index, 1)[0]);
 		}
 
+		var loadingTabs = 0;
+
 		// Filter some urls
 		for (var wnd of windows) {
 			wnd.tabs = wnd.tabs.filter(tab => {
@@ -48,6 +49,9 @@ Chrome.onBrowserAction(sourceTab => {
 				       !prefs.domainBlacklist.includes(url.hostname) &&
 				       !(prefs.ignorePinned && tab.pinned);
 			});
+
+			// Count the number of loading tabs
+			loadingTabs += wnd.tabs.reduce((n, tab) => n + Number(tab.status === 'loading'), 0);
 		}
 
 		// Ignore empty windows
@@ -56,6 +60,16 @@ Chrome.onBrowserAction(sourceTab => {
 		// Create document
 		var buildDocument = (prefs.format === 'json') ? buildJSONDocument : buildMarkdownDocument;
 		doc = buildDocument(windows, sourceTab.id);
+
+		// Warn the user if all tabs were ignored
+		if (windows.length === 0) {
+			doc.message = Chrome.getString('toast_no_tabs');
+		}
+
+		// Warn the user if some tabs didn't finish loading
+		if (loadingTabs > 0) {
+			doc.message = Chrome.getString('toast_loading_tab', loadingTabs);
+		}
 
 		// Open document in a new tab
 		TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
