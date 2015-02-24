@@ -1,7 +1,6 @@
 import KeyPress from './lib-browser/KeyPress';
 import { parseQuery } from './lib/URLTools';
 import { removeChildren } from './lib-browser/DOMHelpers';
-import * as TabManager from './lib-chrome/TabManager';
 
 // Get the parameters
 var queryItems = parseQuery(location.search);
