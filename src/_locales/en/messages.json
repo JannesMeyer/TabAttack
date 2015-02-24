@@ -36,20 +36,16 @@
 		"message": "Open links"
 	},
 	"toast_no_document": {
-		// TODO
 		"message": "No document found"
 	},
 	"toast_no_tabs": {
-		// TODO
 		"message": "No tabs to export"
 	},
 	"toast_loading_tab": {
-		// TODO
 		"message": "$num$ Tab is still loading, its [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"toast_loading_tabs": {
-		// TODO
 		"message": "$num$ Tabs are still loading, their [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
 	},
@@ -57,7 +53,6 @@
 		"message": "Links outside of a list are not allowed"
 	},
 	"toast_copied_document": {
-		// TODO
 		"message": "Copied the whole document"
 	},
 	"headline_window": {
