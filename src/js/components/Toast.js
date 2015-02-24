@@ -19,7 +19,7 @@ export default class Toast extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		this.setState({ visible: true });
+		this.setState({ visible: Boolean(nextProps.children) });
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -31,7 +31,6 @@ export default class Toast extends React.Component {
 
 		// Enter the portal
 		var toast = React.render(<div className={cx({'m-toast': true, 's-hidden': !visible})}><div>{this.props.children}</div></div>, this.portal);
-
 		if (visible) {
 			// Refresh the time-to-hide
 			clearTimeout(this.timeoutId);

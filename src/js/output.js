@@ -51,7 +51,7 @@ class Page extends React.Component {
 
 	componentDidMount() {
 		// File loading
-		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text } }));
+		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text }, toastMessage: undefined }));
 		FileSystem.setupFileInput(this.refs.fileInput.getDOMNode());
 		FileSystem.setupFileTarget(document.body);
 	}
