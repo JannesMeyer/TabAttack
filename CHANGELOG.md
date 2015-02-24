@@ -7,7 +7,7 @@
 - Improve tab counter responsiveness
 - Improve the accuracy of the link text when copying from the context menu
 - Use the naked domain name when not entering a title for a link before copying
-- Add keyboard shortcuts to the action's title attributes
+- Add keyboard shortcut hints to the button's tooltips
 
 ### Fixed
 - When opening only windows (no tabs), don't restore focus to the original window

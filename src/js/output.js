@@ -7,6 +7,7 @@ import * as FileSystem from './lib-browser/FileSystem';
 import * as TabManager from './lib-chrome/TabManager';
 import Editor from './components/Editor';
 import Toast from './components/Toast';
+import ActionButton from './components/ActionButton';
 
 // Load strings
 document.title = Chrome.getString('ext_name');
@@ -16,6 +17,11 @@ var strings = {
 	loadFile:  Chrome.getString('action_load_file'),
 	openLinks: Chrome.getString('action_open_links')
 };
+
+var ctrlS      = KeyPress('S', ['ctrl']);
+var ctrlQ      = KeyPress('Q', ['ctrl']);
+var ctrlO      = KeyPress('O', ['ctrl']);
+var ctrlShiftO = KeyPress('O', ['ctrl', 'shift']);
 
 // Load document
 Chrome.sendMessage({ operation: 'get_document' }).then(response => {
@@ -48,12 +54,6 @@ class Page extends React.Component {
 		FileSystem.onFile(text => this.setState({ doc: { format: 'markdown', text } }));
 		FileSystem.setupFileInput(this.refs.fileInput.getDOMNode());
 		FileSystem.setupFileTarget(document.body);
-
-		// Set keyboard shortcuts
-		KeyPress('S', ['ctrl']).addListener(this.downloadAsTextFile, true);
-		KeyPress('Q', ['ctrl']).addListener(this.closeOtherTabs, true);
-		KeyPress('O', ['ctrl']).addListener(this.loadFile, true);
-		KeyPress('O', ['ctrl', 'shift']).addListener(this.openLinks, true);
 	}
 
 	/**
@@ -108,15 +108,15 @@ class Page extends React.Component {
 
 	render() {
 		var doc = this.state.doc;
-		var openButton = (doc.format === 'markdown' && <button onClick={this.openLinks} className="item-open" title={strings.openLinks}>{strings.openLinks}</button>);
 		return (
 			<div className="m-container">
 				<div className="m-toolbar">
 					<input type="file" ref="fileInput" style={{display: 'none'}} />
-					<button onClick={this.downloadAsTextFile} className="item-save" title={strings.save}>{strings.save}</button>
-					<button onClick={this.closeOtherTabs} className="item-close" title={strings.close}>{strings.close}</button>
-					<button onClick={this.loadFile} className="item-load-file" title={strings.loadFile}>{strings.loadFile}</button>
-					{openButton}
+					<ActionButton className="item-save" onClick={this.downloadAsTextFile} keyPress={ctrlS} title={strings.save} />
+					<ActionButton className="item-close" onClick={this.closeOtherTabs} keyPress={ctrlQ} title={strings.close} />
+					<ActionButton className="item-load-file" onClick={this.loadFile} keyPress={ctrlO} title={strings.loadFile} />
+					{doc.format === 'markdown' &&
+					<ActionButton className="item-open" onClick={this.openLinks} keyPress={ctrlShiftO} title={strings.openLinks} />}
 				</div>
 				<Toast>{this.state.toastMessage}</Toast>
 				<Editor ref="editor" doc={doc} showToast={this.showToast} />
