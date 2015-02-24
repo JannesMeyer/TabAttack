@@ -6,6 +6,7 @@ import { getTags, parseHTML } from './lib-browser/DOMHelpers'
 import * as FileSystem from './lib-browser/FileSystem';
 import * as TabManager from './lib-chrome/TabManager';
 import Editor from './components/Editor';
+import Toast from './components/Toast';
 
 // Load strings
 document.title = Chrome.getString('ext_name');
@@ -20,9 +21,7 @@ var strings = {
 Chrome.sendMessage({ operation: 'get_document' }).then(response => {
 	React.render(<Page doc={response} />, document.body);
 }).catch(err => {
-	// TODO: Toast instead of alert
-	alert(err);
-	React.render(<Page />, document.body);
+	React.render(<Page error={err} />, document.body);
 });
 
 /**
@@ -31,12 +30,17 @@ Chrome.sendMessage({ operation: 'get_document' }).then(response => {
 class Page extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { doc: props.doc };
+		this.state = { doc: props.doc, toastMessage: props.error };
 
+		this.showToast = this.showToast.bind(this);
 		this.downloadAsTextFile = this.downloadAsTextFile.bind(this);
 		this.closeOtherTabs = this.closeOtherTabs.bind(this);
 		this.loadFile = this.loadFile.bind(this);
 		this.openLinks = this.openLinks.bind(this);
+	}
+
+	showToast(message) {
+		this.setState({ toastMessage: message });
 	}
 
 	componentDidMount() {
@@ -95,8 +99,7 @@ class Page extends React.Component {
 
 		// Check for leftovers
 		if (getTags(doc, 'a').length > 0) {
-			// TODO: Toast instead of alert
-			alert(Chrome.getString('link_outside_list_error'));
+			this.showToast(Chrome.getString('link_outside_list_error'));
 			return;
 		}
 
@@ -115,8 +118,10 @@ class Page extends React.Component {
 					<button onClick={this.loadFile} className="item-load-file" title={strings.loadFile}>{strings.loadFile}</button>
 					{openButton}
 				</div>
-				<Editor ref="editor" doc={doc} />
+				<Toast>{this.state.toastMessage}</Toast>
+				<Editor ref="editor" doc={doc} showToast={this.showToast} />
 			</div>
 		);
 	}
 }
+Page.defaultProps = { doc: { format: 'markdown', text: '' } };

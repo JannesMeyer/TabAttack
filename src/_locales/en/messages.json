@@ -38,6 +38,9 @@
 	"link_outside_list_error": {
 		"message": "Not all links are inside of a list"
 	},
+	"toast_copied_document": {
+		"message": "Copied the whole document"
+	},
 	"headline_window": {
 		"message": "$num$ tab",
 		"placeholders": { "num": { "content": "$1" } }

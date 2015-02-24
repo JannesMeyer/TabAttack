@@ -1,85 +1,47 @@
-// .m-toast {
-// 	pointer-events: none;
-// 	position: fixed;
-// 	left: 0;
-// 	bottom: 25%;
-// 	width: 100%;
-// 	text-align: center;
-// }
-// .m-toast.s-hidden {
-// 	opacity: 0;
-// 	transition: opacity 0.2s linear;
-// }
-// .m-toast > div {
-// 	display: inline-block;
-// 	padding: 8px 11px;
-// 	border-radius: 3px;
-// 	font-size: 12px;
+import cx from 'react/lib/cx';
 
-// 	background: #262626;
-// 	color: #f0f0f0;
-// 	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
-// }
-
-var Toast = React.createClass({
-
-	show(text, duration = 2) {
-		var node = this.getDOMNode();
-		node.firstChild.firstChild.nodeValue = text;
-		node.classList.remove('s-hidden');
-		setTimeout(() => node.classList.add('s-hidden'), duration * 1000);
-	},
-
-	render() {
-		return <div className="m-toast s-hidden"><div>placeholder</div></div>;
+export default class Toast extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = { visible: Boolean(props.children) };
+		this.timeoutId = undefined;
 	}
 
-});
+	componentDidMount() {
+		this.portal = document.createElement('div');
+		document.body.appendChild(this.portal);
+		this.updateToast();
+	}
 
-export default Toast;
+	componentWillUnmount() {
+		clearTimeout(this.timeoutId);
+		React.unmountComponentAtNode(this.portal);
+	}
 
+	componentWillReceiveProps(nextProps) {
+		this.setState({ visible: true });
+	}
 
-// // Setup toast
-// var timeout;
-// var toastNode = document.querySelector('.m-toast');
-// /**
-//  * Show a toast
-//  */
-// function makeToast(text) {
-// 	toastNode.firstChild.nodeValue = text;
-// 	toastNode.classList.remove('s-hidden');
+	componentDidUpdate(prevProps, prevState) {
+		this.updateToast();
+	}
 
-// 	// Refresh the time-to-hide
-// 	if (timeout !== undefined) {
-// 		clearTimeout(timeout);
-// 	}
-// 	timeout = setTimeout(() => toastNode.classList.add('s-hidden'), 4000);
-// }
+	updateToast() {
+		var visible = this.state.visible;
 
+		// Enter the portal
+		var toast = React.render(<div className={cx({'m-toast': true, 's-hidden': !visible})}><div>{this.props.children}</div></div>, this.portal);
 
+		if (visible) {
+			// Refresh the time-to-hide
+			clearTimeout(this.timeoutId);
+			// Hide after a few seconds
+			this.timeoutId = setTimeout(() => this.setState({ visible: false }), this.props.duration * 1000);
+		}
+	}
 
-
-
-// body {
-// 	text-align: center;
-// }
-// .m-toast {
-// 	display: inline-block;
-// 	pointer-events: none;
-// 	position: relative;
-// 	top: 72%;
-// 	z-index: 100;
-// 	padding: 8px 11px;
-
-// 	cursor: default;
-// 	font-size: 12px;
-// 	background: #262626;
-// 	color: #f0f0f0;
-// 	border-radius: 3px;
-// 	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
-// }
-// .m-toast.s-hidden {
-// 	visibility: hidden;
-// 	opacity: 0;
-// 	transition: visibility 0 0.2s, opacity 0.2s ease-in-out;
-// }
+	render() {
+		return null;
+	}
+}
+Toast.defaultProps = { duration: 2 };

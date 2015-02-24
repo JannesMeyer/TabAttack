@@ -86,25 +86,52 @@ html, body, .m-container {
 /*****************************
   Drag and drop target
  *****************************/
-body.s-dnd-hover::before,
-body.s-dnd-hover::after {
+.s-dnd-hover::before,
+.s-dnd-hover::after {
 	content: ' ';
 	position: absolute;
 	z-index: 1000;
 	display: block;
 	pointer-events: none;
 }
-body.s-dnd-hover::before {
+.s-dnd-hover::before {
 	width: 100%;
 	height: 100%;
 	background: rgba(255, 255, 255, 0.5);
 }
-body.s-dnd-hover::after {
+.s-dnd-hover::after {
 	top: 9px;
 	left: 9px;
 	right: 9px;
 	bottom: 9px;
 	border: 7px dashed #1f68e0;
+}
+
+/*****************************
+  Toast
+ *****************************/
+.m-toast {
+	position: fixed;
+	left: 0;
+	bottom: 25%;
+	width: 100%;
+	z-index: 900;
+
+	text-align: center;
+	pointer-events: none;
+}
+.m-toast.s-hidden {
+	opacity: 0;
+	transition: opacity 0.2s linear;
+}
+.m-toast > div {
+	display: inline-block;
+	padding: 8px 11px;
+
+	border-radius: 3px;
+	background: #262626;
+	color: #f0f0f0;
+	box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
 }
 </style>
 <script defer src="build/output.bundle.js"></script>

@@ -7,11 +7,13 @@
 - Improve tab counter responsiveness
 - Improve the accuracy of the link text when copying from the context menu
 - Use the naked domain name when not entering a title for a link before copying
+- Add keyboard shortcuts to the action's title attributes
 
 ### Fixed
 - When opening only windows (no tabs), don't restore focus to the original window
 - Don't close the openerTab if it is from an incognito window
 - Don't offer to send incognito tabs to non-incognito windows and vice versa
+- Restore toast functionality
 
 ## [1.5] - 21.02.2015
 ### Added

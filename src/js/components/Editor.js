@@ -64,6 +64,10 @@ export default class Editor extends React.Component {
 		window.removeEventListener('copy', this.handleCopy);
 	}
 
+	shouldComponentUpdate(nextProps, nextState) {
+		return this.props.doc !== nextProps.doc;
+	}
+
 	handleUnload(ev) {
 		if (this.editor.session.getUndoManager().isClean()) {
 			return;
@@ -78,8 +82,7 @@ export default class Editor extends React.Component {
 			return;
 		}
 		ev.clipboardData.setData('text/plain', this.getContent());
-		// TODO: Toast instead of alert
-		alert('Copied the whole document');
+		this.props.showToast(Chrome.getString('toast_copied_document'));
 	}
 
 	componentDidUpdate(prevProps, prevState) {
