@@ -54,7 +54,7 @@
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"link_outside_list_error": {
-		"message": "Not all links are inside of a list"
+		"message": "Links outside of a list are not allowed"
 	},
 	"toast_copied_document": {
 		// TODO
