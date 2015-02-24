@@ -1,4 +1,7 @@
 {
+	"ext_name": {
+		"message": "TabAttack"
+	},
 	"ext_description": {
 		"message": "Exportar pestañas como Markdown."
 	},
