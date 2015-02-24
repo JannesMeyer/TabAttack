@@ -35,6 +35,10 @@
 	"action_open_links": {
 		"message": "Open links"
 	},
+	"toast_no_document": {
+		// TODO
+		"message": "No document found"
+	},
 	"toast_no_tabs": {
 		// TODO
 		"message": "No tabs to export"

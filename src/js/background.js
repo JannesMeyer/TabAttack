@@ -186,7 +186,7 @@ Chrome.onMessage('get_document', (message, sender, sendResponse) => {
 	if (doc) {
 		sendResponse(doc);
 	} else {
-		sendResponse({ error: 'No document found' });
+		sendResponse({ error: Chrome.getString('toast_no_document') });
 	}
 });
 
