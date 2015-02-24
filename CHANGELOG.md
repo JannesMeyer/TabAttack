@@ -15,6 +15,7 @@
 - Don't close the openerTab if it is from an incognito window
 - Don't offer to send incognito tabs to non-incognito windows and vice versa
 - Restore toast functionality
+- Make it possible to move tabs past pinned tabs
 
 ## [1.5] - 21.02.2015
 ### Added
