@@ -1,9 +1,10 @@
+import 'babel/polyfill';
 import './defaults';
 import { drawIcon } from './Icon';
 import * as TitleChangelog from './TitleChangelog';
-import 'babel/polyfill';
 import { throttle } from './lib/DateTime';
 import * as TabManager from './lib-chrome/TabManager';
+import { moveTabs } from './lib-chrome/TabManager.moveTabs';
 import { markdownLink } from './lib/Markdown';
 import { writeClipboard } from './lib-browser/Clipboard';
 import { showPopup } from './lib-chrome/Popup';
@@ -146,16 +147,12 @@ Chrome.onCommand('copy_tab_as_markdown', () => {
 /*
  * Global shortcut: Move highlighted tabs left
  */
-Chrome.onCommand('move_tab_left', () => {
-	TabManager.moveTabs(-1);
-});
+Chrome.onCommand('move_tab_left', moveTabs.bind(undefined, -1));
 
 /*
  * Global shortcut: Move highlighted tabs right
  */
-Chrome.onCommand('move_tab_right', () => {
-	TabManager.moveTabs(+1);
-});
+Chrome.onCommand('move_tab_right', moveTabs.bind(undefined, 1));
 
 /*
  * Global shortcut: Pin highlighted tabs

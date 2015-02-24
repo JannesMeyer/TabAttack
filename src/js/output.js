@@ -4,7 +4,7 @@ import KeyPress from './lib-browser/KeyPress';
 import { getIsoDateString } from './lib/DateTime';
 import { getTags, parseHTML } from './lib-browser/DOMHelpers'
 import * as FileSystem from './lib-browser/FileSystem';
-import * as TabManager from './lib-chrome/TabManager';
+import { closeOtherTabs, restoreWindows } from './lib-chrome/TabManager';
 import Editor from './components/Editor';
 import Toast from './components/Toast';
 import ActionButton from './components/ActionButton';
@@ -77,9 +77,7 @@ class Page extends React.Component {
 	 * Action: Close all tabs
 	 */
 	closeOtherTabs(ev) {
-		Chrome.getCurrentTab().then(tab => {
-			TabManager.closeOtherTabs(tab);
-		});
+		Chrome.getCurrentTab().then(closeOtherTabs);
 	}
 
 	/**
@@ -109,7 +107,7 @@ class Page extends React.Component {
 			return;
 		}
 
-		TabManager.restoreWindows(windows);
+		restoreWindows(windows);
 	}
 
 	render() {

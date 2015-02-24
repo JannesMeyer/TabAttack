@@ -1,5 +1,3 @@
-import Chrome from './lib-chrome/Chrome';
-
 Chrome.setDefaults({
 	format: 'markdown',
 	protocolBlacklist: [ 'chrome-devtools:', 'chrome:', 'chrome-extension:', 'opera:' ],
