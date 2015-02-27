@@ -7,11 +7,20 @@ import { drawIcon } from './Icon';
 import { showPopup } from './lib-chrome/Popup';
 import { getProtocol } from './lib/URLTools';
 
+import { tabtabsearch_onInputEntered, tabtabsearch_onInputCanceled} from './lib-chrome/TabtabSearch.js'
+
 var protocolBlacklist = new Set([ 'chrome-devtools:', 'chrome:', 'chrome-extension:', 'opera:' ]);
 // TODO: Make this list configurable
 // var domainBlacklist = new Set([ 'mail.google.com' ]);
 var doc, iconLocked = false;
-var isDevMode = false;
+var isDevMode = true;
+
+/**
+ * Install TabTab-Search in the Omnibox
+ */
+chrome.omnibox.onInputEntered.addListener(tabtabsearch_onInputEntered);
+chrome.omnibox.onInputCancelled.addListener(tabtabsearch_onInputCanceled);
+
 
 /*
  * Check whether this is a development install

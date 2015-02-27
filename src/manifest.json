@@ -29,6 +29,9 @@
 			},
 		"default_title": "__MSG_icon_tooltip__"
 	},
+	"omnibox": {
+        "keyword": "tab"
+  },
 	"commands": {
 		"_execute_browser_action": {
 			"suggested_key": { "default": "Ctrl+Shift+S" }
