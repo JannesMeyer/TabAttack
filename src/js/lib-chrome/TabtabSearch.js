@@ -5,7 +5,7 @@ var topMatch;
 
 function _log(text) {
   //////// comment/uncommment if you need to debug   //////////
-  console.log(text);
+  //console.log(text);
 }
 
 

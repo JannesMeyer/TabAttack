@@ -13,7 +13,7 @@ var protocolBlacklist = new Set([ 'chrome-devtools:', 'chrome:', 'chrome-extensi
 // TODO: Make this list configurable
 // var domainBlacklist = new Set([ 'mail.google.com' ]);
 var doc, iconLocked = false;
-var isDevMode = true;
+var isDevMode = false;
 
 /**
  * Install TabTab-Search in the Omnibox
