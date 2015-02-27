@@ -7,7 +7,7 @@ import { drawIcon } from './Icon';
 import { showPopup } from './lib-chrome/Popup';
 import { getProtocol } from './lib/URLTools';
 
-import { tabtabsearch_onInputEntered, tabtabsearch_onInputCanceled} from './lib-chrome/TabtabSearch.js'
+import { tabtabsearch_onInputEntered, tabtabsearch_onInputCanceled, tabtabsearch_onInputChanged } from './lib-chrome/TabtabSearch.js'
 
 var protocolBlacklist = new Set([ 'chrome-devtools:', 'chrome:', 'chrome-extension:', 'opera:' ]);
 // TODO: Make this list configurable
@@ -20,6 +20,7 @@ var isDevMode = true;
  */
 chrome.omnibox.onInputEntered.addListener(tabtabsearch_onInputEntered);
 chrome.omnibox.onInputCancelled.addListener(tabtabsearch_onInputCanceled);
+chrome.omnibox.onInputChanged.addListener(tabtabsearch_onInputChanged);
 
 
 /*

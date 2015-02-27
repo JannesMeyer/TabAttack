@@ -92,8 +92,8 @@ function formatMatches(parsed) {
   }, "");
 }
 
-omnibox.onInputChanged.addListener(function(text, suggest) {
-  _log("onInputChanged text=" + text );
+export function tabtabsearch_onInputChanged(text, suggest) {
+  _log("tabtabsearch_onInputChanged text=" + text );
 
   text = text.toLowerCase().replace(/\W+/g, ' ').trim();
   if (!text)
@@ -136,7 +136,7 @@ omnibox.onInputChanged.addListener(function(text, suggest) {
 
     suggest(suggestions);
   });
-});
+}
 
 
 
