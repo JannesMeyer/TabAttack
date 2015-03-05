@@ -65,13 +65,13 @@
 		"message": "Formato:"
 	},
 	"options_export_ignore_domains": {
-		"message": "Ignorar esos dominios:"
+		"message": "Ignorar estos dominios:"
 	},
 	"options_export_add_domain": {
 		"message": "Añadir un dominio"
 	},
 	"options_export_ignore_pinned": {
-		"message": "Ignorar pestañas fijadas"
+		"message": "Ignorar pestañas fijas"
 	},
 	"options_editor": {
 		"message": "Editor"
