@@ -10,7 +10,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 function handleSuccess(ev) {
-	console.log(ev.target.result);
 	this.resolve(ev.target.result);
 }
 
