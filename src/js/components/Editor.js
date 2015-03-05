@@ -1,4 +1,6 @@
 import ace from 'brace';
+import 'brace/ext/searchbox';
+import 'brace/ext/settings_menu';
 import 'brace/mode/json';
 import 'brace/mode/markdown';
 import 'brace/theme/chrome';
@@ -40,7 +42,6 @@ import 'brace/theme/vibrant_ink';
 export default class Editor extends React.Component {
 
 	constructor() {
-		super();
 		this.handleUnload = this.handleUnload.bind(this);
 		this.handleCopy = this.handleCopy.bind(this);
 	}

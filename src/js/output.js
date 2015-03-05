@@ -35,7 +35,6 @@ Chrome.sendMessage({ operation: 'get_document' }).then(response => {
  */
 class Page extends React.Component {
 	constructor(props) {
-		super(props);
 		this.state = {
 			doc: props.doc,
 			toastMessage: props.message

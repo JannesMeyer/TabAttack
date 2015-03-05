@@ -2,7 +2,6 @@ import cx from 'react/lib/cx';
 
 export default class Toast extends React.Component {
 	constructor(props) {
-		super(props);
 		this.state = { visible: Boolean(props.children) };
 		this.timeoutId = undefined;
 	}

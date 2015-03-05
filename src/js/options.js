@@ -29,7 +29,6 @@ Chrome.getPreferences().then(prefs => {
  */
 class Page extends React.Component {
 	constructor(props) {
-		super(props);
 		this.state = props.prefs;
 
 		this.addDomain = this.addDomain.bind(this);
