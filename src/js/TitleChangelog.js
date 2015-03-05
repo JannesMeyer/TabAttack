@@ -61,6 +61,7 @@ function exportChangeLog(download = true) {
 			saveTextFile('title-change-log.json', text);
 		} else {
 			console.log(text);
+			console.log(items.length + ' items');
 		}
 	});
 }
