@@ -42,11 +42,11 @@
 		"message": "No tabs to export"
 	},
 	"toast_loading_tab": {
-		"message": "$num$ Tab is still loading, its [Title] might be wrong",
+		"message": "$num$ tab is still loading, its [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"toast_loading_tabs": {
-		"message": "$num$ Tabs are still loading, their [Title] might be wrong",
+		"message": "$num$ tabs are still loading, their [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"link_outside_list_error": {
