@@ -82,11 +82,11 @@ Pull requests and bug reports are welcome. If you submit a pull request, please 
 
 Special thanks to these projects:
 
-- [React](http://facebook.github.io/react/)
 - [Ace](http://ace.c9.io/)
+- [React](http://facebook.github.io/react/)
 - [marked](https://github.com/chjj/marked)
-- [webpack](http://webpack.github.io/)
 - [Chromium](http://www.chromium.org/Home)
+- [webpack](http://webpack.github.io/)
 
 ## License
 
