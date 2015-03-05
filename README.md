@@ -76,6 +76,18 @@ Pull requests and bug reports are welcome. If you submit a pull request, please 
 - Curly braces on the same line
 - etc.
 
+## Acknowledgments
+
+[Icon shape created by Catia Marsh Wallow from the Noun Project](http://thenounproject.com/term/star/28082/)
+
+Special thanks to these projects:
+
+- [React](http://facebook.github.io/react/)
+- [Ace](http://ace.c9.io/)
+- [marked](https://github.com/chjj/marked)
+- [webpack](http://webpack.github.io/)
+- [Chromium](http://www.chromium.org/Home)
+
 ## License
 
 [GPLv3](http://www.gnu.org/licenses/gpl-3.0.txt)
