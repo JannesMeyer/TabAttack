@@ -41,6 +41,9 @@
 	"toast_no_tabs": {
 		"message": "No tabs to export"
 	},
+	"toast_highlighted_tabs": {
+		"message": "Highlighted tabs exported"
+	},
 	"toast_loading_tab": {
 		"message": "$num$ tab is still loading, its [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }

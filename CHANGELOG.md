@@ -1,6 +1,11 @@
 # Change Log
 
-## [Unreleased]
+## [1.7]
+### Added
+- Only export highlighted tabs if the number of highlighted tabs is higher than 1
+- Added search (Cmd+F) and settings (Cmd+,) to the editor
+
+## [1.6] - 24.02.2015
 ### Added
 - Mark incognito windows when exporting tabs
 - German and Spanish locales

@@ -28,11 +28,10 @@ export function getActiveTab() {
  * navigating to it in another tab if it contains the NTP.
  */
 export function show(openerTab, url) {
-	if (openerTab.url === 'chrome://newtab/' && !openerTab.incognito) {
-		return Promise.all([ Chrome.createTab({ url }), Chrome.removeTabs(openerTab.id) ]);
-	} else {
-		return Chrome.createTab({ url, openerTabId: openerTab.id });
-	}
+	// if (openerTab.url === 'chrome://newtab/' && !openerTab.incognito) {
+	// 	return Promise.all([ Chrome.createTab({ url }), Chrome.removeTabs(openerTab.id) ]);
+	// }
+	return Chrome.createTab({ url, openerTabId: openerTab.id });
 }
 
 /**

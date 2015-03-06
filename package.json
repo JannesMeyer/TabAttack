@@ -13,7 +13,7 @@
     "babel-loader": "4.x",
     "brace": "0.x",
     "marked": "0.x",
-    "react": "^0.13.0-beta.2",
+    "react": "^0.13.0-rc2",
     "webpack": "1.x"
   }
 }

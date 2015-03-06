@@ -33,46 +33,7 @@ Chrome.onBrowserAction(sourceTab => {
 		Chrome.getPreferences([ 'format', 'ignorePinned', 'domainBlacklist', 'protocolBlacklist' ]),
 		Chrome.getAllWindows({ populate: true })
 	]).then(([ prefs, windows ]) => {
-		// Pull a window to the top
-		// TODO: reverse order of windows/tabs completely instead
-		var index = windows.findIndex(w => w.id === sourceTab.windowId);
-		if (index > 0) {
-			windows.unshift(windows.splice(index, 1)[0]);
-		}
-
-		var loadingTabs = 0;
-
-		// Filter some urls
-		for (var wnd of windows) {
-			wnd.tabs = wnd.tabs.filter(tab => {
-				var url = new URL(tab.url);
-				return !prefs.protocolBlacklist.includes(url.protocol) &&
-				       !prefs.domainBlacklist.includes(url.hostname) &&
-				       !(prefs.ignorePinned && tab.pinned);
-			});
-
-			// Count the number of loading tabs
-			loadingTabs += wnd.tabs.reduce((n, tab) => n + Number(tab.status === 'loading'), 0);
-		}
-
-		// Ignore empty windows
-		windows = windows.filter(wnd => wnd.tabs.length > 0);
-
-		// Create document
-		var buildDocument = (prefs.format === 'json') ? buildJSONDocument : buildMarkdownDocument;
-		doc = buildDocument(windows, sourceTab.id);
-
-		// Warn the user if all tabs were ignored
-		if (windows.length === 0) {
-			doc.message = Chrome.getString('toast_no_tabs');
-		}
-
-		// Warn the user if some tabs didn't finish loading
-		if (loadingTabs > 0) {
-			doc.message = Chrome.getString('toast_loading_tab', loadingTabs);
-		}
-
-		// Open document in a new tab
+		doc = buildDocument(sourceTab, windows, prefs);
 		TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
 	});
 });
@@ -239,10 +200,78 @@ function copyLink(originalTitle, url, type) {
 }
 
 /**
+ * Filter some tabs and windows out, then build the document
+ */
+function buildDocument(sourceTab, windows, { protocolBlacklist, domainBlacklist, ignorePinned, format }) {
+		// TODO: reverse the order of the windows
+		// Pull a window to the top
+		var index = windows.findIndex(wnd => wnd.id === sourceTab.windowId);
+		if (index > 0) {
+			windows.unshift(windows.splice(index, 1)[0]);
+		}
+
+		// Count highlighted tabs. If >1 only export those.
+		var highlightedTabs = windows[0].tabs.filter(tab => tab.highlighted);
+		if (highlightedTabs.length > 1) {
+			windows = [ { tabs: highlightedTabs } ];
+		}
+
+		// Filter some urls out and count the number of tabs that are still loading
+		var loadingTabs = 0;
+		for (var wnd of windows) {
+			wnd.tabs = wnd.tabs.filter(tab => {
+				var url = new URL(tab.url);
+				return !protocolBlacklist.includes(url.protocol) &&
+				       !domainBlacklist.includes(url.hostname) &&
+				       !(ignorePinned && tab.pinned);
+			});
+			// Count the number of loading tabs
+			loadingTabs += wnd.tabs.reduce((n, tab) => n + (tab.status === 'loading' ? 1 : 0), 0);
+		}
+
+		// Ignore empty windows
+		windows = windows.filter(wnd => wnd.tabs.length > 0);
+
+		// Build document
+		var doc;
+		if (format === 'json') {
+			doc = buildJSONDocument(windows, sourceTab.id);
+		} else {
+			doc = buildMarkdownDocument(windows, sourceTab.id);
+		}
+
+		// Tell the user if only highlighted tabs were exported
+		if (highlightedTabs.length > 1) {
+			doc.message = Chrome.getString('toast_highlighted_tabs');
+		} else
+
+		// Warn the user if all tabs were ignored
+		if (windows.length === 0) {
+			doc.message = Chrome.getString('toast_no_tabs');
+		} else
+
+		// Warn the user if some tabs didn't finish loading
+		if (loadingTabs > 0) {
+			doc.message = Chrome.getString('toast_loading_tab', loadingTabs);
+		}
+
+		return doc;
+}
+
+/**
+ * Build a pretty-printed JSON document
+ */
+function buildJSONDocument(windows, sourceTabId) {
+	windows = windows.map(w => w.tabs.map(t => ({ title: t.title, url: t.url })));
+	return { format: 'json', text: JSON.stringify(windows, undefined, 2) };
+}
+
+/**
  * Build a markdown document from an array of windows
  */
 function buildMarkdownDocument(windows, sourceTabId) {
-	var lines = [], highlightLine = 0;
+	var lines = [];
+	var highlightLine = 0;
 	for (var wnd of windows) {
 		var name = (wnd.incognito ? 'headline_incognito_window' : 'headline_window');
 		lines.push('# ' + Chrome.getString(name, wnd.tabs.length));
@@ -258,14 +287,6 @@ function buildMarkdownDocument(windows, sourceTabId) {
 	}
 	lines.pop();
 	return { format: 'markdown', text: lines.join('\n'), highlightLine };
-}
-
-/**
- * Build a pretty-printed JSON document
- */
-function buildJSONDocument(windows, sourceTabId) {
-	windows = windows.map(w => w.tabs.map(t => ({ title: t.title, url: t.url })));
-	return { format: 'json', text: JSON.stringify(windows, undefined, 2) };
 }
 
 /**
