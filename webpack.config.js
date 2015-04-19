@@ -1,12 +1,9 @@
 var webpack = require('webpack');
-var getAbsolutePath = require('path').join.bind(require('path'), __dirname);
+var path = require('path');
 
-/**
- * Webpack configuration
- */
+var getAbsolutePath = path.join.bind(path, __dirname);
 var config = module.exports = {
 	cache: true,
-	watchDelay: 50,
 	entry: {
 		background: './src/js/background.js',
 		output:     './src/js/output.js',
@@ -17,6 +14,7 @@ var config = module.exports = {
 		path: './src/build',
 		filename: '[name].bundle.js'
 	},
+	watchDelay: 50,
 	plugins: [
 		new webpack.ProvidePlugin({
 			React: 'react',
@@ -27,7 +25,7 @@ var config = module.exports = {
 		loaders: [
 			{
 				test: /\.js$/,
-				loader: 'babel', // ?modules=commonStrict
+				loader: 'babel',
 				include: [ getAbsolutePath('src') ],
 				exclude: [ getAbsolutePath('node_modules') ]
 			}
@@ -35,15 +33,10 @@ var config = module.exports = {
 	}
 };
 
-
-var uglifyConfig = {
-	// This is a regex that never matches so that all comments get deleted
-	comments: / ^/,
-	compress: { warnings: false }
-};
-
-// Add extra plugins in production
 if (process.env.NODE_ENV === 'production') {
 	config.plugins.push(new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }));
-	config.plugins.push(new webpack.optimize.UglifyJsPlugin(uglifyConfig));
+	config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+		comments: / ^/,
+		compress: { warnings: false }
+	}));
 }
