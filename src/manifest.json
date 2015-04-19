@@ -1,29 +1,26 @@
 {
 	"manifest_version": 2,
 	"name": "__MSG_ext_name__",
-	"homepage_url": "https://github.com/JannesMeyer/TabAttack",
 	"version": "1.7",
-	"minimum_chrome_version": "40",
-
-	"default_locale": "en",
 	"description": "__MSG_ext_description__",
+	"default_locale": "en",
+	"homepage_url": "https://github.com/JannesMeyer/TabAttack",
+	"minimum_chrome_version": "40",
+	"offline_enabled": true,
+	"permissions": [ "tabs", "storage", "clipboardWrite", "chrome://favicon/", "contextMenus", "activeTab" ],
 	"icons": {
 		"16": "data/icon-h16.png",
 		"48": "data/icon-h48.png",
 		"128": "data/icon-h128.png"
 	},
-
-	"permissions": ["tabs", "storage", "clipboardWrite", "chrome://favicon/", "contextMenus", "activeTab"],
 	"background": {
-		"scripts": ["build/background.bundle.js"],
+		"scripts": [ "build/background.bundle.js" ],
 		"persistent": true
 	},
 	"options_ui": {
 		"page": "options.html",
 		"chrome_style": true
 	},
-	"offline_enabled": true,
-
 	"browser_action": {
 		"default_icon": {
 			"19": "data/browser-action.png"
@@ -33,6 +30,9 @@
 	"commands": {
 		"_execute_browser_action": {
 			"suggested_key": { "default": "Ctrl+Shift+S" }
+		},
+		"export_current_window": {
+			"description": "Export only current window"
 		},
 		"copy_tab_as_markdown": {
 			"suggested_key": { "default": "Ctrl+Shift+L" },

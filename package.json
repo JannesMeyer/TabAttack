@@ -1,19 +1,16 @@
 {
   "name": "TabAttack",
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/JannesMeyer/TabAttack.git"
-  },
+  "repository": "JannesMeyer/TabAttack",
   "scripts": {
-    "build": "NODE_ENV=production webpack; rm '$build.zip'; zip -vr '$build.zip' src/ -x '*.DS_Store'"
+    "pack": "NODE_ENV=production ./node_modules/.bin/webpack && rm '$build.zip' && zip -vx '*.DS_Store' -r '$build.zip' src"
   },
-  "devDependencies": {
-    "babel": "4.x",
+  "dependencies": {
+    "babel-core": "4.x",
     "babel-loader": "4.x",
     "brace": "0.x",
     "marked": "0.x",
-    "react": "^0.13.0-rc2",
+    "react": "0.x",
     "webpack": "1.x"
   }
 }
