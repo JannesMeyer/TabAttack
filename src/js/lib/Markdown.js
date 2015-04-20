@@ -3,7 +3,7 @@
  */
 export function markdownLink(title, url) {
 	if (title === '') {
-		title = '(untitled link)';
+		title = 'Untitled';
 	}
 	// Escape special characters
 	title = title.replace(/[\[\]\*\`_\\]/g, c => '\\' + c).replace(/</g, '&lt;');

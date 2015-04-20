@@ -1,5 +1,5 @@
 import './defaults';
-import { lightThemes, darkThemes } from './lib-browser/aceThemeList';
+import { lightThemes, darkThemes } from './lib-browser/ace-themes';
 
 // Useful for testing purposes:
 // chrome.storage.sync.clear()

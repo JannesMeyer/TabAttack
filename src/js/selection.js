@@ -1,11 +1,11 @@
-import KeyPress from './lib-browser/KeyPress';
-import { parseQuery } from './lib/URLTools';
-import { removeChildren } from './lib-browser/DOMHelpers';
+import KeyPress from 'keypress-tool';
+import parseQuery from './lib/parse-query';
+import { removeChildren } from './lib-browser/dom-tool';
 
 // Get the parameters
-var queryItems = parseQuery(location.search);
-var targets = queryItems.windows.split(';').map(Number);
-var numTabs = parseInt(queryItems.tabs);
+var query = parseQuery(location.search);
+var targets = query.windows.split(';').map(Number);
+var numTabs = Number(query.tabs);
 
 // Set the title
 document.title = Chrome.getString('move_tab', numTabs);

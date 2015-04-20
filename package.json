@@ -5,10 +5,13 @@
   "scripts": {
     "pack": "NODE_ENV=production ./node_modules/.bin/webpack && rm '$build.zip' && zip -vx '*.DS_Store' -r '$build.zip' src"
   },
-  "dependencies": {
+  "devDependencies": {
     "babel-core": "4.x",
     "babel-loader": "4.x",
     "brace": "0.x",
+    "clipboard-tool": "1.x",
+    "date-tool": "1.x",
+    "keypress-tool": "1.x",
     "marked": "0.x",
     "react": "0.x",
     "webpack": "1.x"

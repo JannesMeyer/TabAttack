@@ -1,5 +1,3 @@
-import cx from 'react/lib/cx';
-
 export default class Toast extends React.Component {
 	constructor(props) {
 		this.state = { visible: Boolean(props.children) };
@@ -29,7 +27,8 @@ export default class Toast extends React.Component {
 		var visible = this.state.visible;
 
 		// Enter the portal
-		var toast = React.render(<div className={cx({'m-toast': true, 's-hidden': !visible})}><div>{this.props.children}</div></div>, this.portal);
+		var classes = 'm-toast' + (visible ? '' : ' s-hidden');
+		var toast = React.render(<div className={classes}><div>{this.props.children}</div></div>, this.portal);
 		if (visible) {
 			// Refresh the time-to-hide
 			clearTimeout(this.timeoutId);

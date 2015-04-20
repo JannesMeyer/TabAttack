@@ -3,7 +3,11 @@
 ## [1.7]
 ### Added
 - Only export highlighted tabs if the number of highlighted tabs is higher than 1
+- Added "Export current window" to the context menu of the toolbar icon
 - Added search (Cmd+F) and settings (Cmd+,) to the editor
+
+### Changed
+- Set the default editor theme to KatzenMilch
 
 ## [1.6] - 24.02.2015
 ### Added

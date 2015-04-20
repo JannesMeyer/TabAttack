@@ -1,14 +1,13 @@
-import 'babel/polyfill';
+import 'babel-core/polyfill';
 import './defaults';
-import { drawIcon } from './Icon';
+import * as Clipboard from 'clipboard-tool';
+import { throttle } from 'date-tool';
+import * as Icon from './Icon';
 import * as TitleChangelog from './TitleChangelog';
-import { throttle } from './lib/DateTime';
 import * as TabManager from './lib-chrome/TabManager';
 import { moveTabs } from './lib-chrome/TabManager.moveTabs';
-import { markdownLink } from './lib/Markdown';
-import { writeClipboard } from './lib-browser/Clipboard';
+import { markdownLink } from './lib/markdown';
 import { showPopup } from './lib-chrome/Popup';
-import { getProtocol } from './lib/URLTools';
 
 /**
  * The last generated document
@@ -28,14 +27,18 @@ var isDev = (process.env.NODE_ENV !== 'production');
 /*
  * Handle browser action
  */
-Chrome.onBrowserAction(sourceTab => {
-	Promise.all([
-		Chrome.getPreferences([ 'format', 'ignorePinned', 'domainBlacklist', 'protocolBlacklist' ]),
-		Chrome.getAllWindows({ populate: true })
-	]).then(([ prefs, windows ]) => {
-		doc = buildDocument(sourceTab, windows, prefs);
-		TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
-	});
+Chrome.onBrowserAction(exportAllWindows);
+
+// TODO
+chrome.contextMenus.create({
+	title: 'Only current window',
+	contexts: [ 'browser_action' ],
+	onclick: (info, sourceTab) => exportCurrentWindow(sourceTab)
+});
+
+// TODO
+Chrome.onCommand('export_current_window', () => {
+	TabManager.getActiveTab().then(exportCurrentWindow);
 });
 
 /**
@@ -196,7 +199,29 @@ function copyLink(originalTitle, url, type) {
 		}
 
 		// Copy the title and URL as a Markdown link
-		writeClipboard(markdownLink(title, url));
+		Clipboard.write(markdownLink(title, url));
+}
+
+// TODO
+function exportAllWindows(sourceTab) {
+	Promise.all([
+		Chrome.getPreferences([ 'format', 'ignorePinned', 'domainBlacklist', 'protocolBlacklist' ]),
+		Chrome.getAllWindows({ populate: true })
+	]).then(([ prefs, windows ]) => {
+		doc = buildDocument(sourceTab, windows, prefs);
+		TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
+	});
+}
+
+// TODO
+function exportCurrentWindow(sourceTab) {
+	Promise.all([
+		Chrome.getPreferences([ 'format', 'ignorePinned', 'domainBlacklist', 'protocolBlacklist' ]),
+		Chrome.getLastFocusedWindow({ populate: true })
+	]).then(([ prefs, wnd ]) => {
+		doc = buildDocument(sourceTab, [ wnd ], prefs);
+		TabManager.show(sourceTab, chrome.runtime.getURL('output.html'));
+	});
 }
 
 /**
@@ -294,7 +319,7 @@ function buildMarkdownDocument(windows, sourceTabId) {
  */
 function updateIcon() {
 	TabManager.getTabCount().then(count => {
-		chrome.browserAction.setIcon({ imageData: drawIcon(count) });
+		chrome.browserAction.setIcon({ imageData: Icon.draw(count) });
 	});
 }
 

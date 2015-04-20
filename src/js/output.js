@@ -1,8 +1,8 @@
 import './defaults';
 import marked from 'marked';
-import KeyPress from './lib-browser/KeyPress';
-import { getIsoDateString } from './lib/DateTime';
-import { getTags, parseHTML } from './lib-browser/DOMHelpers'
+import KeyPress from 'keypress-tool';
+import { getIsoDateString } from 'date-tool';
+import { getTags, parseHTML } from './lib-browser/dom-tool';
 import * as FileSystem from './lib-browser/FileSystem';
 import { closeOtherTabs, restoreWindows } from './lib-chrome/TabManager';
 import Editor from './components/Editor';
@@ -95,13 +95,13 @@ class Page extends React.Component {
 		var doc = parseHTML(marked(text));
 
 		// Get all links inside of an <ul>
-		var windows = getTags(doc, 'ul').map(ul => {
+		var windows = getTags('ul', doc).map(ul => {
 			ul.parentNode.removeChild(ul);
-			return getTags(ul, 'a').map(a => a.href);
+			return getTags('a', ul).map(a => a.href);
 		});
 
 		// Check for leftovers
-		if (getTags(doc, 'a').length > 0) {
+		if (getTags('a', doc).length > 0) {
 			this.showToast(Chrome.getString('link_outside_list_error'));
 			return;
 		}

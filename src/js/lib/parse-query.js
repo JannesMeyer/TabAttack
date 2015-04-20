@@ -1,14 +1,10 @@
-export function getProtocol(url) {
-	return url.slice(0, url.indexOf(':'));
-}
-
 /**
  * Parse the query part of an URL
  *
  * Taken from URI.js (MIT, GPLv3)
  * https://github.com/medialize/URI.js/blob/gh-pages/src/URI.js
  */
-export function parseQuery(string) {
+export default function parseQuery(string) {
 	if (!string) {
 		return {};
 	}
