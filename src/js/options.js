@@ -1,5 +1,6 @@
 import './defaults';
 import { lightThemes, darkThemes } from './lib-browser/ace-themes';
+import Toast from './components/Toast';
 
 // Useful for testing purposes:
 // chrome.storage.sync.clear()
@@ -16,7 +17,8 @@ var strings = {
 	editorHeadline:      Chrome.getString('options_editor'),
 	editorTheme:         Chrome.getString('options_editor_theme'),
 	contextMenuHeadline: Chrome.getString('options_context_menu'),
-	showCopyLink:        Chrome.getString('options_show_copy_link')
+	showCopyLink:        Chrome.getString('options_show_copy_link'),
+	showCopyPage:        Chrome.getString('options_show_copy_page')
 };
 
 // Load preferences
@@ -45,7 +47,17 @@ class Page extends React.Component {
 
 		// Live update
 		if (field === 'showCopyLinkAsMarkdown') {
-			Chrome.sendMessage({ operation: (value ? 'add_context_menu' : 'remove_context_menu') });
+			if (value) {
+				Chrome.sendMessage('show copyLinkItem');
+			} else {
+				Chrome.sendMessage('hide copyLinkItem');
+			}
+		} else if (field === 'showCopyPageAsMarkdown') {
+			if (value) {
+				Chrome.sendMessage('show copyPageItem');
+			} else {
+				Chrome.sendMessage('hide copyPageItem');
+			}
 		}
 	}
 
@@ -125,6 +137,11 @@ class Page extends React.Component {
 				<label>
 					<input type="checkbox" checked={s.showCopyLinkAsMarkdown} onChange={this.handleChange.bind(this, 'showCopyLinkAsMarkdown')} />
 					{strings.showCopyLink}
+				</label>
+
+				<label>
+					<input type="checkbox" checked={s.showCopyPageAsMarkdown} onChange={this.handleChange.bind(this, 'showCopyPageAsMarkdown')} />
+					{strings.showCopyPage}
 				</label>
 
 			</div>

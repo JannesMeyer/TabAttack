@@ -24,8 +24,8 @@ var ctrlO      = KeyPress('O', ['ctrl']);
 var ctrlShiftO = KeyPress('O', ['ctrl', 'shift']);
 
 // Load document
-Chrome.sendMessage({ operation: 'get_document' }).then(response => {
-	React.render(<Page doc={response} message={response.message} />, document.body);
+Chrome.sendMessage('get_document').then(response => {
+	React.render(<Page message={response.message} doc={response} />, document.body);
 }).catch(err => {
 	React.render(<Page message={err} />, document.body);
 });

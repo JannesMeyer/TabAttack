@@ -6,6 +6,9 @@
 		"message": "Exports your tabs as easily archivable Markdown."
 	},
 
+	"context_menu_export_current_window": {
+		"message": "Only current window"
+	},
 	"context_menu_copy_page": {
 		"message": "Copy Page As Markdown Link…"
 	},
@@ -100,10 +103,13 @@
 		"message": "Color scheme:"
 	},
 	"options_context_menu": {
-		"message": "Context menu"
+		"message": "Context menu items"
 	},
 	"options_show_copy_link": {
-		"message": "Show item to copy links as Markdown"
+		"message": "Copy Link As Markdown"
+	},
+	"options_show_copy_page": {
+		"message": "Copy Page As Markdown Link"
 	},
 
 	"shortcut_copy_tab_as_markdown": {

@@ -42,7 +42,7 @@ window.addEventListener('unload', close);
  * Close the popup without returning anything
  */
 function close(ev) {
-	Chrome.sendMessage({ operation: 'popup_close' });
+	Chrome.sendMessage('popup_close');
 	window.close();
 }
 
@@ -51,7 +51,7 @@ function close(ev) {
  */
 function clickHandler(ev) {
 	var windowId = listState[focusIndex].returnValue;
-	Chrome.sendMessage({ operation: 'popup_return', windowId });
+	Chrome.sendMessage('popup_return', { windowId });
 	window.close();
 }
 

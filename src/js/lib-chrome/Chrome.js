@@ -1,3 +1,8 @@
+import '../lib/object-assign';
+
+var messageHandlers = new Map();
+var commandHandlers = new Map();
+
 // TODO: Lazy initialization
 var Chrome = {
 	// Tabs
@@ -24,7 +29,7 @@ var Chrome = {
 	clearPreferences:     dechromeify(chrome.storage.sync, chrome.storage.sync.clear),
 
 	// Message passing
-	sendMessage:          dechromeify(chrome.runtime, chrome.runtime.sendMessage, { responseErrors: true }),
+	_sendMessage:          dechromeify(chrome.runtime, chrome.runtime.sendMessage, { responseErrors: true }),
 
 	// Runtime
 	getURL:               alias(chrome.runtime, chrome.runtime.getURL),
@@ -32,8 +37,6 @@ var Chrome = {
 	// Management
 	getExtensionInfo:     dechromeify(chrome.management, chrome.management.getSelf)
 };
-var messageHandlers = new Map();
-var commandHandlers = new Map();
 
 /**
  * Convert an async Chrome function into one that returns a Promise
@@ -118,22 +121,8 @@ Chrome.setDefaults = function(defaults) {
 	};
 };
 
-/**
- * The message dispatcher
- */
-function dispatchMessage(message, sender, sendResponse) {
-	if (messageHandlers.has(message.operation)) {
-		messageHandlers.get(message.operation)(message, sender, sendResponse);
-	}
-}
-
-/**
- * The command dispatcher
- */
-function dispatchCommand(command) {
-	if (commandHandlers.has(command)) {
-		commandHandlers.get(command)();
-	}
+Chrome.sendMessage = function(operation, message) {
+	return Chrome._sendMessage(Object.assign({ _chrome_operation: operation }, message));
 }
 
 /**
@@ -141,7 +130,13 @@ function dispatchCommand(command) {
  */
 Chrome.onMessage = function(operation, handler) {
 	if (messageHandlers.size === 0) {
-		chrome.runtime.onMessage.addListener(dispatchMessage);
+		chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+			var operation = message._chrome_operation;
+			if (messageHandlers.has(operation)) {
+				delete message._chrome_operation;
+				messageHandlers.get(operation)(message, sender, sendResponse);
+			}
+		});
 	}
 	messageHandlers.set(operation, handler);
 };
@@ -151,7 +146,11 @@ Chrome.onMessage = function(operation, handler) {
  */
 Chrome.onCommand = function(command, handler) {
 	if (commandHandlers.size === 0) {
-		chrome.commands.onCommand.addListener(dispatchCommand);
+		chrome.commands.onCommand.addListener(command => {
+			if (commandHandlers.has(command)) {
+				commandHandlers.get(command)();
+			}
+		});
 	}
 	commandHandlers.set(command, handler);
 };
