@@ -4,7 +4,7 @@
  * Taken from URI.js (MIT, GPLv3)
  * https://github.com/medialize/URI.js/blob/gh-pages/src/URI.js
  */
-export default function parseQuery(string) {
+export function parseQuery(string) {
 	if (!string) {
 		return {};
 	}
@@ -38,4 +38,11 @@ export default function parseQuery(string) {
 	}
 
 	return items;
+}
+
+/**
+ * Builds a query string.
+ */
+export function buildQuery(obj) {
+	return Object.keys(obj).map(k => k + '=' + encodeURIComponent(obj[k])).join('&');
 }

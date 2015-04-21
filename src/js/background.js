@@ -8,6 +8,7 @@ import * as TitleChangelog from './TitleChangelog';
 import * as TabManager from './lib-chrome/TabManager';
 import { moveTabs } from './lib-chrome/TabManager.moveTabs';
 import { markdownLink } from './lib/markdown';
+import { buildQuery } from './lib/query-string';
 import { showPopup } from './lib-chrome/Popup';
 import ContextMenuItem from './lib-chrome/ContextMenuItem';
 
@@ -20,6 +21,12 @@ var _doc;
  * Boolean that says whether we are in development mode or not
  */
 var isDev = (process.env.NODE_ENV !== 'production');
+
+function prop(name) {
+	return function(obj) {
+		return obj[name];
+	};
+}
 
 /*
  * Handle browser action
@@ -51,11 +58,10 @@ var copyLinkItem = new ContextMenuItem('copy_link', ['link'], function(info, tab
 
 	// Attention: textContent includes text from hidden elements
 	var linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
-	// Insert the probe
-	chrome.tabs.executeScript({ code: linkProbe, allFrames: true }, results => {
+	chrome.tabs.executeScript({ code: linkProbe, allFrames: true }, function(results) {
 		var title;
 		if (results) {
-			// Get the first element of the array that is not falsy
+			// The first truthy element
 			title = results.filter(Boolean)[0];
 			if (title) {
 				// Do the same processing that a browser does when displaying links
@@ -138,16 +144,21 @@ Chrome.onCommand('send_tab', function() {
 		TabManager.getHighlightedTabs(),
 		Chrome.getAllWindows()
 	]).then(([tabs, windows]) => {
-		var sourceWindow = windows.find(w => w.focused);
+		var sourceWindow = windows.find(prop('focused'));
 		// Get target windows
 		windows = windows.filter(w => w.type === 'normal' && !w.focused && sourceWindow.incognito === w.incognito);
 		if (windows.length === 0) {
 			// Immediately detach to a new window
 			TabManager.moveTabsToWindow(tabs, undefined, sourceWindow.incognito);
 		} else {
-			// Ask the user what to do
-			var url = Chrome.getURL('selection.html') + '?tabs=' + tabs.length + '&windows=' + windows.map(w => w.id).join(';');
-			showPopup({ url, parent: sourceWindow, width: 240, height: 400 }).then(message => {
+			var numTabs = tabs.length;
+			var windowIds = windows.map(prop('id')).join(';');
+			showPopup({
+				url: Chrome.getURL('selection.html') + '?' + buildQuery({ numTabs, windowIds }),
+				parent: sourceWindow,
+				width: 240,
+				height: 400
+			}).then(message => {
 				TabManager.moveTabsToWindow(tabs, message.windowId);
 			});
 		}
@@ -226,7 +237,7 @@ function buildDocument(sourceTab, windows) {
 		}
 
 		// Count highlighted tabs. If >1 only export those.
-		var highlightedTabs = windows[0].tabs.filter(tab => tab.highlighted);
+		var highlightedTabs = windows[0].tabs.filter(prop('highlighted'));
 		if (highlightedTabs.length > 1) {
 			windows = [ { tabs: highlightedTabs } ];
 		}

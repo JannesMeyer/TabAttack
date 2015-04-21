@@ -1,11 +1,11 @@
 import KeyPress from 'keypress-tool';
-import parseQuery from './lib/parse-query';
+import { parseQuery } from './lib/query-string';
 import { removeChildren } from './lib-browser/dom-tool';
 
 // Get the parameters
 var query = parseQuery(location.search);
-var targets = query.windows.split(';').map(Number);
-var numTabs = Number(query.tabs);
+var windowIds = query.windowIds.split(';').map(Number);
+var numTabs = Number(query.numTabs);
 
 // Set the title
 document.title = Chrome.getString('move_tab', numTabs);
@@ -17,7 +17,7 @@ var listState = [{
 }];
 var buttons;
 var focusIndex;
-Promise.all(targets.map(id => Chrome.getWindow(id, { populate: true }))).then(windows => {
+Promise.all(windowIds.map(id => Chrome.getWindow(id, { populate: true }))).then(windows => {
 	for (var wnd of windows) {
 		listState.push({
 			name: Chrome.getString('window_with_tab', wnd.tabs.length),

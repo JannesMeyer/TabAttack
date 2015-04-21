@@ -1,10 +1,11 @@
 # Change Log
 
-## [1.7]
+## [unreleased]
 ### Added
-- Only export highlighted tabs if the number of highlighted tabs is higher than 1
-- Added "Export current window" to the context menu of the toolbar icon
-- Added search (Cmd+F) and settings (Cmd+,) to the editor
+- Only export highlighted tabs if more than one tab is highlighted
+- "Only current window" to the context menu of the toolbar icon
+- Option to enable page context menu
+- Search (Cmd+F) and settings (Cmd+,) to the editor
 
 ### Changed
 - Set the default editor theme to KatzenMilch
