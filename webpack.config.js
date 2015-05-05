@@ -17,8 +17,7 @@ var config = module.exports = {
 	watchDelay: 50,
 	plugins: [
 		new webpack.ProvidePlugin({
-			React: 'react',
-			Chrome: getAbsolutePath('src/js/lib-chrome/Chrome.js')
+			React: 'react'
 		})
 	],
 	module: {

@@ -1,6 +1,12 @@
 import KeyPress from 'keypress-tool';
+import { getString } from 'chrome-tool/i18n';
+import { sendMessage } from 'chrome-tool/runtime';
+import { get as getWindow } from 'chrome-tool/windows';
+
 import { parseQuery } from './lib/query-string';
 import { removeChildren } from './lib-browser/dom-tool';
+
+var returned = false;
 
 // Get the parameters
 var query = parseQuery(location.search);
@@ -8,19 +14,21 @@ var windowIds = query.windowIds.split(';').map(Number);
 var numTabs = Number(query.numTabs);
 
 // Set the title
-document.title = Chrome.getString('move_tab', numTabs);
+document.title = getString('move_tab', numTabs);
 
 // Build DOM
 var listState = [{
-	name: Chrome.getString('new_window'),
-	returnValue: undefined
+	name: getString('new_window'),
+	returnValue: -1
 }];
 var buttons;
 var focusIndex;
-Promise.all(windowIds.map(id => Chrome.getWindow(id, { populate: true }))).then(windows => {
+Promise.all(
+	windowIds.map(id => getWindow(id, { populate: true }))
+).then(windows => {
 	for (var wnd of windows) {
 		listState.push({
-			name: Chrome.getString('window_with_tab', wnd.tabs.length),
+			name: getString('window_with_tab', wnd.tabs.length),
 			tabs: wnd.tabs,
 			returnValue: wnd.id
 		});
@@ -34,16 +42,19 @@ KeyPress('up').addListener(moveFocus.bind(null, -1));
 KeyPress('tab').addListener(moveFocus.bind(null, 1));
 KeyPress('down').addListener(moveFocus.bind(null, 1));
 
-KeyPress('esc').addListener(close);
-window.addEventListener('blur', close);
-window.addEventListener('unload', close);
+KeyPress('esc').addListener(ev => returnMessage());
+window.addEventListener('blur', ev => returnMessage());
+window.addEventListener('unload', ev => returnMessage());
 
 /**
- * Close the popup without returning anything
+ * Closing the popup without returning anything
  */
-function close(ev) {
-	Chrome.sendMessage('popup_close');
-	window.close();
+function returnMessage(val) {
+	if (!returned) {
+		sendMessage('popup_close', val);
+		returned = true;
+		window.close();
+	}
 }
 
 /**
@@ -51,8 +62,11 @@ function close(ev) {
  */
 function clickHandler(ev) {
 	var windowId = listState[focusIndex].returnValue;
-	Chrome.sendMessage('popup_return', { windowId });
-	window.close();
+	if (windowId === -1) {
+		returnMessage({ newWindow: true });
+	} else {
+		returnMessage({ windowId });
+	}
 }
 
 /**

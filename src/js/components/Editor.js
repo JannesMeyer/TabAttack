@@ -1,3 +1,5 @@
+import Preferences from '../Preferences';
+import { getString } from 'chrome-tool/i18n';
 import ace from 'brace';
 import 'brace/ext/searchbox';
 import 'brace/ext/settings_menu';
@@ -48,10 +50,11 @@ export default class Editor extends React.Component {
 
 	componentDidMount() {
 		this.editor = ace.edit('editor');
+		this.editor.$blockScrolling = Infinity;
 		this.editor.setOption('fontSize', '14px');
 		this.editor.setOption('showLineNumbers', false);
 		this.editor.setOption('showPrintMargin', false);
-		Chrome.getPreference('editorTheme').then(theme => {
+		Preferences.get('editorTheme').then(theme => {
 			this.editor.setTheme('ace/theme/' + theme);
 		});
 		this.updateContent();
@@ -73,7 +76,7 @@ export default class Editor extends React.Component {
 		if (this.editor.session.getUndoManager().isClean()) {
 			return;
 		}
-		var message = Chrome.getString('confirm_unload');
+		var message = getString('confirm_unload');
 		ev.returnValue = message;
 		return message;
 	}
@@ -83,7 +86,7 @@ export default class Editor extends React.Component {
 			return;
 		}
 		ev.clipboardData.setData('text/plain', this.getContent());
-		this.props.showToast(Chrome.getString('toast_copied_document'));
+		this.props.showToast(getString('toast_copied_document'));
 	}
 
 	componentDidUpdate(prevProps, prevState) {

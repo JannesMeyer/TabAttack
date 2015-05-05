@@ -1,6 +1,6 @@
-import Chrome from './lib-chrome/Chrome';
+import Preferences from 'chrome-tool/Preferences';
 
-Chrome.setDefaults({
+export default new Preferences({
 	format: 'markdown',
 	protocolBlacklist: [
 		'chrome:',

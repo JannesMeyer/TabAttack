@@ -1,16 +1,14 @@
 import 'babel-core/polyfill';
 import { throttle } from 'date-tool';
 import * as Clipboard from 'clipboard-tool';
+import { Tabs, Windows, Popup, ContextMenuItem, BrowserAction } from 'chrome-tool';
+import { getString, getURL, onMessage, onCommand } from 'chrome-tool';
 
-import './defaults';
-import * as Icon from './Icon';
-import * as TitleChangelog from './TitleChangelog';
-import * as TabManager from './lib-chrome/TabManager';
-import { moveTabs } from './lib-chrome/TabManager.moveTabs';
-import { markdownLink } from './lib/markdown';
+import Preferences from './Preferences';
+import drawIcon from './helpers/draw-icon';
+import * as TitleChangelog from './helpers/title-changelog';
 import { buildQuery } from './lib/query-string';
-import { showPopup } from './lib-chrome/Popup';
-import ContextMenuItem from './lib-chrome/ContextMenuItem';
+import { markdownLink } from './lib/markdown';
 
 /**
  * The last generated document
@@ -22,16 +20,10 @@ var _doc;
  */
 var isDev = (process.env.NODE_ENV !== 'production');
 
-function prop(name) {
-	return function(obj) {
-		return obj[name];
-	};
-}
-
 /*
  * Handle browser action
  */
-Chrome.onBrowserAction(exportAllWindows);
+BrowserAction.onClicked(exportAllWindows);
 
 /**
  * Context menu: Export current window (browser action)
@@ -43,8 +35,8 @@ new ContextMenuItem('export_current_window', ['browser_action'], function(info, 
 /**
  * Keyboard shortcut: Export current window
  */
-Chrome.onCommand('export_current_window', function() {
-	TabManager.getActiveTab().then(exportCurrentWindow);
+onCommand('export_current_window', function() {
+	Tabs.getActive().then(exportCurrentWindow);
 });
 
 /*
@@ -58,7 +50,7 @@ var copyLinkItem = new ContextMenuItem('copy_link', ['link'], function(info, tab
 
 	// Attention: textContent includes text from hidden elements
 	var linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
-	chrome.tabs.executeScript({ code: linkProbe, allFrames: true }, function(results) {
+	Tabs.executeScript({ code: linkProbe, allFrames: true }, results => {
 		var title;
 		if (results) {
 			// The first truthy element
@@ -72,9 +64,10 @@ var copyLinkItem = new ContextMenuItem('copy_link', ['link'], function(info, tab
 		copyLink(title, info.linkUrl, 'linkTitle');
 	});
 });
-Chrome.getPreference('showCopyLinkAsMarkdown').then(copyLinkItem.setVisible);
-Chrome.onMessage('show copyLinkItem', copyLinkItem.show);
-Chrome.onMessage('hide copyLinkItem', copyLinkItem.hide);
+
+Preferences.get('showCopyLinkAsMarkdown').then(copyLinkItem.setVisible);
+onMessage('show copyLinkItem', copyLinkItem.show);
+onMessage('hide copyLinkItem', copyLinkItem.hide);
 
 /**
  * Context menu: Copy page as Markdown link
@@ -82,34 +75,35 @@ Chrome.onMessage('hide copyLinkItem', copyLinkItem.hide);
 var copyPageItem = new ContextMenuItem('copy_page', ['page'], function(info, tab) {
 	copyLink(tab.title, tab.url, 'documentTitle');
 });
-Chrome.getPreference('showCopyPageAsMarkdown').then(copyPageItem.setVisible);
-Chrome.onMessage('show copyPageItem', copyPageItem.show);
-Chrome.onMessage('hide copyPageItem', copyPageItem.hide);
+
+Preferences.get('showCopyPageAsMarkdown').then(copyPageItem.setVisible);
+onMessage('show copyPageItem', copyPageItem.show);
+onMessage('hide copyPageItem', copyPageItem.hide);
 
 /*
  * Global shortcut: Copy active tab as a Markdown link
  */
-Chrome.onCommand('copy_tab_as_markdown', function() {
-	TabManager.getActiveTab().then(tab => copyLink(tab.title, tab.url, 'documentTitle'));
+onCommand('copy_tab_as_markdown', function() {
+	Tabs.getActive().then(tab => copyLink(tab.title, tab.url, 'documentTitle'));
 });
 
 /*
  * Global shortcut: Move highlighted tabs left
  */
-Chrome.onCommand('move_tab_left', moveTabs.bind(null, -1));
+onCommand('move_tab_left', Tabs.moveHighlighted.bind(null, -1));
 
 /*
  * Global shortcut: Move highlighted tabs right
  */
-Chrome.onCommand('move_tab_right', moveTabs.bind(null, 1));
+onCommand('move_tab_right', Tabs.moveHighlighted.bind(null, 1));
 
 /*
  * Global shortcut: Pin highlighted tabs
  */
-Chrome.onCommand('pin_tab', function() {
-	TabManager.getHighlightedTabs().then(tabs => {
+onCommand('pin_tab', function() {
+	Tabs.getHighlighted().then(tabs => {
 		for (var tab of tabs) {
-			Chrome.updateTab(tab.id, { pinned: !tab.pinned });
+			Tabs.update(tab.id, { pinned: !tab.pinned });
 		}
 	});
 });
@@ -117,10 +111,10 @@ Chrome.onCommand('pin_tab', function() {
 /*
  * Global shortcut: Duplicate highlighted tabs
  */
-Chrome.onCommand('duplicate_tab', function() {
-	TabManager.getHighlightedTabs().then(tabs => {
+onCommand('duplicate_tab', function() {
+	Tabs.getHighlighted().then(tabs => {
 		for (var tab of tabs) {
-			Chrome.duplicateTab(tab.id);
+			Tabs.duplicate(tab.id);
 		}
 	});
 });
@@ -128,38 +122,44 @@ Chrome.onCommand('duplicate_tab', function() {
 /*
  * Message from output.html: Get document
  */
-Chrome.onMessage('get_document', (message, sender, sendResponse) => {
+onMessage('get_document', (message, sender, sendResponse) => {
 	if (_doc) {
 		sendResponse(_doc);
 	} else {
-		sendResponse({ error: Chrome.getString('toast_no_document') });
+		sendResponse({ error: getString('toast_no_document') });
 	}
 });
 
 /*
  * Global shortcut: Send the highlighted tabs to another window
  */
-Chrome.onCommand('send_tab', function() {
+onCommand('send_tab', function() {
 	Promise.all([
-		TabManager.getHighlightedTabs(),
-		Chrome.getAllWindows()
+		Tabs.getHighlighted(),
+		Windows.getAll()
 	]).then(([tabs, windows]) => {
-		var sourceWindow = windows.find(prop('focused'));
+		var sourceWindow = windows.find(w => w.focused);
 		// Get target windows
 		windows = windows.filter(w => w.type === 'normal' && !w.focused && sourceWindow.incognito === w.incognito);
 		if (windows.length === 0) {
 			// Immediately detach to a new window
-			TabManager.moveTabsToWindow(tabs, undefined, sourceWindow.incognito);
+			Tabs.moveToNewWindow(tabs, sourceWindow.incognito);
 		} else {
-			var numTabs = tabs.length;
-			var windowIds = windows.map(prop('id')).join(';');
-			showPopup({
-				url: Chrome.getURL('selection.html') + '?' + buildQuery({ numTabs, windowIds }),
+			new Popup({
+				url: 'selection.html',
+				params: buildQuery({
+					numTabs: tabs.length,
+					windowIds: windows.map(w => w.id).join(';')
+				}),
 				parent: sourceWindow,
 				width: 240,
 				height: 400
-			}).then(message => {
-				TabManager.moveTabsToWindow(tabs, message.windowId);
+			}).show().then(msg => {
+				if (msg.windowId !== undefined) {
+					Tabs.moveToWindow(tabs, msg.windowId);
+				} else if (msg.newWindow !== undefined) {
+					Tabs.moveToNewWindow(tabs, sourceWindow.incognito);
+				}
 			});
 		}
 	});
@@ -170,7 +170,7 @@ Chrome.onCommand('send_tab', function() {
  */
 function copyLink(originalTitle, url, type) {
 		// Let the user modify the title
-		var title = prompt(Chrome.getString('prompt_title_change', originalTitle), originalTitle);
+		var title = prompt(getString('prompt_title_change', originalTitle), originalTitle);
 
 		// Cancelled?
 		if (title === null) {
@@ -196,7 +196,7 @@ function copyLink(originalTitle, url, type) {
  * Exports all windows
  */
 function exportAllWindows(sourceTab) {
-	Chrome.getAllWindows({ populate: true })
+	Windows.getAll({ populate: true })
 		.then(buildDocument.bind(null, sourceTab))
 		.then(openDocument.bind(null, sourceTab));
 }
@@ -205,7 +205,7 @@ function exportAllWindows(sourceTab) {
  * Exports only the current window
  */
 function exportCurrentWindow(sourceTab) {
-	Chrome.getWindow(sourceTab.windowId, { populate: true })
+	Windows.get(sourceTab.windowId, { populate: true })
 		.then(Array) // Wraps the object in an Array
 		.then(buildDocument.bind(null, sourceTab))
 		.then(openDocument.bind(null, sourceTab));
@@ -216,19 +216,14 @@ function exportCurrentWindow(sourceTab) {
  */
 function openDocument(sourceTab, doc) {
 	_doc = doc;
-	TabManager.show(sourceTab, Chrome.getURL('output.html'));
+	Tabs.open(sourceTab, getURL('output.html'));
 }
 
 /**
  * Filter some tabs and windows out, then build the document
  */
 function buildDocument(sourceTab, windows) {
-	return Chrome.getPreferences([
-		'format',
-		'ignorePinned',
-		'domainBlacklist',
-		'protocolBlacklist'
-	]).then(prefs => {
+	return Preferences.get('format', 'ignorePinned', 'domainBlacklist', 'protocolBlacklist').then(prefs => {
 		// TODO: reverse the order of the windows
 		// Pull a window to the top
 		var index = windows.findIndex(wnd => wnd.id === sourceTab.windowId);
@@ -237,7 +232,7 @@ function buildDocument(sourceTab, windows) {
 		}
 
 		// Count highlighted tabs. If >1 only export those.
-		var highlightedTabs = windows[0].tabs.filter(prop('highlighted'));
+		var highlightedTabs = windows[0].tabs.filter(t => t.highlighted);
 		if (highlightedTabs.length > 1) {
 			windows = [ { tabs: highlightedTabs } ];
 		}
@@ -268,17 +263,17 @@ function buildDocument(sourceTab, windows) {
 
 		// Tell the user if only highlighted tabs were exported
 		if (highlightedTabs.length > 1) {
-			doc.message = Chrome.getString('toast_highlighted_tabs');
+			doc.message = getString('toast_highlighted_tabs');
 		} else
 
 		// Warn the user if all tabs were ignored
 		if (windows.length === 0) {
-			doc.message = Chrome.getString('toast_no_tabs');
+			doc.message = getString('toast_no_tabs');
 		} else
 
 		// Warn the user if some tabs didn't finish loading
 		if (loadingTabs > 0) {
-			doc.message = Chrome.getString('toast_loading_tab', loadingTabs);
+			doc.message = getString('toast_loading_tab', loadingTabs);
 		}
 
 		return doc;
@@ -301,7 +296,7 @@ function buildMarkdownDocument(windows, sourceTabId) {
 	var highlightLine = 0;
 	for (var wnd of windows) {
 		var name = (wnd.incognito ? 'headline_incognito_window' : 'headline_window');
-		lines.push('# ' + Chrome.getString(name, wnd.tabs.length));
+		lines.push('# ' + getString(name, wnd.tabs.length));
 		lines.push('');
 		for (var tab of wnd.tabs) {
 			lines.push('- ' + markdownLink(tab.title, tab.url));
@@ -320,8 +315,8 @@ function buildMarkdownDocument(windows, sourceTabId) {
  * Update icon with the current tab count
  */
 function updateIcon() {
-	TabManager.getTabCount().then(count => {
-		chrome.browserAction.setIcon({ imageData: Icon.draw(count) });
+	Tabs.count().then(count => {
+		BrowserAction.setIcon({ imageData: drawIcon(count) });
 	});
 }
 

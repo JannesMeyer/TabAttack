@@ -1,21 +1,22 @@
-import './defaults';
 import marked from 'marked';
 import KeyPress from 'keypress-tool';
 import { getIsoDateString } from 'date-tool';
+import { Tabs, Windows, getString, sendMessage } from 'chrome-tool';
+
 import { getTags, parseHTML } from './lib-browser/dom-tool';
 import * as FileSystem from './lib-browser/FileSystem';
-import { closeOtherTabs, restoreWindows } from './lib-chrome/TabManager';
+
 import Editor from './components/Editor';
 import Toast from './components/Toast';
 import ActionButton from './components/ActionButton';
 
 // Load strings
-document.title = Chrome.getString('ext_name');
+document.title = getString('ext_name');
 var strings = {
-	save:      Chrome.getString('action_save'),
-	close:     Chrome.getString('action_close_tabs'),
-	loadFile:  Chrome.getString('action_load_file'),
-	openLinks: Chrome.getString('action_open_links')
+	save:      getString('action_save'),
+	close:     getString('action_close_tabs'),
+	loadFile:  getString('action_load_file'),
+	openLinks: getString('action_open_links')
 };
 
 var ctrlS      = KeyPress('S', ['ctrl']);
@@ -24,8 +25,8 @@ var ctrlO      = KeyPress('O', ['ctrl']);
 var ctrlShiftO = KeyPress('O', ['ctrl', 'shift']);
 
 // Load document
-Chrome.sendMessage('get_document').then(response => {
-	React.render(<Page message={response.message} doc={response} />, document.body);
+sendMessage('get_document').then(doc => {
+	React.render(<Page message={doc.message} doc={doc} />, document.body);
 }).catch(err => {
 	React.render(<Page message={err} />, document.body);
 });
@@ -40,6 +41,7 @@ class Page extends React.Component {
 			toastMessage: props.message
 		};
 
+		// Bind methods
 		this.showToast = this.showToast.bind(this);
 		this.downloadAsTextFile = this.downloadAsTextFile.bind(this);
 		this.closeOtherTabs = this.closeOtherTabs.bind(this);
@@ -73,10 +75,10 @@ class Page extends React.Component {
 	}
 
 	/**
-	 * Action: Close all tabs
+	 * Action: Close all tabs except the current tab
 	 */
 	closeOtherTabs(ev) {
-		Chrome.getCurrentTab().then(closeOtherTabs);
+		Tabs.closeOthers();
 	}
 
 	/**
@@ -102,11 +104,11 @@ class Page extends React.Component {
 
 		// Check for leftovers
 		if (getTags('a', doc).length > 0) {
-			this.showToast(Chrome.getString('link_outside_list_error'));
+			this.showToast(getString('link_outside_list_error'));
 			return;
 		}
 
-		restoreWindows(windows);
+		Windows.open(windows);
 	}
 
 	render() {

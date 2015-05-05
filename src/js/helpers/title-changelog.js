@@ -1,11 +1,11 @@
-import { saveTextFile } from './lib-browser/FileSystem';
+import { saveTextFile } from '../lib-browser/FileSystem';
 
 var database;
 
 if (process.env.NODE_ENV !== 'production') {
-	window.getEntry = getEntry.bind(undefined, 'titles');
-	window.updateEntry = updateEntry.bind(undefined, 'titles');
-	window.deleteEntry = deleteEntry.bind(undefined, 'titles');
+	window.getEntry = getEntry.bind(null, 'titles');
+	window.updateEntry = updateEntry.bind(null, 'titles');
+	window.deleteEntry = deleteEntry.bind(null, 'titles');
 	window.exportChangeLog = exportChangeLog;
 }
 

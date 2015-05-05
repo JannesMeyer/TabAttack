@@ -1,28 +1,32 @@
-import './defaults';
-import { lightThemes, darkThemes } from './lib-browser/ace-themes';
+import { getString } from 'chrome-tool/i18n';
+import { sendMessage } from 'chrome-tool/runtime';
+
+import Preferences from './Preferences';
+import { lightThemes, darkThemes } from './helpers/ace-themes';
 import Toast from './components/Toast';
 
 // Useful for testing purposes:
-// chrome.storage.sync.clear()
-// chrome.storage.sync.get(function(p) { console.log(p) })
+// import Storage from 'chrome-tool/storage-sync';
+// Storage.clear()
+// Storage.get(function(p) { console.log(p) })
 
 // Load strings
-document.title = Chrome.getString('options');
+document.title = getString('options');
 var strings = {
-	exportHeadline:      Chrome.getString('options_export'),
-	exportFormat:        Chrome.getString('options_export_format'),
-	exportAddDomain:     Chrome.getString('options_export_add_domain'),
-	exportIgnoreDomains: Chrome.getString('options_export_ignore_domains'),
-	exportIgnorePinned:  Chrome.getString('options_export_ignore_pinned'),
-	editorHeadline:      Chrome.getString('options_editor'),
-	editorTheme:         Chrome.getString('options_editor_theme'),
-	contextMenuHeadline: Chrome.getString('options_context_menu'),
-	showCopyLink:        Chrome.getString('options_show_copy_link'),
-	showCopyPage:        Chrome.getString('options_show_copy_page')
+	exportHeadline:      getString('options_export'),
+	exportFormat:        getString('options_export_format'),
+	exportAddDomain:     getString('options_export_add_domain'),
+	exportIgnoreDomains: getString('options_export_ignore_domains'),
+	exportIgnorePinned:  getString('options_export_ignore_pinned'),
+	editorHeadline:      getString('options_editor'),
+	editorTheme:         getString('options_editor_theme'),
+	contextMenuHeadline: getString('options_context_menu'),
+	showCopyLink:        getString('options_show_copy_link'),
+	showCopyPage:        getString('options_show_copy_page')
 };
 
 // Load preferences
-Chrome.getPreferences().then(prefs => {
+Preferences.getAll().then(prefs => {
 	React.render(<Page prefs={prefs} />, document.body);
 });
 
@@ -38,7 +42,7 @@ class Page extends React.Component {
 	}
 
 	componentWillUpdate(nextProps, nextState) {
-		Chrome.setPreferences(nextState);
+		Preferences.set(nextState);
 	}
 
 	handleChange(field, ev) {
@@ -48,15 +52,15 @@ class Page extends React.Component {
 		// Live update
 		if (field === 'showCopyLinkAsMarkdown') {
 			if (value) {
-				Chrome.sendMessage('show copyLinkItem');
+				sendMessage('show copyLinkItem');
 			} else {
-				Chrome.sendMessage('hide copyLinkItem');
+				sendMessage('hide copyLinkItem');
 			}
 		} else if (field === 'showCopyPageAsMarkdown') {
 			if (value) {
-				Chrome.sendMessage('show copyPageItem');
+				sendMessage('show copyPageItem');
 			} else {
-				Chrome.sendMessage('hide copyPageItem');
+				sendMessage('hide copyPageItem');
 			}
 		}
 	}

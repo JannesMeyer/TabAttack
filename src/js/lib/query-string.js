@@ -44,5 +44,5 @@ export function parseQuery(string) {
  * Builds a query string.
  */
 export function buildQuery(obj) {
-	return Object.keys(obj).map(k => k + '=' + encodeURIComponent(obj[k])).join('&');
+	return '?' + Object.keys(obj).map(k => k + '=' + encodeURIComponent(obj[k])).join('&');
 }

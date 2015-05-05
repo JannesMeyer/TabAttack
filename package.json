@@ -9,6 +9,7 @@
     "babel-core": "4.x",
     "babel-loader": "4.x",
     "brace": "0.x",
+    "chrome-tool": "1.x",
     "clipboard-tool": "1.x",
     "date-tool": "1.x",
     "keypress-tool": "1.x",
