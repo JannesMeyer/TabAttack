@@ -1,5 +1,6 @@
 export default class Toast extends React.Component {
 	constructor(props) {
+		super();
 		this.state = { visible: Boolean(props.children) };
 		this.timeoutId = undefined;
 	}

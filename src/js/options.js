@@ -35,6 +35,7 @@ Preferences.getAll().then(prefs => {
  */
 class Page extends React.Component {
 	constructor(props) {
+		super();
 		this.state = props.prefs;
 
 		this.addDomain = this.addDomain.bind(this);

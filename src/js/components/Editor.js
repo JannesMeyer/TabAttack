@@ -44,6 +44,9 @@ import 'brace/theme/vibrant_ink';
 export default class Editor extends React.Component {
 
 	constructor() {
+		super();
+
+		// Bind methods
 		this.handleUnload = this.handleUnload.bind(this);
 		this.handleCopy = this.handleCopy.bind(this);
 	}
