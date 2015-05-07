@@ -12,13 +12,13 @@ style.innerHTML = `
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
-  src: local('Roboto Bold'), local('Roboto-Bold'), url(data/Roboto-Bold.woff2) format('woff2');
+  src: local('Roboto Bold'), local('Roboto-Bold'), url(assets/Roboto-Bold.woff2) format('woff2');
 }
 @font-face {
   font-family: 'Roboto Condensed';
   font-style: normal;
   font-weight: 700;
-  src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(data/Roboto-Condensed-Bold.woff2) format('woff2');
+  src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(assets/Roboto-Condensed-Bold.woff2) format('woff2');
 }`;
 document.head.appendChild(style);
 
