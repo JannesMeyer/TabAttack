@@ -2,6 +2,7 @@
   "name": "TabAttack",
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
+  "license": "GPLv3",
   "devDependencies": {
     "babel-core": "5.x",
     "babel-loader": "5.x",

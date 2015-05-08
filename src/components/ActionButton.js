@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default class ActionButton extends React.Component {
 	componentDidMount() {
 		var p = this.props;

@@ -1,35 +1,18 @@
+// Globals: getString, sendMessage, onMessage
+import React from 'react';
 import marked from 'marked';
 import KeyPress from 'keypress-tool';
 import { getIsoDateString } from 'date-tool';
-import { Tabs, Windows, getString, sendMessage } from 'chrome-tool';
-
-import { getTags, parseHTML } from './lib-browser/dom-tool';
-import * as FileSystem from './lib-browser/FileSystem';
-
-import Editor from './components/Editor';
-import Toast from './components/Toast';
-import ActionButton from './components/ActionButton';
-
-// Load strings
-document.title = getString('ext_name');
-var strings = {
-	save:      getString('action_save'),
-	close:     getString('action_close_tabs'),
-	loadFile:  getString('action_load_file'),
-	openLinks: getString('action_open_links')
-};
+import { getTags, parseHTML } from '../lib-browser/dom-tool';
+import * as FileSystem from '../lib-browser/FileSystem';
+import Editor from './Editor';
+import Toast from './Toast';
+import ActionButton from './ActionButton';
 
 var ctrlS      = KeyPress('S', ['ctrl']);
 var ctrlQ      = KeyPress('Q', ['ctrl']);
 var ctrlO      = KeyPress('O', ['ctrl']);
 var ctrlShiftO = KeyPress('O', ['ctrl', 'shift']);
-
-// Load document
-sendMessage('get_document').then(doc => {
-	React.render(<Page message={doc.message} doc={doc} />, document.body);
-}).catch(err => {
-	React.render(<Page message={err} />, document.body);
-});
 
 /**
  * Page component
@@ -55,6 +38,8 @@ class Page extends React.Component {
 	}
 
 	componentDidMount() {
+		document.title = getString('ext_name');
+
 		// File loading
 		FileSystem.onFile(text => this.setState({
 			doc: { format: 'markdown', text },
@@ -79,7 +64,7 @@ class Page extends React.Component {
 	 * Action: Close all tabs except the current tab
 	 */
 	closeOtherTabs(ev) {
-		Tabs.closeOthers();
+		sendMessage('close_other_tabs');
 	}
 
 	/**
@@ -109,7 +94,7 @@ class Page extends React.Component {
 			return;
 		}
 
-		Windows.open(windows);
+		sendMessage('open_windows', windows);
 	}
 
 	render() {
@@ -118,11 +103,11 @@ class Page extends React.Component {
 			<div className="m-container">
 				<div className="m-toolbar">
 					<input type="file" ref="fileInput" style={{display: 'none'}} />
-					<ActionButton className="item-save" onClick={this.downloadAsTextFile} keyPress={ctrlS} title={strings.save} />
-					<ActionButton className="item-close" onClick={this.closeOtherTabs} keyPress={ctrlQ} title={strings.close} />
-					<ActionButton className="item-load-file" onClick={this.loadFile} keyPress={ctrlO} title={strings.loadFile} />
+					<ActionButton className="item-save" onClick={this.downloadAsTextFile} keyPress={ctrlS} title={getString('action_save')} />
+					<ActionButton className="item-close" onClick={this.closeOtherTabs} keyPress={ctrlQ} title={getString('action_close_tabs')} />
+					<ActionButton className="item-load-file" onClick={this.loadFile} keyPress={ctrlO} title={getString('action_load_file')} />
 					{doc.format === 'markdown' &&
-					<ActionButton className="item-open" onClick={this.openLinks} keyPress={ctrlShiftO} title={strings.openLinks} />}
+					<ActionButton className="item-open" onClick={this.openLinks} keyPress={ctrlShiftO} title={getString('action_open_links')} />}
 				</div>
 				<Toast duration={4}>{this.state.toastMessage}</Toast>
 				<Editor ref="editor" doc={doc} showToast={this.showToast} />

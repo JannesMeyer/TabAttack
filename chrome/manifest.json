@@ -14,7 +14,7 @@
 		"128": "img/icon-h128.png"
 	},
 	"background": {
-		"scripts": [ "build/index.bundle.js" ],
+		"scripts": [ "build/chrome.bundle.js" ],
 		"persistent": true
 	},
 	"options_ui": {

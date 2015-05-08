@@ -146,7 +146,7 @@ onCommand('send_tab', function() {
 			Tabs.moveToNewWindow(tabs, sourceWindow.incognito);
 		} else {
 			new Popup({
-				url: 'selection.html',
+				url: 'assets/selection.html',
 				params: buildQuery({
 					numTabs: tabs.length,
 					windowIds: windows.map(w => w.id).join(';')
@@ -216,7 +216,7 @@ function exportCurrentWindow(sourceTab) {
  */
 function openDocument(sourceTab, doc) {
 	_doc = doc;
-	Tabs.open(sourceTab, getURL('output.html'));
+	Tabs.open(sourceTab, getURL('assets/output.html'));
 }
 
 /**
@@ -323,8 +323,8 @@ function updateIcon() {
 /**
  * Debounced version of updateIcon()
  */
-var handleTabChange = throttle(updateIcon, 500);
+var patientlyUpdateIcon = throttle(updateIcon, 500);
 
 updateIcon();
-chrome.tabs.onCreated.addListener(handleTabChange);
-chrome.tabs.onRemoved.addListener(handleTabChange);
+Tabs.onCreated(patientlyUpdateIcon);
+Tabs.onRemoved(patientlyUpdateIcon);

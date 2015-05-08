@@ -1,3 +1,4 @@
+import React from 'react';
 import Preferences from '../Preferences';
 import { getString } from 'chrome-tool/i18n';
 import ace from 'brace';

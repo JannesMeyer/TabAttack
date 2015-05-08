@@ -1,6 +1,4 @@
-import Preferences from 'chrome-tool/Preferences';
-
-export default new Preferences({
+var defaults = {
 	format: 'markdown',
 	protocolBlacklist: [
 		'chrome:',
@@ -20,4 +18,20 @@ export default new Preferences({
 	editorTheme: 'katzenmilch',
 	showCopyLinkAsMarkdown: true,
 	showCopyPageAsMarkdown: false
-});
+};
+
+if (typeof chrome !== 'undefined') {
+	var Preferences = require('chrome-tool/Preferences');
+	var prefs = new Preferences(defaults);
+} else {
+	var prefs = {
+		get() {
+			return defaults;
+		},
+		getAll() {
+			return defaults;
+		}
+	};
+}
+
+export default prefs;

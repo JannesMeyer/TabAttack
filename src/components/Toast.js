@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default class Toast extends React.Component {
 	constructor(props) {
 		super();

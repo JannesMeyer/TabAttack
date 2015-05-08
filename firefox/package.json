@@ -1,13 +1,13 @@
 {
   "title": "TabAttack",
-  "name": "firefox-tabattack",
-  "version": "1.0.0",
+  "name": "tabattack",
+  "version": "1.7.0",
   "description": "A basic add-on",
-  "main": "index.js",
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
+  "license": "GPLv3",
+  "main": "build/firefox.bundle.js",
   "engines": {
     "firefox": ">=38.0a1",
     "fennec": ">=38.0a1"
-  },
-  "license": "GPLv3"
+  }
 }

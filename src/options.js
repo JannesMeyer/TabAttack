@@ -1,3 +1,4 @@
+import React from 'react';
 import { getString } from 'chrome-tool/i18n';
 import { sendMessage } from 'chrome-tool/runtime';
 
