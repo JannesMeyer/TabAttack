@@ -4,7 +4,9 @@ var defaults = {
 		'chrome:',
 		'chrome-extension:',
 		'chrome-devtools:',
-		'opera:'
+		'opera:',
+		'resource:',
+		'about:'
 	],
 	domainBlacklist: [
 		'mail.google.com',
@@ -26,10 +28,14 @@ if (typeof chrome !== 'undefined') {
 } else {
 	var prefs = {
 		get() {
-			return defaults;
+			if (arguments.length === 1) {
+				return Promise.resolve(defaults[arguments[0]]);
+			} else {
+				return Promise.resolve(defaults);
+			}
 		},
 		getAll() {
-			return defaults;
+			return Promise.resolve(defaults);
 		}
 	};
 }

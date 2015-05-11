@@ -1,6 +1,16 @@
+import React from 'react';
 import Page from './components/Page';
 
-window.getString = function(id) {
+window.getString = getString;
+window.sendMessage = sendMessage;
+
+addEventListener('load', () => {
+  sendMessage('get_document', doc => {
+    React.render(<Page message={doc.message} doc={doc} />, document.body);
+  });
+});
+
+function getString(id) {
   return id;
 }
 
@@ -14,7 +24,7 @@ function generateGuid() {
   });
 }
 
-window.sendMessage = function(event, message, callback) {
+function sendMessage(event, message, callback) {
   // Second argument is optional
   message = message || {};
   if (typeof message === 'function') { callback = message; message = {}; }
@@ -30,7 +40,7 @@ window.sendMessage = function(event, message, callback) {
   // Temporary event listener
   if (callback) {
     addEventListener('message', function listener(ev) {
-      if (ev.data._in_response_to === message._id) {
+      if (ev.data._response_to === message._id) {
         removeEventListener('message', listener);
         ev.stopPropagation();
         callback(ev.data);
@@ -38,9 +48,3 @@ window.sendMessage = function(event, message, callback) {
     });
   }
 }
-
-addEventListener('load', function() {
-	sendMessage('get_document', doc => {
-		React.render(<Page message={doc.message} doc={doc} />, document.body);
-	});
-});

@@ -29,7 +29,7 @@ var config = module.exports = {
 	},
 	externals: [
 		function(context, request, callback) {
-			if (/^sdk[$\/]/.test(request)) {
+			if (/^(sdk|chrome|toolkit|Services)(\/|$)/.test(request)) {
 				return callback(null, 'commonjs ' + request);
 			}
 			callback();

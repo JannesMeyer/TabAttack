@@ -17,7 +17,7 @@ var ctrlShiftO = KeyPress('O', ['ctrl', 'shift']);
 /**
  * Page component
  */
-class Page extends React.Component {
+export default class Page extends React.Component {
 	constructor(props) {
 		super();
 		this.state = {
