@@ -3,16 +3,18 @@
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
   "license": "GPLv3",
-  "devDependencies": {
-    "babel-core": "5.x",
-    "babel-loader": "5.x",
+  "dependencies": {
+    "react": "0.x",
     "brace": "0.x",
+    "marked": "^0.3.3",
     "chrome-tool": "2.x",
     "clipboard-tool": "1.x",
     "date-tool": "1.x",
-    "keypress-tool": "1.x",
-    "marked": "^0.3.3",
-    "react": "0.x",
+    "keypress-tool": "1.x"
+  },
+  "devDependencies": {
+    "babel-core": "5.x",
+    "babel-loader": "5.x",
     "webpack": "1.x"
   }
 }
