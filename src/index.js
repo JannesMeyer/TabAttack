@@ -1,4 +1,7 @@
-import {
+import { throttle } from 'date-tool';
+import { markdownLink } from './lib/markdown';
+var {
+  convertWindows,
   addButtonListener,
   addTabCountListener,
   updateIcon,
@@ -18,9 +21,7 @@ import {
   copyToClipboard,
   URL,
   Preferences,
-  ask } from './helpers/browser-firefox';
-import { throttle } from 'date-tool';
-import { markdownLink } from './lib/markdown';
+  ask } = BrowserRuntime; // Injected by webpack
 
 // Boolean: Development mode
 var isDev = (process.env.NODE_ENV !== 'production');
@@ -45,8 +46,9 @@ onCommand('move_tab_left', moveTab.bind(null, -1));
 onCommand('move_tab_right', moveTab.bind(null, 1));
 onCommand('pin_tab', pinTab);
 
-function exportAllWindows() {
-  getAllWindows()
+function exportAllWindows(sourceTab) {
+  getAllWindows(sourceTab)
+    .then(convertWindows)
     .then(filterTabs)
     .then(filterEmptyWindows)
     .then(addMessage)
@@ -57,6 +59,8 @@ function exportAllWindows() {
 
 function exportCurrentWindow() {
   getCurrentWindow()
+    .then(Array)
+    .then(convertWindows)
     .then(filterTabs)
     .then(filterEmptyWindows)
     .then(addMessage)
@@ -155,10 +159,10 @@ function formatMarkdownDocument({ windows, message }) {
 }
 
 /**
- * Helper: Print error message
+ * Helper: Print error
  */
 function printError(error) {
-  console.error(error);
+  console.error(error.message + '\n' + error.stack);
 }
 
 function copyTabAsMarkdown() {
@@ -194,14 +198,17 @@ function copyLinkAsMarkdown(originalTitle, url, type) {
  */
 function sendTab() {
   getHighlightedTabs()
-    .then(getTargetWindows)
-    .then(selectTargetWindow)
-    .then(({ tabs, newWindow, targetWindowId, incognito }) => {
-      if (newWindow) {
-        return moveTabsToNewWindow(tabs, incognito);
-      } else {
-        return moveTabsToWindow(tabs, targetWindowId);
-      }
+    .then(getTargetWindows) // → tabs, targetWindows
+    .then(selectTargetWindow) // → tabs, targetWindow, newWindow, incognito
+    .then(function({ tabs, targetWindow, newWindow }) {
+      console.log('newWindow', newWindow);
     })
+    // .then(({ tabs, newWindow, targetWindowId, incognito }) => {
+    //   if (newWindow) {
+    //     return moveTabsToNewWindow(tabs, incognito);
+    //   } else {
+    //     return moveTabsToWindow(tabs, targetWindowId);
+    //   }
+    // })
     .catch(printError);
 }

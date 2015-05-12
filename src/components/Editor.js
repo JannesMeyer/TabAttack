@@ -1,6 +1,5 @@
 import React from 'react';
 import Preferences from '../Preferences';
-import { getString } from 'chrome-tool/i18n';
 import ace from 'brace';
 import 'brace/ext/searchbox';
 import 'brace/ext/settings_menu';
@@ -38,6 +37,7 @@ import 'brace/theme/tomorrow_night_bright';
 import 'brace/theme/tomorrow_night_eighties';
 import 'brace/theme/twilight';
 import 'brace/theme/vibrant_ink';
+var { getString } = ContentRuntime; // Injected by webpack
 
 /**
  * Ace editor component

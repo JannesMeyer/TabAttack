@@ -1,8 +1,5 @@
 import KeyPress from 'keypress-tool';
-import { getString } from 'chrome-tool/i18n';
-import { sendMessage } from 'chrome-tool/runtime';
-import { get as getWindow } from 'chrome-tool/windows';
-
+var { getString, sendMessage, getWindow } = ContentRuntime;
 import { parseQuery } from './lib/query-string';
 import { removeChildren } from './lib-browser/dom-tool';
 
@@ -23,9 +20,8 @@ var listState = [{
 }];
 var buttons;
 var focusIndex;
-Promise.all(
-	windowIds.map(id => getWindow(id, { populate: true }))
-).then(windows => {
+var allWindows = windowIds.map(id => getWindow(id, { populate: true }));
+Promise.all(allWindows).then(windows => {
 	for (var wnd of windows) {
 		listState.push({
 			name: getString('window_with_tab', wnd.tabs.length),

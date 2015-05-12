@@ -5,7 +5,7 @@
   "description": "A basic add-on",
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "license": "GPLv3",
-  "main": "build/firefox.bundle.js",
+  "main": "build/index.bundle.js",
   "engines": {
     "firefox": ">=38.0a1",
     "fennec": ">=38.0a1"

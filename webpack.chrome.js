@@ -6,19 +6,23 @@ var getAbsolutePath = path.join.bind(path, __dirname);
 var config = module.exports = {
 	cache: true,
 	entry: {
-		chrome:    './src/index-chrome.js',
-		firefox:   './src/index-firefox.js',
-		'output-firefox':    './src/output-firefox.js',
+		index:     './src/index.js',
+		output:    './src/output.js',
 		options:   './src/options.js',
 		selection: './src/selection.js'
 	},
 	output: {
-		path: './build',
+		path: './chrome/build',
 		filename: '[name].bundle.js'
 	},
+	plugins: [
+		new webpack.ProvidePlugin({
+			BrowserRuntime: getAbsolutePath('src/BrowserRuntime.chrome.js'),
+			ContentRuntime: getAbsolutePath('src/ContentRuntime.chrome.js')
+		})
+	],
 	watchDelay: 50,
 	module: {
-
 		loaders: [
 			{
 				test: /\.js$/,
@@ -26,15 +30,7 @@ var config = module.exports = {
 				include: [ getAbsolutePath('src') ]
 			}
 		]
-	},
-	externals: [
-		function(context, request, callback) {
-			if (/^(sdk|chrome|toolkit|Services)(\/|$)/.test(request)) {
-				return callback(null, 'commonjs ' + request);
-			}
-			callback();
-		}
-	]
+	}
 };
 
 // Production mode

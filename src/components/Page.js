@@ -1,4 +1,3 @@
-// Globals: getString, sendMessage, onMessage
 import React from 'react';
 import marked from 'marked';
 import KeyPress from 'keypress-tool';
@@ -8,6 +7,7 @@ import * as FileSystem from '../lib-browser/FileSystem';
 import Editor from './Editor';
 import Toast from './Toast';
 import ActionButton from './ActionButton';
+var { getString, sendMessage } = ContentRuntime; // Injected by webpack
 
 var ctrlS      = KeyPress('S', ['ctrl']);
 var ctrlQ      = KeyPress('Q', ['ctrl']);

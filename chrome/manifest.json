@@ -9,21 +9,21 @@
 	"offline_enabled": true,
 	"permissions": [ "tabs", "storage", "clipboardWrite", "chrome://favicon/", "contextMenus", "activeTab" ],
 	"icons": {
-		"16": "img/icon-h16.png",
-		"48": "img/icon-h48.png",
-		"128": "img/icon-h128.png"
+		"16": "data/img/icon-h16.png",
+		"48": "data/img/icon-h48.png",
+		"128": "data/img/icon-h128.png"
 	},
 	"background": {
-		"scripts": [ "build/chrome.bundle.js" ],
+		"scripts": [ "build/index.bundle.js" ],
 		"persistent": true
 	},
 	"options_ui": {
-		"page": "assets/options.html",
+		"page": "data/options.html",
 		"chrome_style": true
 	},
 	"browser_action": {
 		"default_icon": {
-			"19": "img/browser-action.png"
+			"19": "data/img/browser-action.png"
 		},
 		"default_title": "__MSG_icon_tooltip__"
 	},

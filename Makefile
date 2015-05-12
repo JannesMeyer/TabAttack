@@ -1,19 +1,21 @@
 WEBPACK = ./node_modules/.bin/webpack
 
-all: node_modules
-	$(WEBPACK)
+chrome: node_modules
+	$(WEBPACK) --config webpack.chrome.js
 
-watch:
-	$(WEBPACK) -w
+chrome-watch: node_modules
+	$(WEBPACK) --config webpack.chrome.js -w
+
+firefox: node_modules
+	$(WEBPACK) --config webpack.firefox.js
+
+firefox-watch: node_modules
+	$(WEBPACK) --config webpack.firefox.js -w
 
 pack-chrome:
 	NODE_ENV=production $(WEBPACK)
 	rm chrome-extension.zip
-	zip -vx '*.DS_Store' -r chrome-extension.zip src
-
-firefox:
-	cd firefox
-	jpm run
+	zip -vx '*.DS_Store' -r chrome-extension.zip chrome
 
 clean:
 	@rm -r src/build

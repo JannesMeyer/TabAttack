@@ -1,16 +1,64 @@
-import { ActionButton } from 'sdk/ui/button/action';
-import { PageMod }      from 'sdk/page-mod';
-import { Hotkey }       from 'sdk/hotkeys';
-import { URL }          from 'sdk/url';
+import { ActionButton }     from 'sdk/ui/button/action';
+import { PageMod }          from 'sdk/page-mod';
+import { Hotkey }           from 'sdk/hotkeys';
+import { URL }              from 'sdk/url';
+import { browserWindows }   from 'sdk/windows';
+import Promise              from 'sdk/core/promise';
+import { viewFor }          from 'sdk/view/core';
+import { getOuterId, open } from 'sdk/window/utils';
 import clipboard from 'sdk/clipboard';
 import tabs      from 'sdk/tabs';
-import windows   from 'sdk/windows';
 import self      from 'sdk/self';
-import Preferences from '../Preferences';
+
+import Preferences from './Preferences';
+import { buildQuery } from './lib/query-string';
+
 import { Cu } from 'chrome';
 Cu.import('resource://gre/modules/Services.jsm');
 
 export { URL, Preferences };
+
+export function addButtonListener(callback) {
+  button = ActionButton({
+    id: 'export',
+    label: 'Export all tabs as markdown',
+    icon: {
+      16: './icon-16.png',
+      32: './icon-32.png',
+      64: './icon-64.png'
+    },
+    onClick: callback,
+    badgeColor: '#00AAAA'
+  });
+}
+
+export function addTabCountListener(callback) {
+  tabs.on('open', callback);
+  tabs.on('close', callback);
+}
+
+/**
+ * Opens a popup. At the moment only one at a time is supported.
+ */
+function showPopup({ url, params = '', width = 800, height = 600 }) {
+  var deferred = Promise.defer();
+
+  // Register/overwrite return handler
+  onMessage('popup_close', data => {
+    deferred.resolve(data);
+  });
+
+  tabs.open(self.data.url(url) + params);
+  // open(self.data.url(url) + params, {
+  //   features: {
+  //     width,
+  //     height,
+  //     centerscreen: true,
+  //     resizable: true
+  //   }
+  // });
+  return deferred.promise;
+}
 
 /**
  * The last generated document
@@ -39,7 +87,7 @@ var commands = {
 
 PageMod({
   include: self.data.url('output.html'),
-  contentScriptFile: './firefox-content-script.js',
+  contentScriptFile: './content-script.js',
   onAttach: startListening
 });
 
@@ -76,35 +124,6 @@ onMessage('get_document', (msg, sendResponse) => {
 export function openDocument(doc) {
   _doc = doc;
   tabs.open('./output.html');
-
-  // var { open } = require('sdk/window/utils');
-  // var window = open(self.data.url('output.html'), {
-  //   features: {
-  //     centerscreen: true,
-  //     resizable: true,
-  //     width: 800,
-  //     height: 600
-  //   }
-  // });
-}
-
-export function addButtonListener(callback) {
-  button = ActionButton({
-    id: 'export',
-    label: 'Export all tabs as markdown',
-    icon: {
-      16: './icon-16.png',
-      32: './icon-32.png',
-      64: './icon-64.png'
-    },
-    onClick: callback,
-    badgeColor: '#00AAAA'
-  });
-}
-
-export function addTabCountListener(callback) {
-  tabs.on('open', callback);
-  tabs.on('close', callback);
 }
 
 export function onCommand(id, callback) {
@@ -125,17 +144,16 @@ export function onMessage(id, listener) {
 }
 
 export function getCurrentWindow() {
-  var exportedWindows = [ exportWindow(windows.browserWindows.activeWindow) ];
-  return Promise.resolve(exportedWindows);
+  return Promise.resolve(browserWindows.activeWindow);
 }
 export function getAllWindows() {
-  var exportedWindows = Array.prototype.map.call(windows.browserWindows, exportWindow);
-  return Promise.resolve(exportedWindows);
+  return Promise.resolve(Array.prototype.splice.call(browserWindows));
 }
 
-function exportWindow(browserWindow) {
+function convertWindows(windows) {
+
   // // Pull the current window to the top
-  // var activeWindow = windows.browserWindows.activeWindow;
+  // var activeWindow = browserWindows.activeWindow;
   // var index = windowsExport.findIndex(w => w.id === sourceTab.windowId);
   // if (index > 0) {
   //   windowsExport.unshift(windowsExport.splice(index, 1)[0]);
@@ -156,12 +174,9 @@ function exportWindow(browserWindow) {
     var tab = {
       title: browserTab.title,
       url: browserTab.url,
-      isPinned: browserTab.isPinned
+      isPinned: browserTab.isPinned,
+      active: (browserTab.id === tabs.activeTab.id)
     };
-    // Add the 'active' key
-    if (browserTab.id === tabs.activeTab.id) {
-      tab.active = true;
-    }
     // Count the number of tabs that are still loading
     if (browserTab.readyState === 'uninitialized' || browserTab.readyState === 'loading') {
       ++wnd.loadingTabs;
@@ -184,7 +199,7 @@ export function getActiveTab() {
 }
 
 export function getHighlightedTabs() {
-  return [ getActiveTab() ];
+  return Promise.resolve([ getActiveTab() ]);
 }
 
 export function moveTab(direction) {
@@ -226,43 +241,39 @@ export function copyToClipboard(text) {
 }
 
 export function getTargetWindows(tabs) {
-  var activeWindow = windows.browserWindows.activeWindow;
-  var targetWindows = Array.prototype.filter.call(windows.browserWindows, function(w) {
-    var isPopup = (wnd.type !== 'normal');
-    var isActive = (wnd.id === activeWindow.id);
-    var isEqualPrivacy = (wnd.isPrivate === activeWindow.isPrivate);
-    return !isPopup && !isActive && isEqualPrivacy;
+  // var activeWindowId = getOuterId(viewFor(browserWindows.activeWindow));
+  var activeWindow = browserWindows.activeWindow;
+
+  var targetWindows = Array.prototype.filter.call(browserWindows, function(wnd) {
+    var isActive = (wnd === activeWindow);
+    return !isActive;
   });
-  return { tabs, targetWindows, activeWindow };
+  return { tabs, targetWindows };
 }
 
-export function selectTargetWindow({ tabs, targetWindows, activeWindow }) {
+export function selectTargetWindow({ tabs, targetWindows }) {
   if (targetWindows.length === 0) {
-    return {
-      tabs: tabs,
-      targetWindow: targetWindows[0],
-      newWindow: true,
-      incognito: targetWindows[0].isPrivate
-    };
+    return { tabs, newWindow: true, incognito: false };
   }
 
-  return new Popup({
-    url: 'assets/selection.html',
+  return showPopup({
+    url: 'selection.html',
     params: buildQuery({
       numTabs: tabs.length,
-      windowIds: windows.map(w => w.id).join(';')
+      windowIds: targetWindows.map(w => getOuterId(viewFor(w))).join(';')
     }),
-    parent: activeWindow,
     width: 240,
     height: 400
-  }).show().then(({ windowId, newWindow }) => {
-    return {
-      tabs: tabs,
-      targetWindow: windowId,
-      newWindow: newWindow,
-      incognito: activeWindow.isPrivate
-    };
   });
+
+  // .then(({ windowId, newWindow }) => {
+  //   return {
+  //     tabs: tabs,
+  //     targetWindow: windowId,
+  //     newWindow: newWindow,
+  //     incognito: false
+  //   };
+  // });
 }
 
 export function moveTabsToNewWindow(tabs, incognito) {
