@@ -1,27 +1,11 @@
 import { throttle } from 'date-tool';
 import { markdownLink } from './lib/markdown';
-var {
-  convertWindows,
-  addButtonListener,
-  addTabCountListener,
-  updateIcon,
-  onCommand,
-  getActiveTab,
-  getHighlightedTabs,
-  getTargetWindows,
-  selectTargetWindow,
-  moveTabsToNewWindow,
-  moveTabsToWindow,
-  moveTab,
-  pinTab,
-  getCurrentWindow,
-  getAllWindows,
-  openDocument,
-  getString,
-  copyToClipboard,
-  URL,
-  Preferences,
-  ask } = BrowserRuntime; // Injected by webpack
+var { onCommand, getString, Preferences, URL } = BrowserRuntime; // Injected by webpack
+// Injected by webpack:
+// Exporter
+// CopyLink
+// TabActions
+// ToolbarButton
 
 // Boolean: Development mode
 var isDev = (process.env.NODE_ENV !== 'production');
@@ -33,39 +17,39 @@ var formatters = {
 };
 
 // Tab counter
-addButtonListener(exportAllWindows);
-addTabCountListener(throttle(updateIcon, 500));
-updateIcon();
+TabActions.addCountListener(throttle(ToolbarButton.update, 500));
+ToolbarButton.update();
 
-// Keyboard shortcuts
+// Actions
+ToolbarButton.addListener(exportAllWindows);
 onCommand('export_all_windows', exportAllWindows);
 onCommand('export_current_window', exportCurrentWindow);
 onCommand('copy_tab_as_markdown', copyTabAsMarkdown);
 onCommand('send_tab', sendTab);
-onCommand('move_tab_left', moveTab.bind(null, -1));
-onCommand('move_tab_right', moveTab.bind(null, 1));
-onCommand('pin_tab', pinTab);
+onCommand('move_tab_left', TabActions.moveTab.bind(null, -1));
+onCommand('move_tab_right', TabActions.moveTab.bind(null, 1));
+onCommand('pin_tab', TabActions.pinTab);
 
 function exportAllWindows(sourceTab) {
-  getAllWindows(sourceTab)
-    .then(convertWindows)
+  Exporter.getAllWindows(sourceTab)
+    .then(Exporter.convertWindows)
     .then(filterTabs)
     .then(filterEmptyWindows)
     .then(addMessage)
     .then(formatDocument)
-    .then(openDocument)
+    .then(Exporter.openDocument)
     .catch(printError);
 }
 
 function exportCurrentWindow() {
-  getCurrentWindow()
+  Exporter.getCurrentWindow()
     .then(Array)
-    .then(convertWindows)
+    .then(Exporter.convertWindows)
     .then(filterTabs)
     .then(filterEmptyWindows)
     .then(addMessage)
     .then(formatDocument)
-    .then(openDocument)
+    .then(Exporter.openDocument)
     .catch(printError);
 }
 

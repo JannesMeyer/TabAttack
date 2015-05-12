@@ -82,15 +82,16 @@ Pull requests and bug reports are welcome. If you submit a pull request, please 
 
 ## Acknowledgments
 
-[Icon shape created by Catia Marsh Wallow from the Noun Project](http://thenounproject.com/term/star/28082/)
+The icon shape was [created by Catia Marsh Mallow](https://thenounproject.com/catia.giacomello/) and can be [found on the Noun Project](http://thenounproject.com/term/star/28082/).
 
 Special thanks to these projects:
 
 - [Ace](http://ace.c9.io/)
 - [React](http://facebook.github.io/react/)
 - [marked](https://github.com/chjj/marked)
-- [Chromium](http://www.chromium.org/Home)
 - [webpack](http://webpack.github.io/)
+- [Chromium](http://www.chromium.org/Home)
+- [Firefox](https://www.mozilla.org/firefox/)
 
 ## License
 

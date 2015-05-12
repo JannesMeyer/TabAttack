@@ -1,3 +1,19 @@
+import BrowserAction from 'chrome-tool/browser-action';
+import * as Tabs     from 'chrome-tool/tabs';
+
+export function addListener(callback) {
+  BrowserAction.onClicked(callback);
+}
+
+/**
+ * Update icon with the current tab count
+ */
+export function update() {
+  Tabs.count().then(count => {
+    BrowserAction.setIcon({ imageData: drawIcon(count) });
+  });
+}
+
 var iconSize = 19;
 var borderWidth = 2;
 var borderRadius = 3;
@@ -41,7 +57,7 @@ ctx.fill();
  *
  * @param text: text to draw (String or Number)
  */
-export default function drawIcon(text) {
+function drawIcon(text) {
 	text = text.toString();
 	// Clear the inner part of the icon, without ever redrawing the border
 	ctx.clearRect(borderWidth, borderWidth, innerSize, innerSize);

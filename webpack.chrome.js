@@ -17,8 +17,11 @@ var config = module.exports = {
 	},
 	plugins: [
 		new webpack.ProvidePlugin({
-			BrowserRuntime: getAbsolutePath('src/BrowserRuntime.chrome.js'),
-			ContentRuntime: getAbsolutePath('src/ContentRuntime.chrome.js')
+			BrowserRuntime: getAbsolutePath('src/chrome/BrowserRuntime'),
+			ContentRuntime: getAbsolutePath('src/chrome/ContentRuntime'),
+			Exporter:       getAbsolutePath('src/chrome/Exporter'),
+			TabActions:     getAbsolutePath('src/chrome/TabActions'),
+			ToolbarButton:  getAbsolutePath('src/chrome/ToolbarButton')
 		})
 	],
 	watchDelay: 50,
