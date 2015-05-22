@@ -17,6 +17,7 @@ var formatters = {
 };
 
 // Tab counter
+// TODO: statistics using d3
 TabActions.addCountListener(throttle(ToolbarButton.update, 500));
 ToolbarButton.update();
 
