@@ -3,6 +3,7 @@
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
   "scripts": {
+    "start": "./node_modules/.bin/webpack -w",
     "pack": "NODE_ENV=production ./node_modules/.bin/webpack && rm '$build.zip' && zip -vx '*.DS_Store' -r '$build.zip' src"
   },
   "devDependencies": {

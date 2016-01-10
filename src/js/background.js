@@ -241,7 +241,14 @@ function buildDocument(sourceTab, windows) {
 		var loadingTabs = 0;
 		for (var wnd of windows) {
 			wnd.tabs = wnd.tabs.filter(tab => {
+
+				// The Great Suspender
+				if (tab.url.startsWith('chrome-extension://klbibkeccnjlkjkiokjodocebajanakg/suspended.html#uri=')) {
+					tab.url = tab.url.replace(/^chrome-extension:\/\/klbibkeccnjlkjkiokjodocebajanakg\/suspended\.html#uri=/, '');
+				}
+
 				var url = new URL(tab.url);
+
 				return !prefs.protocolBlacklist.includes(url.protocol) &&
 				       !prefs.domainBlacklist.includes(url.hostname) &&
 				       !(prefs.ignorePinned && tab.pinned);
