@@ -2,8 +2,14 @@
 	"folders":
 	[
 		{
-			"file_exclude_patterns": [".*"],
-			"folder_exclude_patterns": [".*"],
+			"file_exclude_patterns":
+			[
+				".*"
+			],
+			"folder_exclude_patterns":
+			[
+				".*"
+			],
 			"path": "."
 		}
 	]
