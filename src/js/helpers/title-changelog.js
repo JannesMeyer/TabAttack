@@ -14,7 +14,8 @@ function handleSuccess(ev) {
 }
 
 function getEntry(store, key) {
-	var deferred = Promise.defer();
+	// TODO: stop using Promise.defer
+    var deferred = Promise.defer();
 	getDB().then(db => {
 		db.transaction(store).objectStore(store).get(key).onsuccess = handleSuccess.bind(deferred);
 	});
@@ -22,6 +23,7 @@ function getEntry(store, key) {
 }
 
 function updateEntry(store, entry) {
+    // TODO: stop using Promise.defer
 	var deferred = Promise.defer();
 	getDB().then(db => {
 		db.transaction(store, 'readwrite').objectStore(store).put(entry).onsuccess = handleSuccess.bind(deferred);
@@ -39,6 +41,7 @@ function deleteEntry(store, key) {
 
 function getAll(store) {
 	return function(db) {
+        // TODO: stop using Promise.defer
 		var deferred = Promise.defer();
 		var entries = [];
 		db.transaction('titles').objectStore('titles').openCursor().onsuccess = (ev) => {
