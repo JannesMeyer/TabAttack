@@ -41,19 +41,18 @@ function deleteEntry(store, key) {
 
 function getAll(store) {
 	return function(db) {
-        // TODO: stop using Promise.defer
-		var deferred = Promise.defer();
-		var entries = [];
-		db.transaction('titles').objectStore('titles').openCursor().onsuccess = (ev) => {
-			var cursor = ev.target.result;
-			if (cursor) {
-				entries.push(cursor.value);
-				cursor.continue();
-			} else {
-				deferred.resolve(entries);
-			}
-		};
-		return deferred.promise;
+		return new Promise((resolve, reject) => {
+            var entries = [];
+            db.transaction('titles').objectStore('titles').openCursor().onsuccess = (ev) => {
+                var cursor = ev.target.result;
+                if (cursor) {
+                    entries.push(cursor.value);
+                    cursor.continue();
+                } else {
+                    resolve(entries);
+                }
+            };
+        });
 	};
 }
 
