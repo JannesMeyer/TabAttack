@@ -10,6 +10,9 @@ import * as TitleChangelog from './helpers/title-changelog';
 import { buildQuery } from './lib/query-string';
 import { markdownLink } from './lib/markdown';
 
+
+// TODO: make this browser-independent. just logic.
+
 /**
  * The last generated document
  */
