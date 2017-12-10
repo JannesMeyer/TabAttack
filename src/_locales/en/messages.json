@@ -130,6 +130,12 @@
 	"shortcut_move_tab_right": {
 		"message": "Move tab right"
 	},
+	"shortcut_focus_left": {
+		"message": "Focus tab to the left"
+	},
+	"shortcut_focus_right": {
+		"message": "Focus tab to the right"
+	},
 
 	"move_tab": {
 		"message": "Send $num$ tab to…",

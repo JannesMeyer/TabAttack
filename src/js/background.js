@@ -83,22 +83,22 @@ Preferences.get('showCopyPageAsMarkdown').then(copyPageItem.setVisible);
 onMessage('show copyPageItem', copyPageItem.show);
 onMessage('hide copyPageItem', copyPageItem.hide);
 
-/*
- * Global shortcut: Copy active tab as a Markdown link
- */
+/** Global shortcut: Copy active tab as a Markdown link */
 onCommand('copy_tab_as_markdown', function() {
 	Tabs.getActive().then(tab => copyLink(tab.title, tab.url, 'documentTitle'));
 });
 
-/*
- * Global shortcut: Move highlighted tabs left
- */
-onCommand('move_tab_left', Tabs.moveHighlighted.bind(null, -1));
+/** Global shortcut: Move highlighted tabs left */
+onCommand('move_tab_left', () => Tabs.moveHighlighted(-1));
 
-/*
- * Global shortcut: Move highlighted tabs right
- */
-onCommand('move_tab_right', Tabs.moveHighlighted.bind(null, 1));
+/** Global shortcut: Move highlighted tabs right */
+onCommand('move_tab_right', () => Tabs.moveHighlighted(1));
+
+/** Global shortcut: Focus tab to the left */
+onCommand('focus_left', () => Tabs.focusLeft());
+
+/** Global shortcut: Focus tab to the right */
+onCommand('focus_right', () => Tabs.focusLeft());
 
 /*
  * Global shortcut: Pin highlighted tabs
