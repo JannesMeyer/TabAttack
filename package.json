@@ -1,14 +1,13 @@
 {
-  "name": "TabAttack",
+  "name": "tabattack",
+  "private": true,
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
   "scripts": {
     "start": "./node_modules/.bin/webpack -w",
     "pack": "NODE_ENV=production ./node_modules/.bin/webpack && rm '$build.zip' && zip -vx '*.DS_Store' -r '$build.zip' src"
   },
-  "devDependencies": {
-    "babel-core": "5.x",
-    "babel-loader": "5.x",
+  "dependencies": {
     "brace": "0.x",
     "chrome-tool": "2.x",
     "clipboard-tool": "1.x",
@@ -16,6 +15,8 @@
     "keypress-tool": "1.x",
     "marked": "^0.3.3",
     "react": "0.x",
-    "webpack": "1.x"
+    "ts-loader": "^3.2.0",
+    "typescript": "^2.6.2",
+    "webpack": "3.10.0"
   }
 }

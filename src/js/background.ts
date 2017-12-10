@@ -1,4 +1,4 @@
-import 'babel-core/polyfill';
+//import 'babel-core/polyfill';
 import { throttle } from 'date-tool';
 import * as Clipboard from 'clipboard-tool';
 import { Tabs, Windows, Popup, ContextMenuItem, BrowserAction } from 'chrome-tool';

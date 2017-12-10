@@ -1,9 +1,8 @@
 var webpack = require('webpack');
 var path = require('path');
-
 var getAbsolutePath = path.join.bind(path, __dirname);
+
 var config = module.exports = {
-	cache: true,
 	entry: {
 		background: './src/js/background.js',
 		output:     './src/js/output.js',
@@ -11,23 +10,17 @@ var config = module.exports = {
 		options:    './src/js/options.js'
 	},
 	output: {
-		path: './src/build',
+		path: getAbsolutePath('src/build'),
 		filename: '[name].bundle.js'
 	},
-	watchDelay: 50,
-	plugins: [
-		new webpack.ProvidePlugin({
-			React: 'react'
-		})
-	],
+	// plugins: [
+	// 	new webpack.ProvidePlugin({
+	// 		React: 'react'
+	// 	})
+	// ],
 	module: {
 		loaders: [
-			{
-				test: /\.js$/,
-				loader: 'babel',
-				include: [ getAbsolutePath('src') ],
-				exclude: [ getAbsolutePath('node_modules') ]
-			}
+			{ test: /\.tsx?$/, loader: 'ts-loader' }
 		]
 	}
 };
