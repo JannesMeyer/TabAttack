@@ -1,4 +1,4 @@
-# TabAttack
+# TabAttack Browser Extension
 
 [![Build Status](https://travis-ci.org/JannesMeyer/TabAttack.svg?branch=master)](https://travis-ci.org/JannesMeyer/TabAttack)
 [![Dependencies](https://david-dm.org/JannesMeyer/TabAttack.svg)](https://david-dm.org/JannesMeyer/TabAttack)
