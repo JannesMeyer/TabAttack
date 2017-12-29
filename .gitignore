@@ -1,6 +1,7 @@
 .DS_Store
-$*
-*.bundle.js
 *.sublime-workspace
 
+TabAttack.zip
+/assets
 /node_modules
+/src/build
