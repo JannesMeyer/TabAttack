@@ -1,31 +1,30 @@
-var webpack = require('webpack');
-var path = require('path');
-var getAbsolutePath = path.join.bind(path, __dirname);
+const path = require('path');
+const webpack = require('webpack');
 
-var config = module.exports = {
+console.log('node ' + process.version);
+
+const isProduction = process.argv.includes('-p');
+
+module.exports = config = {
 	entry: {
-		background: './src/js/background.js',
-		output:     './src/js/output.js',
-		selection:  './src/js/selection.js',
-		options:    './src/js/options.js'
+		background: './src/js/background.ts',
+		output:     './src/js/output.tsx',
+		selection:  './src/js/selection.ts',
+		options:    './src/js/options.tsx'
 	},
 	output: {
-		path: getAbsolutePath('src/build'),
-		filename: '[name].bundle.js'
+		path: path.join(__dirname, 'src/build'),
+		filename: '[name].js'
 	},
-	// plugins: [
-	// 	new webpack.ProvidePlugin({
-	// 		React: 'react'
-	// 	})
-	// ],
 	module: {
 		loaders: [
 			{ test: /\.tsx?$/, loader: 'ts-loader' }
 		]
-	}
+	},
+	plugins: [],
 };
 
-if (process.env.NODE_ENV === 'production') {
+if (isProduction) {
 	config.plugins.push(new webpack.DefinePlugin({ 'process.env.NODE_ENV': '"production"' }));
 	config.plugins.push(new webpack.optimize.UglifyJsPlugin({
 		comments: / ^/,
