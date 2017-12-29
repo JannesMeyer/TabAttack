@@ -1,6 +1,7 @@
 import Preferences from '../Preferences';
-import { getString } from 'chrome-tool/i18n';
-import ace from 'brace';
+import { getString } from 'chrome-tool';
+import * as React from 'react';
+import * as ace from 'brace';
 import 'brace/ext/searchbox';
 import 'brace/ext/settings_menu';
 import 'brace/mode/json';
@@ -38,17 +39,20 @@ import 'brace/theme/tomorrow_night_eighties';
 import 'brace/theme/twilight';
 import 'brace/theme/vibrant_ink';
 
+interface P {
+	doc: any;
+	showToast: (message: string) => void;
+}
+
 /**
  * Ace editor component
  */
-export default class Editor extends React.Component {
+export default class Editor extends React.Component<P> {
 
-	constructor() {
-		super();
+	editor: ace.Editor;
 
-		// Bind methods
-		this.handleUnload = this.handleUnload.bind(this);
-		this.handleCopy = this.handleCopy.bind(this);
+	constructor(p: P) {
+		super(p);
 	}
 
 	componentDidMount() {
@@ -71,28 +75,28 @@ export default class Editor extends React.Component {
 		window.removeEventListener('copy', this.handleCopy);
 	}
 
-	shouldComponentUpdate(nextProps, nextState) {
+	shouldComponentUpdate(nextProps: P) {
 		return this.props.doc !== nextProps.doc;
 	}
 
-	handleUnload(ev) {
+	handleUnload = (ev: Event) => {
 		if (this.editor.session.getUndoManager().isClean()) {
 			return;
 		}
 		var message = getString('confirm_unload');
 		ev.returnValue = message;
 		return message;
-	}
+	};
 
-	handleCopy(ev) {
+	handleCopy = (ev: any) => {
 		if (ev.clipboardData.getData('text/plain') !== '') {
 			return;
 		}
 		ev.clipboardData.setData('text/plain', this.getContent());
 		this.props.showToast(getString('toast_copied_document'));
-	}
+	};
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate(prevProps: P) {
 		this.updateContent();
 	}
 

@@ -1,11 +1,14 @@
-var iconSize = 19;
-var borderWidth = 2;
-var borderRadius = 3;
+const SCALE = 1;
+const SIZE = 19 * SCALE;
+const BORDER_WIDTH = 2 * SCALE;
+const INNER_SIZE = SIZE - (2 * BORDER_WIDTH);
+const BORDER_RADIUS = 3 * SCALE;
+const COLOR = '#5c5c5c'; // '#4a4a4b' in Firefox
+const BIG_FONT = 'bold 11px Roboto';
+const SMALL_FONT = 'bold 10px Roboto Condensed';
+const TEXT_POSITION = 13;
 
 // Load font
-var bigFont = 'bold 11px Roboto';
-var smallFont = 'bold 10px Roboto Condensed';
-var textPosition = 13;
 var style = document.createElement('style');
 style.innerHTML = `
 @font-face {
@@ -22,40 +25,52 @@ style.innerHTML = `
 }`;
 document.head.appendChild(style);
 
-// Create off-screen canvas
-var canvas = document.createElement('canvas');
-canvas.width = canvas.height = iconSize;
-var ctx = canvas.getContext('2d');
-ctx.strokeStyle = '#5c5c5c';
-ctx.fillStyle = '#5c5c5c';
-ctx.lineWidth = borderWidth;
-ctx.textAlign = 'center';
+/**
+ * Create off-screen canvas and draw the rounded rectangle
+ */
+function createBackgroundCanvas() {
+	let canvas = document.createElement('canvas');
+	canvas.width = SIZE;
+	canvas.height = SIZE;
 
-// Draw the border
-var innerSize = iconSize - (2 * borderWidth);
-roundedRect(ctx, 0, 0, iconSize, iconSize, borderRadius);
-ctx.fill();
+	let ctx = canvas.getContext('2d');
+	if (ctx == null) {
+		throw new Error('Could not get a canvas context');
+	}
+	ctx.strokeStyle = COLOR;
+	ctx.fillStyle = COLOR;
+	ctx.lineWidth = BORDER_WIDTH;
+	ctx.textAlign = 'center';
+
+	// Draw the border
+	roundedRect(ctx, 0, 0, SIZE, SIZE, BORDER_RADIUS);
+	ctx.fill();
+
+	return ctx;
+}
+
+let ctx = createBackgroundCanvas();
 
 /**
  * Draws the text inside the icon
  *
  * @param text: text to draw (String or Number)
  */
-export default function drawIcon(text) {
+export default function drawIcon(text: string) {
 	text = text.toString();
 	// Clear the inner part of the icon, without ever redrawing the border
-	ctx.clearRect(borderWidth, borderWidth, innerSize, innerSize);
+	ctx.clearRect(BORDER_WIDTH, BORDER_WIDTH, INNER_SIZE, INNER_SIZE);
 
 	// Draw the text
 	if (text.length >= 3) {
-		ctx.font = smallFont;
-		ctx.fillText(text, iconSize / 2, textPosition, innerSize);
+		ctx.font = SMALL_FONT;
+		ctx.fillText(text, SIZE / 2, TEXT_POSITION, INNER_SIZE);
 	} else {
-		ctx.font = bigFont;
-		ctx.fillText(text, iconSize / 2, textPosition);
+		ctx.font = BIG_FONT;
+		ctx.fillText(text, SIZE / 2, TEXT_POSITION);
 	}
 
-	return ctx.getImageData(0, 0, iconSize, iconSize)
+	return ctx.getImageData(0, 0, SIZE, SIZE)
 }
 
 /**
@@ -63,7 +78,7 @@ export default function drawIcon(text) {
  *
  * http://stackoverflow.com/questions/1255512/how-to-draw-a-rounded-rectangle-on-html-canvas
  */
-function roundedRect(ctx, x, y, width, height, radius) {
+function roundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
 	ctx.beginPath();
 	ctx.moveTo(x + radius, y);
 	ctx.lineTo(x + width - radius, y);

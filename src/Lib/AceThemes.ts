@@ -1,4 +1,9 @@
-export var lightThemes = [
+interface ITheme {
+	name: string;
+	caption: string;
+}
+
+export const lightThemes: ITheme[] = [
 	{ name: 'chrome',          caption: 'Chrome' },
 	{ name: 'clouds',          caption: 'Clouds' },
 	{ name: 'crimson_editor',  caption: 'Crimson Editor' },
@@ -11,10 +16,10 @@ export var lightThemes = [
 	{ name: 'tomorrow',        caption: 'Tomorrow' },
 	{ name: 'xcode',           caption: 'XCode' },
 	{ name: 'kuroir',          caption: 'Kuroir' },
-	{ name: 'katzenmilch',     caption: 'KatzenMilch' }
+	{ name: 'katzenmilch',     caption: 'KatzenMilch' },
 ];
 
-export var darkThemes = [
+export const darkThemes: ITheme[] = [
 	{ name: 'ambiance',                caption: 'Ambiance' },
 	{ name: 'chaos',                   caption: 'Chaos' },
 	{ name: 'clouds_midnight',         caption: 'Clouds Midnight' },
@@ -33,5 +38,5 @@ export var darkThemes = [
 	{ name: 'tomorrow_night_bright',   caption: 'Tomorrow Night Bright' },
 	{ name: 'tomorrow_night_eighties', caption: 'Tomorrow Night 80s' },
 	{ name: 'twilight',                caption: 'Twilight' },
-	{ name: 'vibrant_ink',             caption: 'Vibrant Ink' }
+	{ name: 'vibrant_ink',             caption: 'Vibrant Ink' },
 ];

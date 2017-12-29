@@ -1,10 +1,6 @@
 import KeyPress from 'keypress-tool';
-import { getString } from 'chrome-tool/i18n';
-import { sendMessage } from 'chrome-tool/runtime';
-import { get as getWindow } from 'chrome-tool/windows';
-
-import { parseQuery } from './lib/query-string';
-import { removeChildren } from './lib-browser/dom-tool';
+import { parseQuery } from '../Lib/QueryString';
+import { removeChildren } from '../Lib/DOM';
 
 var returned = false;
 

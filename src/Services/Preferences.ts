@@ -1,4 +1,4 @@
-import Preferences from 'chrome-tool/Preferences';
+import Preferences from '../Lib/Preferences';
 
 export default new Preferences({
 	format: 'markdown',

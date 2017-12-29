@@ -1,4 +1,6 @@
-import marked from 'marked';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as marked from 'marked';
 import KeyPress from 'keypress-tool';
 import { getIsoDateString } from 'date-tool';
 import { Tabs, Windows, getString, sendMessage } from 'chrome-tool';
@@ -26,20 +28,32 @@ var ctrlShiftO = KeyPress('O', ['ctrl', 'shift']);
 
 // Load document
 sendMessage('get_document').then(doc => {
-	React.render(<Page message={doc.message} doc={doc} />, document.body);
+	ReactDOM.render(<Page message={doc.message} doc={doc} />, document.body);
 }).catch(err => {
-	React.render(<Page message={err} />, document.body);
+	ReactDOM.render(<Page message={err} />, document.body);
 });
 
-/**
- * Page component
- */
-class Page extends React.Component {
-	constructor(props) {
-		super();
+interface P {
+	doc?: Doc;
+	message: string | undefined;
+}
+
+interface S {
+	doc: Doc | undefined;
+	toastMessage: string | undefined;
+}
+
+interface Doc {
+	format: 'markdown' | 'json';
+	text: string | undefined;
+}
+
+class Page extends React.Component<P, S> {
+	constructor(p: P) {
+		super(p);
 		this.state = {
-			doc: props.doc,
-			toastMessage: props.message
+			doc: p.doc,
+			toastMessage: p.message
 		};
 
 		// Bind methods
@@ -50,7 +64,7 @@ class Page extends React.Component {
 		this.openLinks = this.openLinks.bind(this);
 	}
 
-	showToast(message) {
+	showToast(message: string) {
 		this.setState({ toastMessage: message });
 	}
 
@@ -67,32 +81,35 @@ class Page extends React.Component {
 	/**
 	 * Action: Download the editor's content as a text file
 	 */
-	downloadAsTextFile(ev) {
-		var doc = this.state.doc;
-		var ext = (doc.format === 'json' ? '.json' : '.md');
-		var filename = getIsoDateString() + ext;
-		var text = this.refs.editor.getContent();
+	downloadAsTextFile() {
+		let doc = this.state.doc;
+		if (doc == null) {
+			throw new Error('No document loaded');
+		}
+		let ext = (doc.format === 'json' ? '.json' : '.md');
+		let filename = getIsoDateString() + ext;
+		let text = this.refs.editor.getContent();
 		FileSystem.saveTextFile(filename, text);
 	}
 
 	/**
 	 * Action: Close all tabs except the current tab
 	 */
-	closeOtherTabs(ev) {
+	closeOtherTabs() {
 		Tabs.closeOthers();
 	}
 
 	/**
 	 * Action: Load file
 	 */
-	loadFile(ev) {
+	loadFile() {
 		this.refs.fileInput.getDOMNode().click();
 	}
 
 	/**
 	 * Action: Open all links in tabs
 	 */
-	openLinks(ev) {
+	openLinks() {
 		// Markdown → HTML → DOM
 		var text = this.refs.editor.getContent();
 		var doc = parseHTML(marked(text));
