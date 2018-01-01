@@ -1,19 +1,25 @@
+interface IListener {
+  (message: any, sender: browser.runtime.MessageSender, sendResponse: () => void): void;
+}
+
 var listeners = new Map();
 
 /**
  * Send a message to another part of the extension
  */
-export function sendMessage(operation: string, message: any = {}) {
+export function sendMessage<R>(operation: string, message: any = {}): Promise<R> {
   // Extend message with one custom property
   message._chrome_operation = operation;
 
-  return new Promise((resolve, reject) => {
+  return new Promise<R>((resolve, reject) => {
     // Send message and look at response.error
-    chrome.runtime.sendMessage(message, response => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
+    browser.runtime.sendMessage(message, undefined, (response: R) => {
+      if (browser.runtime.lastError) {
+        reject(browser.runtime.lastError);
+
       } else if (response && response.error) {
         reject(response);
+
       } else {
         resolve(response);
       }
@@ -24,8 +30,8 @@ export function sendMessage(operation: string, message: any = {}) {
 /**
  * Collective listener
  */
-function globalHandler(message: any, sender: chrome.runtime.MessageSender, sendResponse: Function) {
-  var listener = listeners.get(message._chrome_operation);
+const globalHandler: IListener = function globalHandler(message, sender, sendResponse) {
+  let listener = listeners.get(message._chrome_operation);
   if (listener) {
     listener(message, sender, sendResponse);
   }
@@ -36,9 +42,9 @@ function globalHandler(message: any, sender: chrome.runtime.MessageSender, sendR
  * To un-listen, just do this:
  *   onMessage('operation name', null)
  */
-export function onMessage(operation: string, handler: Function) {
+export function onMessage(operation: string, handler?: (data: any => void) | null) {
   if (listeners.size === 0) {
-    chrome.runtime.onMessage.addListener(globalHandler);
+    browser.runtime.onMessage.addListener(globalHandler);
   }
   listeners.set(operation, handler);
 }

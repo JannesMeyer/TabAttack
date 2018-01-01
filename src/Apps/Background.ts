@@ -6,6 +6,7 @@ import { markdownLink } from '../Lib/Markdown';
 import * as TabService from '../Services/TabService';
 import { getString } from '../Services/StringService';
 import { onCommand } from '../Lib/BrowserCommand';
+import BrowserContextMenu from '../Lib/BrowserContextMenu';
 //import * as throttle from 'lodash.throttle';
 
 /**
@@ -41,10 +42,8 @@ onCommand('export_current_window', function() {
 /*
  * Context menu: Copy link as Markdown
  */
-const copyLinkCmi = 'copy_link';
-browser.contextMenus.create({
-  id: copyLinkCmi,
-  title: getString('context_menu_' + copyLinkCmi),
+const copyLinkCmi = new BrowserContextMenu({
+  id: 'copy_link',
   contexts: [ browser.contextMenus.ContextType.link ],
   onclick(info, tab) {
     if (info.selectionText) {
@@ -73,16 +72,16 @@ browser.contextMenus.create({
   },
 });
 
-Preferences.get('showCopyLinkAsMarkdown').then(copyLinkItem.setVisible);
-onMessage('show copyLinkItem', copyLinkItem.show);
-onMessage('hide copyLinkItem', copyLinkItem.hide);
+Preferences.get('showCopyLinkAsMarkdown').then(copyLinkCmi.setVisible);
+onMessage('show copyLinkItem', copyLinkCmi.show);
+onMessage('hide copyLinkItem', copyLinkCmi.hide);
 
 /**
  * Context menu: Copy page as Markdown link
  */
-var copyPageItem = new ContextMenuItem({
+var copyPageItem = new BrowserContextMenu({
   id: 'copy_page',
-  contexts: ['page'],
+  contexts: [ browser.contextMenus.ContextType.page ],
   onclick(info, tab) {
     copyLink(tab.title, tab.url, 'documentTitle');
   },
@@ -154,9 +153,9 @@ onCommand('send_tab', function() {
 		TabService.getHighlighted(),
 		browser.windows.getAll()
 	]).then(([tabs, windows]) => {
-		var sourceWindow = windows.find(w => w.focused);
+    let sourceWindow = windows.find(w => w.focused);
 		// Get target windows
-		windows = windows.filter(w => w.type === 'normal' && !w.focused && sourceWindow.incognito === w.incognito);
+		windows = windows.filter(w => w.type === 'normal' && !w.focused && sourceWindow && sourceWindow.incognito === w.incognito);
 		if (windows.length === 0) {
 			// Immediately detach to a new window
 			TabService.moveToNewWindow(tabs, sourceWindow.incognito);
@@ -309,7 +308,7 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
  * Build a pretty-printed JSON document from an array of windows
  */
 function buildJSONDocument(windows: browser.windows.Window[], sourceTabId: number): IDoc {
-	windows = windows.map(w => w.tabs.map(t => ({ title: t.title, url: t.url })));
+	let wnd = windows.map(w => (w.tabs || []).map(t => ({ title: t.title, url: t.url })));
 	return { format: 'json', text: JSON.stringify(windows, undefined, 2) };
 }
 
@@ -340,6 +339,7 @@ interface IDoc {
   format: 'markdown' | 'json';
   text: string;
   highlightLine?: number;
+  message?: string;
 }
 
 /**
