@@ -56,12 +56,13 @@ const copyLinkCmi = new BrowserContextMenu({
 
     // Attention: textContent includes text from hidden elements
     let linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
-    browser.tabs.executeScript(tab.id, { code: linkProbe, allFrames: true }).then(results => {
-      var title;
+    browser.tabs.executeScript(tab.id, { code: linkProbe, allFrames: true }).then(x => {
+      let results: (string | undefined)[] = x as any;
+      let title: string | undefined;
       if (results) {
         // The first truthy element
         title = results.filter(Boolean)[0];
-        if (title) {
+        if (title != null) {
           // Do the same processing that a browser does when displaying links
           title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
         }
