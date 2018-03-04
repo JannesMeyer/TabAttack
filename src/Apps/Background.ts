@@ -25,7 +25,7 @@ browser.browserAction.onClicked.addListener(exportAllWindows);
 const exportWindowCmi = 'export_current_window';
 browser.contextMenus.create({
   id: exportWindowCmi,
-  contexts: [ browser.contextMenus.ContextType.browser_action ],
+  contexts: [ 'browser_action' ],
   title: getString('context_menu_' + exportWindowCmi),
   onclick(info, sourceTab) {
     exportCurrentWindow(sourceTab);
@@ -44,7 +44,7 @@ onCommand('export_current_window', function() {
  */
 const copyLinkCmi = new BrowserContextMenu({
   id: 'copy_link',
-  contexts: [ browser.contextMenus.ContextType.link ],
+  contexts: [ 'link' ],
   onclick(info, tab) {
     if (info.selectionText) {
       copyLink(info.selectionText, info.linkUrl, 'linkTitle');
