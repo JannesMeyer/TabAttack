@@ -1,5 +1,6 @@
 .DS_Store
-TabAttack.zip
+*.log
+*.zip
 /assets
 /node_modules
-/src/build
+/dist
