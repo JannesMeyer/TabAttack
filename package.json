@@ -4,13 +4,12 @@
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
   "scripts": {
-    "start": "tsc",
+    "start": "tsc -p src -w",
     "pack": "rimraf TabAttack.zip && tsc && zip -vx '*.DS_Store' -r TabAttack.zip src",
     "postinstall": "rimraf ./node_modules/@types/node",
     "clean": "rimraf ./src/build ./TabAttack.zip"
   },
   "dependencies": {
-    "@types/chrome": "^0.0.123",
     "@types/lodash.throttle": "^4.1.6",
     "@types/marked": "^1.1.0",
     "@types/react": "^16.9.49",
