@@ -1,6 +1,4 @@
 .DS_Store
-*.sublime-workspace
-
 TabAttack.zip
 /assets
 /node_modules
