@@ -1,9 +1,9 @@
-interface ITheme {
+interface AceTheme {
 	name: string;
 	caption: string;
 }
 
-export const lightThemes: ITheme[] = [
+export const lightThemes: AceTheme[] = [
 	{ name: 'chrome',          caption: 'Chrome' },
 	{ name: 'clouds',          caption: 'Clouds' },
 	{ name: 'crimson_editor',  caption: 'Crimson Editor' },
@@ -19,7 +19,7 @@ export const lightThemes: ITheme[] = [
 	{ name: 'katzenmilch',     caption: 'KatzenMilch' },
 ];
 
-export const darkThemes: ITheme[] = [
+export const darkThemes: AceTheme[] = [
 	{ name: 'ambiance',                caption: 'Ambiance' },
 	{ name: 'chaos',                   caption: 'Chaos' },
 	{ name: 'clouds_midnight',         caption: 'Clouds Midnight' },

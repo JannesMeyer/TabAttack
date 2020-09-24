@@ -7,25 +7,25 @@ var listeners = new Map();
 /**
  * Send a message to another part of the extension
  */
-export function sendMessage<R>(operation: string, message: any = {}): Promise<R> {
-  // Extend message with one custom property
-  message._chrome_operation = operation;
+// export function sendMessage<R>(operation: string, message: any = {}): Promise<R> {
+//   // Extend message with one custom property
+//   message._chrome_operation = operation;
 
-  return new Promise<R>((resolve, reject) => {
-    // Send message and look at response.error
-    browser.runtime.sendMessage(message, undefined, (response: R) => {
-      if (browser.runtime.lastError) {
-        reject(browser.runtime.lastError);
+//   return new Promise<R>((resolve, reject) => {
+//     // Send message and look at response.error
+//     browser.runtime.sendMessage(message, undefined, (response: R) => {
+//       if (browser.runtime.lastError) {
+//         reject(browser.runtime.lastError);
 
-      } else if (response && response.error) {
-        reject(response);
+//       } else if (response && response.error) {
+//         reject(response);
 
-      } else {
-        resolve(response);
-      }
-    });
-  });
-}
+//       } else {
+//         resolve(response);
+//       }
+//     });
+//   });
+// }
 
 /**
  * Collective listener

@@ -96,7 +96,7 @@ export default class Editor extends React.Component<P> {
 		this.props.showToast(getString('toast_copied_document'));
 	};
 
-	componentDidUpdate(prevProps: P) {
+	componentDidUpdate() {
 		this.updateContent();
 	}
 

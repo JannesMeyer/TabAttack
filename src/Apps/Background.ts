@@ -6,7 +6,7 @@ import { markdownLink } from '../Lib/Markdown';
 import * as TabService from '../Services/TabService';
 import { getString } from '../Services/StringService';
 import { onCommand } from '../Lib/BrowserCommand';
-import BrowserContextMenu from '../Lib/BrowserContextMenu';
+import BrowserContextMenu from '../Lib/ContextMenuItem';
 //import * as throttle from 'lodash.throttle';
 
 /**
@@ -22,15 +22,15 @@ browser.browserAction.onClicked.addListener(exportAllWindows);
 /**
  * Context menu: Export current window (browser action)
  */
-const exportWindowCmi = 'export_current_window';
-browser.contextMenus.create({
-  id: exportWindowCmi,
-  contexts: [ 'browser_action' ],
-  title: getString('context_menu_' + exportWindowCmi),
-  onclick(info, sourceTab) {
-    exportCurrentWindow(sourceTab);
-  },
-});
+// const exportWindowCmi = 'export_current_window';
+// browser.contextMenus.create({
+//   id: exportWindowCmi,
+//   contexts: [ 'browser_action' ],
+//   title: getString('context_menu_' + exportWindowCmi),
+//   onclick(info, sourceTab) {
+//     exportCurrentWindow(sourceTab);
+//   },
+// });
 
 /**
  * Keyboard shortcut: Export current window
