@@ -1,6 +1,7 @@
 {
   "files.exclude": {
-    "node_modules": true
+    "node_modules": true,
+    "**/*.js": true,
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
