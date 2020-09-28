@@ -4,7 +4,7 @@
  * Taken from URI.js (MIT, GPLv3)
  * https://github.com/medialize/URI.js/blob/gh-pages/src/URI.js
  */
-export function parseQuery(string: string) {
+export function parseQuery(string: string): { [key: string]: string } {
 	if (!string) {
 		return {};
 	}

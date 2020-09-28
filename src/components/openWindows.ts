@@ -5,7 +5,7 @@
  *
  * @param windows: 2-dimensional array of windows and URLs
  */
-export function open(windows: string[][], reuseThreshold = 1) {
+export function openWindows(windows: string[][], reuseThreshold = 1) {
   browser.windows.getLastFocused({ populate: true }).then(wnd => {
     if (wnd.tabs == null) {
       return;

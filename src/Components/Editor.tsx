@@ -1,5 +1,4 @@
-import Preferences from '../Preferences';
-import { getString } from 'chrome-tool';
+import prefs from '../preferences';
 import * as React from 'react';
 import * as ace from 'brace';
 import 'brace/ext/searchbox';
@@ -38,6 +37,7 @@ import 'brace/theme/tomorrow_night_bright';
 import 'brace/theme/tomorrow_night_eighties';
 import 'brace/theme/twilight';
 import 'brace/theme/vibrant_ink';
+import getString from '../lib/browser/getString';
 
 interface P {
 	doc: any;
@@ -49,7 +49,7 @@ interface P {
  */
 export default class Editor extends React.Component<P> {
 
-	editor: ace.Editor;
+	editor!: ace.Editor;
 
 	constructor(p: P) {
 		super(p);
@@ -61,29 +61,29 @@ export default class Editor extends React.Component<P> {
 		this.editor.setOption('fontSize', '14px');
 		this.editor.setOption('showLineNumbers', false);
 		this.editor.setOption('showPrintMargin', false);
-		Preferences.get('editorTheme').then(theme => {
-			this.editor.setTheme('ace/theme/' + theme);
+		prefs.get('editorTheme').then(({ editorTheme }) => {
+			this.editor.setTheme('ace/theme/' + editorTheme);
 		});
 		this.updateContent();
 
-		window.addEventListener('beforeunload', this.handleUnload);
-		window.addEventListener('copy', this.handleCopy);
+		addEventListener('beforeunload', this.handleUnload);
+		addEventListener('copy', this.handleCopy);
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener('beforeunload', this.handleUnload);
-		window.removeEventListener('copy', this.handleCopy);
+		removeEventListener('beforeunload', this.handleUnload);
+		removeEventListener('copy', this.handleCopy);
 	}
 
 	shouldComponentUpdate(nextProps: P) {
 		return this.props.doc !== nextProps.doc;
 	}
 
-	handleUnload = (ev: Event) => {
+	handleUnload = (ev: BeforeUnloadEvent) => {
 		if (this.editor.session.getUndoManager().isClean()) {
 			return;
 		}
-		var message = getString('confirm_unload');
+		let message = getString('confirm_unload');
 		ev.returnValue = message;
 		return message;
 	};

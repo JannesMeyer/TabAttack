@@ -1,6 +1,6 @@
-import { onMessage } from "./BrowserMessage";
+import onMessage from "./browser/onMessage";
 
-interface IPopupArguments {
+interface PopupProps {
   url: string;
   params: string;
   width: number;
@@ -18,20 +18,20 @@ interface IPopupArguments {
  */
 export default class Popup {
 
-  promise: Promise<any>;
-  
-  constructor({ url, params, width, height, parent }: IPopupArguments) {
+  closed: Promise<any>;
+
+  constructor({ url, params, width, height, parent }: PopupProps) {
     // Listen for the closing of the popup
-    this.promise = new Promise((resolve, reject) => {
+    this.closed = new Promise(resolve => {
       onMessage('popup_close', data => {
         // remove listener
-        onMessage('popup_close', null);
+        onMessage('popup_close');
         resolve(data);
       });
     });
 
     browser.windows.create({
-      type: browser.windows.CreateType.normal,
+      type: 'normal',
       url: browser.runtime.getURL(url) + (params || ''),
       left: Math.round(parent.left + (parent.width - width) / 2),
       top: Math.round(parent.top + (parent.height - height) / 3),

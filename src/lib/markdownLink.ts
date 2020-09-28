@@ -1,8 +1,8 @@
 /**
  * Create markdown link with proper escaping
  */
-export function markdownLink(title: string, url: string): string {
-	if (title === '') {
+export default function markdownLink(title: string | undefined, url: string): string {
+	if (title === '' || title == null) {
 		title = 'Untitled';
 	}
 	

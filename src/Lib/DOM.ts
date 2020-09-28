@@ -1,4 +1,4 @@
-var parser: DOMParser | undefined;
+let parser: DOMParser | undefined;
 
 /**
  * Parse a HTML string into its DOM representation
@@ -8,18 +8,6 @@ export function parseHTML(str: string) {
 		parser = new DOMParser();
 	}
 	return parser.parseFromString(str, 'text/html');
-}
-
-/**
- * Use element.getElementsByTagName() and convert the result into an Array
- */
-export function getTags(tagName: string, element: Element) {
-	var list = [];
-	var x = element.getElementsByTagName(tagName);
-	for (var i = 0; i < x.length; i++) {
-		list[i] = x[i];
-	}
-	return list;
 }
 
 /**
@@ -54,16 +42,20 @@ export function findNode(nodeName: string, node: Node | null) {
 			return node;
 		}
 		node = node.parentNode;
-	}
+  }
+  return;
 }
 
 /**
  * Select a node's contents
  */
 export function selectNodeContents(node: Node) {
-	var selection = window.getSelection();
+  let selection = window.getSelection();
+  if (selection == null) {
+    return;
+  }
 	selection.removeAllRanges();
-	var range = document.createRange();
+	let range = document.createRange();
 	range.selectNodeContents(node); // range.selectNode(node);
 	selection.addRange(range);
 }

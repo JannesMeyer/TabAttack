@@ -35,7 +35,7 @@ export function open(openerTab: browser.tabs.Tab, url: string) {
  * Return the total number of tabs
  */
 export function count(): Promise<number> {
-  return browser.tabs.query({ windowType: browser.tabs.WindowType.normal }).then(tabs => tabs.length);
+  return browser.tabs.query({ windowType: 'normal' }).then(tabs => tabs.length);
 }
 
 /**

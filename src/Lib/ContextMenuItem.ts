@@ -1,5 +1,5 @@
-import { getString } from "../Services/StringService";
-import assertDefined from "./assertDefined";
+import getString from './browser/getString';
+import assertDefined from './assertDefined';
 
 type MenuProps = Parameters<(typeof browser.menus.create)>[0];
 

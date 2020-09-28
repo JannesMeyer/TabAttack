@@ -82,7 +82,7 @@ function handleFileChange(ev: Event) {
 
 	// Read file
 	var reader = new FileReader();
-	reader.addEventListener('load', ev => {
+	reader.addEventListener('load', () => {
 		for (var lnr of listeners) {
 			lnr(reader.result);
 		}

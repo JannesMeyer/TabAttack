@@ -1,51 +1,53 @@
 import KeyPress from 'keypress-tool';
-import { parseQuery } from '../Lib/QueryString';
-import { removeChildren } from '../Lib/DOM';
+import { parseQuery } from '../lib/QueryString';
+import { removeChildren } from '../lib/DOM';
+import getString from '../Lib/browser/getString';
+import { sendMessage } from '../lib/browser/sendMessage';
+import assertDefined from '../lib/assertDefined';
 
-var returned = false;
+let returned = false;
 
 // Get the parameters
-var query = parseQuery(location.search);
-var windowIds = query.windowIds.split(';').map(Number);
-var numTabs = Number(query.numTabs);
+let query = parseQuery(location.search);
+let windowIds = query.windowIds.split(';').map(Number);
+let numTabs = Number(query.numTabs);
 
 // Set the title
 document.title = getString('move_tab', numTabs);
 
 // Build DOM
-var listState = [{
-	name: getString('new_window'),
-	returnValue: -1
-}];
-var buttons;
-var focusIndex;
+let listState: { name: string, returnValue: number, tabs?: browser.tabs.Tab[] }[] = [
+  { name: getString('new_window'), returnValue: -1 }
+];
+let buttons: HTMLButtonElement[];
+let focusIndex: number;
 Promise.all(
-	windowIds.map(id => getWindow(id, { populate: true }))
+	windowIds.map(id => browser.windows.get(id, { populate: true }))
 ).then(windows => {
-	for (var wnd of windows) {
+	for (let w of windows) {
 		listState.push({
-			name: getString('window_with_tab', wnd.tabs.length),
-			tabs: wnd.tabs,
-			returnValue: wnd.id
+			name: getString('window_with_tab', assertDefined(w.tabs).length),
+			tabs: assertDefined(w.tabs),
+			returnValue: assertDefined(w.id),
 		});
 	}
 	buttons = renderButtons(document.body);
 	buttons[0].focus();
 });
 
-KeyPress('tab', ['shift']).addListener(moveFocus.bind(null, -1));
-KeyPress('up').addListener(moveFocus.bind(null, -1));
-KeyPress('tab').addListener(moveFocus.bind(null, 1));
-KeyPress('down').addListener(moveFocus.bind(null, 1));
+KeyPress('Tab', 'shift').addListener(moveFocus.bind(null, -1));
+KeyPress('Up').addListener(moveFocus.bind(null, -1));
+KeyPress('Tab').addListener(moveFocus.bind(null, 1));
+KeyPress('Down').addListener(moveFocus.bind(null, 1));
 
-KeyPress('esc').addListener(ev => returnMessage());
-window.addEventListener('blur', ev => returnMessage());
-window.addEventListener('unload', ev => returnMessage());
+KeyPress('Esc').addListener(() => returnMessage());
+window.addEventListener('blur', () => returnMessage());
+window.addEventListener('unload', () => returnMessage());
 
 /**
  * Closing the popup without returning anything
  */
-function returnMessage(val) {
+function returnMessage(val: { newWindow?: boolean, windowId?: number } = {}) {
 	if (!returned) {
 		sendMessage('popup_close', val);
 		returned = true;
@@ -56,8 +58,8 @@ function returnMessage(val) {
 /**
  * Button click handler
  */
-function clickHandler(ev) {
-	var windowId = listState[focusIndex].returnValue;
+function clickHandler() {
+	let windowId = listState[focusIndex].returnValue;
 	if (windowId === -1) {
 		returnMessage({ newWindow: true });
 	} else {
@@ -68,8 +70,8 @@ function clickHandler(ev) {
 /**
  * Focus change event handler
  */
-function focusHandler(ev) {
-	for (var i = 0; i < buttons.length; ++i) {
+function focusHandler(ev: FocusEvent) {
+	for (let i = 0; i < buttons.length; ++i) {
 		if (buttons[i] === ev.target) {
 			focusIndex = i;
 		}
@@ -79,8 +81,8 @@ function focusHandler(ev) {
 /**
  * Move the focus by delta items in the tab order
  */
-function moveFocus(delta) {
-	var index = (buttons.length + focusIndex + delta) % buttons.length;
+function moveFocus(delta: number) {
+	let index = (buttons.length + focusIndex + delta) % buttons.length;
 	buttons[index].focus();
 	buttons[index].scrollIntoView(delta < 0);
 }
@@ -88,17 +90,17 @@ function moveFocus(delta) {
 /**
  * Render the buttons to the root element
  */
-function renderButtons(root) {
+function renderButtons(root: HTMLElement) {
 	// Remove children from root
 	removeChildren(root);
 
 	// Render
-	var main = document.createElement('div');
-	var buttons = listState.map((item, i) => {
-		var button = document.createElement('button');
+	let main = document.createElement('div');
+	let buttons = listState.map(item => {
+		let button = document.createElement('button');
 		main.appendChild(button);
 
-		var text = document.createTextNode(item.name);
+		let text = document.createTextNode(item.name);
 		button.appendChild(text);
 
 		// Register events
@@ -107,11 +109,11 @@ function renderButtons(root) {
 
 		// Tab preview
 		if (item.tabs) {
-			var tabs = document.createElement('div');
+			let tabs = document.createElement('div');
 			button.appendChild(tabs);
 
-			for (var tab of item.tabs) {
-				var favicon = document.createElement('img');
+			for (let tab of item.tabs) {
+				let favicon = document.createElement('img');
 				favicon.src = 'chrome://favicon/' + tab.url;
 				tabs.appendChild(favicon);
 			}

@@ -1,6 +1,6 @@
-import Preferences from '../Lib/Preferences';
+import Preferences from "./lib/Preferences";
 
-export default new Preferences({
+const prefs = new Preferences({
 	format: 'markdown',
 	protocolBlacklist: [
 		'chrome:',
@@ -21,3 +21,5 @@ export default new Preferences({
 	showCopyLinkAsMarkdown: true,
 	showCopyPageAsMarkdown: false
 });
+export type Prefs = typeof prefs.defaults;
+export default prefs;

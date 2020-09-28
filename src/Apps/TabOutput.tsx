@@ -1,16 +1,18 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import * as marked from 'marked';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import marked from 'marked';
 import KeyPress from 'keypress-tool';
 import { getIsoDateString } from 'date-tool';
-import { Tabs, Windows, getString, sendMessage } from 'chrome-tool';
-
-import { getTags, parseHTML } from './lib-browser/dom-tool';
-import * as FileSystem from './lib-browser/FileSystem';
-
-import Editor from './components/Editor';
-import Toast from './components/Toast';
-import ActionButton from './components/ActionButton';
+import { parseHTML } from '../lib/DOM';
+import * as FileSystem from '../lib/FileSystem';
+import Editor from '../components/Editor';
+import Toast from '../components/Toast';
+import ActionButton from '../components/ActionButton';
+import getString from '../lib/browser/getString';
+import { sendMessage } from '../lib/browser/sendMessage';
+import closeOtherTabs from '../lib/browser/closeOtherTabs';
+import { openWindows } from '../components/openWindows';
+import assertDefined from '../lib/assertDefined';
 
 // Load strings
 document.title = getString('ext_name');
@@ -21,45 +23,46 @@ var strings = {
 	openLinks: getString('action_open_links')
 };
 
-var ctrlS      = KeyPress('S', ['ctrl']);
-var ctrlQ      = KeyPress('Q', ['ctrl']);
-var ctrlO      = KeyPress('O', ['ctrl']);
-var ctrlShiftO = KeyPress('O', ['ctrl', 'shift']);
+var ctrlS      = KeyPress('S', 'ctrl');
+var ctrlQ      = KeyPress('Q', 'ctrl');
+var ctrlO      = KeyPress('O', 'ctrl');
+var ctrlShiftO = KeyPress('O', 'ctrl', 'shift');
 
 // Load document
-sendMessage('get_document').then(doc => {
-	ReactDOM.render(<Page message={doc.message} doc={doc} />, document.body);
+sendMessage<Doc>('get_document').then(doc => {
+  doc ??= { format: 'markdown', text: '' };
+	ReactDOM.render(<TabOutput message={doc.message} doc={doc} />, document.body);
 }).catch(err => {
-	ReactDOM.render(<Page message={err} />, document.body);
+	ReactDOM.render(<TabOutput message={err} />, document.body);
 });
 
 interface P {
 	doc?: Doc;
-	message: string | undefined;
+	message?: string;
 }
 
 interface S {
-	doc: Doc | undefined;
-	toastMessage: string | undefined;
+	doc?: Doc;
+	toastMessage?: string;
 }
 
 interface Doc {
 	format: 'markdown' | 'json';
-	text: string | undefined;
+  text?: string;
+  message?: string;
 }
 
-class Page extends React.Component<P, S> {
+class TabOutput extends React.Component<P, S> {
 	constructor(p: P) {
 		super(p);
 		this.state = {
 			doc: p.doc,
-			toastMessage: p.message
+			toastMessage: p.message,
 		};
 
 		// Bind methods
 		this.showToast = this.showToast.bind(this);
 		this.downloadAsTextFile = this.downloadAsTextFile.bind(this);
-		this.closeOtherTabs = this.closeOtherTabs.bind(this);
 		this.loadFile = this.loadFile.bind(this);
 		this.openLinks = this.openLinks.bind(this);
 	}
@@ -74,7 +77,7 @@ class Page extends React.Component<P, S> {
 			doc: { format: 'markdown', text },
 			toastMessage: undefined
 		}));
-		FileSystem.setupFileInput(this.refs.fileInput.getDOMNode());
+		FileSystem.setupFileInput(assertDefined(this.fileInput.current));
 		FileSystem.setupFileTarget(document.body);
 	}
 
@@ -88,22 +91,15 @@ class Page extends React.Component<P, S> {
 		}
 		let ext = (doc.format === 'json' ? '.json' : '.md');
 		let filename = getIsoDateString() + ext;
-		let text = this.refs.editor.getContent();
+		let text = assertDefined(this.editor.current).getContent();
 		FileSystem.saveTextFile(filename, text);
-	}
-
-	/**
-	 * Action: Close all tabs except the current tab
-	 */
-	closeOtherTabs() {
-		Tabs.closeOthers();
 	}
 
 	/**
 	 * Action: Load file
 	 */
 	loadFile() {
-		this.refs.fileInput.getDOMNode().click();
+		this.fileInput.current?.click();
 	}
 
 	/**
@@ -111,40 +107,42 @@ class Page extends React.Component<P, S> {
 	 */
 	openLinks() {
 		// Markdown → HTML → DOM
-		var text = this.refs.editor.getContent();
-		var doc = parseHTML(marked(text));
+		let text = assertDefined(this.editor.current).getContent();
+		let doc = parseHTML(marked(text));
 
 		// Get all links inside of an <ul>
-		var windows = getTags('ul', doc).map(ul => {
-			ul.parentNode.removeChild(ul);
-			return getTags('a', ul).map(a => a.href);
+		let windows = Array.from(doc.getElementsByTagName('ul')).map(ul => {
+			ul.parentNode?.removeChild(ul);
+			return Array.from(ul.getElementsByTagName('a')).map(a => a.href);
 		});
 
 		// Check for leftovers
-		if (getTags('a', doc).length > 0) {
+		if (doc.getElementsByTagName('a').length > 0) {
 			this.showToast(getString('link_outside_list_error'));
 			return;
 		}
 
-		Windows.open(windows);
+		openWindows(windows);
 	}
 
+  fileInput = React.createRef<HTMLInputElement>();
+  editor = React.createRef<Editor>();
+
 	render() {
-		var doc = this.state.doc;
+    let s = this.state;
 		return (
 			<div className="m-container">
 				<div className="m-toolbar">
-					<input type="file" ref="fileInput" style={{display: 'none'}} />
+					<input type="file" ref={this.fileInput} style={{ display: 'none' }} />
 					<ActionButton className="item-save" onClick={this.downloadAsTextFile} keyPress={ctrlS} title={strings.save} />
-					<ActionButton className="item-close" onClick={this.closeOtherTabs} keyPress={ctrlQ} title={strings.close} />
+					<ActionButton className="item-close" onClick={closeOtherTabs} keyPress={ctrlQ} title={strings.close} />
 					<ActionButton className="item-load-file" onClick={this.loadFile} keyPress={ctrlO} title={strings.loadFile} />
-					{doc.format === 'markdown' &&
+					{s.doc?.format === 'markdown' &&
 					<ActionButton className="item-open" onClick={this.openLinks} keyPress={ctrlShiftO} title={strings.openLinks} />}
 				</div>
 				<Toast duration={4}>{this.state.toastMessage}</Toast>
-				<Editor ref="editor" doc={doc} showToast={this.showToast} />
+				<Editor ref={this.editor} doc={s.doc} showToast={this.showToast} />
 			</div>
 		);
 	}
 }
-Page.defaultProps = { doc: { format: 'markdown', text: '' } };

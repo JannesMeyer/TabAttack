@@ -1,13 +1,16 @@
 import * as Clipboard from 'clipboard-tool';
-import Preferences from '../Services/Preferences';
-import drawIcon from '../Services/DrawIcon';
-import { buildQuery } from '../Lib/QueryString';
-import { markdownLink } from '../Lib/Markdown';
-import * as TabService from '../Services/TabService';
-import { getString } from '../Services/StringService';
-import { onCommand } from '../Lib/BrowserCommand';
-import BrowserContextMenu from '../Lib/ContextMenuItem';
-//import * as throttle from 'lodash.throttle';
+import Preferences from '../preferences';
+import drawIcon from '../components/drawIcon';
+import { buildQuery } from '../lib/QueryString';
+import markdownLink from '../lib/markdownLink';
+import * as TabService from '../lib/tabs';
+import { onCommand } from '../lib/browser/onCommand';
+import ContextMenuItem from '../lib/ContextMenuItem';
+import onMessage from '../Lib/browser/onMessage';
+import getString from '../Lib/browser/getString';
+import Popup from '../lib/Popup';
+import throttle from 'lodash.throttle';
+import assertDefined from '../Lib/assertDefined';
 
 /**
  * The last generated document
@@ -42,12 +45,13 @@ onCommand('export_current_window', function() {
 /*
  * Context menu: Copy link as Markdown
  */
-const copyLinkCmi = new BrowserContextMenu({
+const copyLinkCmi = new ContextMenuItem({
   id: 'copy_link',
   contexts: [ 'link' ],
   onclick(info, tab) {
+    let url = assertDefined(info.linkUrl);
     if (info.selectionText) {
-      copyLink(info.selectionText, info.linkUrl, 'linkTitle');
+      copyLink(info.selectionText, url, 'linkTitle');
       return;
     }
     if (tab.id == null) {
@@ -68,33 +72,33 @@ const copyLinkCmi = new BrowserContextMenu({
         }
       }
       // Copy the link, whether we have a title or not
-      copyLink(title, info.linkUrl, 'linkTitle');
+      copyLink(title, url, 'linkTitle');
     });
   },
 });
 
-Preferences.get('showCopyLinkAsMarkdown').then(copyLinkCmi.setVisible);
-onMessage('show copyLinkItem', copyLinkCmi.show);
-onMessage('hide copyLinkItem', copyLinkCmi.hide);
+Preferences.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown }) => copyLinkCmi.setVisible(showCopyLinkAsMarkdown));
+onMessage('show copyLinkItem', () => copyLinkCmi.show());
+onMessage('hide copyLinkItem', () => copyLinkCmi.hide());
 
 /**
  * Context menu: Copy page as Markdown link
  */
-var copyPageItem = new BrowserContextMenu({
+var copyPageItem = new ContextMenuItem({
   id: 'copy_page',
-  contexts: [ browser.contextMenus.ContextType.page ],
-  onclick(info, tab) {
-    copyLink(tab.title, tab.url, 'documentTitle');
+  contexts: [ 'page' ],
+  onclick(_info, tab) {
+    copyLink(tab.title, assertDefined(tab.url), 'documentTitle');
   },
 });
 
-Preferences.get('showCopyPageAsMarkdown').then(copyPageItem.setVisible);
-onMessage('show copyPageItem', copyPageItem.show);
-onMessage('hide copyPageItem', copyPageItem.hide);
+Preferences.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown }) => copyPageItem.setVisible(showCopyPageAsMarkdown));
+onMessage('show copyPageItem', () => copyPageItem.show());
+onMessage('hide copyPageItem', () => copyPageItem.hide());
 
 /** Global shortcut: Copy active tab as a Markdown link */
 onCommand('copy_tab_as_markdown', function() {
-	TabService.getActive().then(tab => copyLink(tab.title, tab.url, 'documentTitle'));
+	TabService.getActive().then(tab => copyLink(tab.title, assertDefined(tab.url), 'documentTitle'));
 });
 
 /** Global shortcut: Move highlighted tabs left */
@@ -103,11 +107,11 @@ onCommand('move_tab_left', () => TabService.moveHighlighted(-1));
 /** Global shortcut: Move highlighted tabs right */
 onCommand('move_tab_right', () => TabService.moveHighlighted(1));
 
-/** Global shortcut: Focus tab to the left */
-onCommand('focus_left', () => TabService.focusLeft());
+// /** Global shortcut: Focus tab to the left */
+// onCommand('focus_left', () => TabService.focusLeft());
 
-/** Global shortcut: Focus tab to the right */
-onCommand('focus_right', () => TabService.focusRight());
+// /** Global shortcut: Focus tab to the right */
+// onCommand('focus_right', () => TabService.focusRight());
 
 /*
  * Global shortcut: Pin highlighted tabs
@@ -138,7 +142,7 @@ onCommand('duplicate_tab', function() {
 /*
  * Message from output.html: Get document
  */
-onMessage('get_document', (message, sender, sendResponse) => {
+onMessage('get_document', (_message, _sender, sendResponse) => {
 	if (_doc) {
 		sendResponse(_doc);
 	} else {
@@ -154,9 +158,9 @@ onCommand('send_tab', function() {
 		TabService.getHighlighted(),
 		browser.windows.getAll()
 	]).then(([tabs, windows]) => {
-    let sourceWindow = windows.find(w => w.focused);
+    let sourceWindow = assertDefined(windows.find(w => w.focused));
 		// Get target windows
-		windows = windows.filter(w => w.type === 'normal' && !w.focused && sourceWindow && sourceWindow.incognito === w.incognito);
+		windows = windows.filter(w => w.type === 'normal' && !w.focused && sourceWindow.incognito === w.incognito);
 		if (windows.length === 0) {
 			// Immediately detach to a new window
 			TabService.moveToNewWindow(tabs, sourceWindow.incognito);
@@ -167,10 +171,15 @@ onCommand('send_tab', function() {
 					numTabs: tabs.length,
 					windowIds: windows.map(w => w.id).join(';')
 				}),
-				parent: sourceWindow,
+				parent: {
+          top: assertDefined(sourceWindow.top),
+          left: assertDefined(sourceWindow.left),
+          width: assertDefined(sourceWindow.width),
+          height: assertDefined(sourceWindow.height),
+        },
 				width: 240,
 				height: 400
-			}).show().then(msg => {
+			}).closed.then(msg => {
 				if (msg.windowId !== undefined) {
 					TabService.moveToWindow(tabs, msg.windowId);
 				} else if (msg.newWindow !== undefined) {
@@ -184,7 +193,7 @@ onCommand('send_tab', function() {
 /**
  * Let the user modify link title and then copy it as Markdown
  */
-function copyLink(originalTitle: string | undefined, url: string | undefined, type: 'documentTitle' | 'linkTitle') {
+function copyLink(originalTitle: string | undefined, url: string, _type: 'documentTitle' | 'linkTitle') {
 		// Let the user modify the title
 		var title = prompt(getString('prompt_title_change', originalTitle), originalTitle);
 
@@ -250,22 +259,23 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
 		}
 
 		// Count highlighted tabs. If >1 only export those.
-		var highlightedTabs = windows[0].tabs.filter(t => t.highlighted);
+		var highlightedTabs = assertDefined(windows[0].tabs).filter(t => t.highlighted);
 		if (highlightedTabs.length > 1) {
-			windows = [ { tabs: highlightedTabs } ];
+			windows = [ { tabs: highlightedTabs, focused: false, incognito: false, alwaysOnTop: false } ];
 		}
 
 		// Filter some urls out and count the number of tabs that are still loading
 		var loadingTabs = 0;
 		for (var wnd of windows) {
-			wnd.tabs = wnd.tabs.filter(tab => {
+			wnd.tabs = assertDefined(wnd.tabs).filter(tab => {
 
-				// Compatibility with The Great Suspender
-				if (tab.url.startsWith('chrome-extension://klbibkeccnjlkjkiokjodocebajanakg/suspended.html#uri=')) {
-					tab.url = tab.url.replace(/^chrome-extension:\/\/klbibkeccnjlkjkiokjodocebajanakg\/suspended\.html#uri=/, '');
+        // Compatibility with The Great Suspender
+        let urlStr = assertDefined(tab.url);
+				if (urlStr.startsWith('chrome-extension://klbibkeccnjlkjkiokjodocebajanakg/suspended.html#uri=')) {
+					tab.url = urlStr.replace(/^chrome-extension:\/\/klbibkeccnjlkjkiokjodocebajanakg\/suspended\.html#uri=/, '');
 				}
 
-				var url = new URL(tab.url);
+				let url = new URL(urlStr);
 
 				return !prefs.protocolBlacklist.includes(url.protocol) &&
 				       !prefs.domainBlacklist.includes(url.hostname) &&
@@ -276,14 +286,14 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
 		}
 
 		// Ignore empty windows
-		windows = windows.filter(wnd => wnd.tabs.length > 0);
+		windows = windows.filter(wnd => assertDefined(wnd.tabs).length > 0);
 
 		// Build document
-		var doc;
+		let doc;
 		if (prefs.format === 'json') {
-			doc = buildJSONDocument(windows, sourceTab.id);
+			doc = buildJSONDocument(windows, assertDefined(sourceTab.id));
 		} else {
-			doc = buildMarkdownDocument(windows, sourceTab.id);
+			doc = buildMarkdownDocument(windows, assertDefined(sourceTab.id));
 		}
 
 		// Tell the user if only highlighted tabs were exported
@@ -308,9 +318,12 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
 /**
  * Build a pretty-printed JSON document from an array of windows
  */
-function buildJSONDocument(windows: browser.windows.Window[], sourceTabId: number): IDoc {
-	let wnd = windows.map(w => (w.tabs || []).map(t => ({ title: t.title, url: t.url })));
-	return { format: 'json', text: JSON.stringify(windows, undefined, 2) };
+function buildJSONDocument(windows: browser.windows.Window[], _sourceTabId: number): IDoc {
+	let wnd = windows.map(w => assertDefined(w.tabs).map(t => ({ title: t.title, url: t.url })));
+	return {
+    format: 'json',
+    text: JSON.stringify(wnd, undefined, 2),
+  };
 }
 
 /**
@@ -320,11 +333,12 @@ function buildMarkdownDocument(windows: browser.windows.Window[], sourceTabId: n
 	var lines = [];
 	var highlightLine = 0;
 	for (var wnd of windows) {
+    let tabs = assertDefined(wnd.tabs);
 		var name = (wnd.incognito ? 'headline_incognito_window' : 'headline_window');
-		lines.push('# ' + getString(name, wnd.tabs.length));
+		lines.push('# ' + getString(name, tabs.length));
 		lines.push('');
-		for (var tab of wnd.tabs) {
-			lines.push('- ' + markdownLink(tab.title, tab.url));
+		for (var tab of tabs) {
+			lines.push('- ' + markdownLink(tab.title, assertDefined(tab.url)));
 			if (tab.id === sourceTabId) {
 				highlightLine = lines.length;
 			}
