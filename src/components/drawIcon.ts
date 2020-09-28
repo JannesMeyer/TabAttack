@@ -8,23 +8,6 @@ const BIG_FONT = 'bold 11px Roboto';
 const SMALL_FONT = 'bold 10px Roboto Condensed';
 const TEXT_POSITION = 13;
 
-// Load font
-var style = document.createElement('style');
-style.innerHTML = `
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 700;
-  src: local('Roboto Bold'), local('Roboto-Bold'), url(data/Roboto-Bold.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Roboto Condensed';
-  font-style: normal;
-  font-weight: 700;
-  src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(data/Roboto-Condensed-Bold.woff2) format('woff2');
-}`;
-document.head.appendChild(style);
-
 /**
  * Create off-screen canvas and draw the rounded rectangle
  */

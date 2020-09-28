@@ -3,3 +3,4 @@
 *.zip
 node_modules
 /dist/**/*.js
+!/dist/vendor/**/*.js
