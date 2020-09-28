@@ -1,6 +1,5 @@
 .DS_Store
 *.log
 *.zip
-/assets
 node_modules
 /dist/**/*.js
