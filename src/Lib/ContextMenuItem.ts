@@ -1,7 +1,7 @@
-import getString from './browser/getString';
-import assertDefined from './assertDefined';
+import getString from './browser/getString.js';
+import assertDefined from './assertDefined.js';
 
-type MenuProps = Parameters<(typeof browser.menus.create)>[0];
+type MenuProps = Parameters<(typeof browser.contextMenus.create)>[0];
 
 /**
  * A context menu item can appear in various places in the browser.
@@ -37,11 +37,11 @@ export default class ContextMenuItem {
   }
 
   show() {
-    browser.menus.create(this.props);
+    browser.contextMenus.create(this.props);
   }
 
   hide() {
-    browser.menus.remove(this.id);
+    browser.contextMenus.remove(this.id);
   }
 
 }

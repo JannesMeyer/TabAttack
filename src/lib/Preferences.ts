@@ -1,4 +1,4 @@
-export default class Preferences<T extends browser.storage.StorageObject> {
+export default class Preferences<T> {
 
   constructor(readonly defaults: T) {}
 
@@ -9,14 +9,14 @@ export default class Preferences<T extends browser.storage.StorageObject> {
    */
   get<X extends keyof T>(...keys: X[]): Promise<Pick<T, X>> {
     let defaults = filterObject(this.defaults, keys);
-    return browser.storage.sync.get(defaults);
+    return browser.storage.sync.get(defaults) as Promise<any>;
   }
 
   /**
    * Requests all values
    */
   getAll(): Promise<T> {
-    return browser.storage.sync.get(null);
+    return browser.storage.sync.get() as Promise<any>;
   }
 
   /**

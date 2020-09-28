@@ -1,16 +1,15 @@
-import * as Clipboard from 'clipboard-tool';
-import Preferences from '../preferences';
-import drawIcon from '../components/drawIcon';
-import { buildQuery } from '../lib/QueryString';
-import markdownLink from '../lib/markdownLink';
-import * as TabService from '../lib/tabs';
-import { onCommand } from '../lib/browser/onCommand';
-import ContextMenuItem from '../lib/ContextMenuItem';
-import onMessage from '../Lib/browser/onMessage';
-import getString from '../Lib/browser/getString';
-import Popup from '../lib/Popup';
-import throttle from 'lodash.throttle';
-import assertDefined from '../Lib/assertDefined';
+import Preferences from '../preferences.js';
+import drawIcon from '../components/drawIcon.js';
+import { buildQuery } from '../lib/QueryString.js';
+import markdownLink from '../lib/markdownLink.js';
+import * as TabService from '../lib/tabs.js';
+import { onCommand } from '../lib/browser/onCommand.js';
+import ContextMenuItem from '../lib/ContextMenuItem.js';
+import onMessage from '../Lib/browser/onMessage.js';
+import getString from '../Lib/browser/getString.js';
+import Popup from '../lib/Popup.js';
+import assertDefined from '../Lib/assertDefined.js';
+import writeClipboard from '../lib/writeClipboard.js';
 
 /**
  * The last generated document
@@ -214,7 +213,7 @@ function copyLink(originalTitle: string | undefined, url: string, _type: 'docume
 		// }
 
 		// Copy the title and URL as a Markdown link
-		Clipboard.write(markdownLink(title, url));
+		writeClipboard(markdownLink(title, url));
 }
 
 /**
@@ -358,7 +357,7 @@ interface IDoc {
 }
 
 /**
- * Update icon with the current tab count
+ * Update browser action icon with the current tab count
  */
 function updateIcon() {
 	TabService.count().then(count => {
@@ -366,11 +365,6 @@ function updateIcon() {
 	});
 }
 
-/**
- * Debounced version of updateIcon()
- */
-var handleTabChange = throttle(updateIcon, 500);
-
-updateIcon();
-browser.tabs.onCreated.addListener(handleTabChange);
-browser.tabs.onRemoved.addListener(handleTabChange);
+browser.tabs.onCreated.addListener(updateIcon);
+browser.tabs.onRemoved.addListener(updateIcon);
+addEventListener('load', updateIcon);

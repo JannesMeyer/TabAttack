@@ -1,4 +1,4 @@
-import onMessage from "./browser/onMessage";
+import onMessage from "./browser/onMessage.js";
 
 interface PopupProps {
   url: string;

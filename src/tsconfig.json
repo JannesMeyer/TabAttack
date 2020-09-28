@@ -10,6 +10,5 @@
     "allowSyntheticDefaultImports": true,
     "target": "ES2020",
     "outDir": "../dist",
-    "typeRoots": ["../node_modules/@types", "../node_modules/web-ext-types"],
   }
 }
