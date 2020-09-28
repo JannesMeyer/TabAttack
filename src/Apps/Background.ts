@@ -62,10 +62,10 @@ const copyLinkCmi = new ContextMenuItem({
   },
 });
 Preferences.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown: x }) => {
-  copyLinkCmi.setEnabled(x).catch(logError);
+  copyLinkCmi.setVisible(x).catch(logError);
 });
-onMessage('show copyLinkItem', () => copyLinkCmi.setEnabled(true).catch(logError));
-onMessage('hide copyLinkItem', () => copyLinkCmi.setEnabled(false).catch(logError));
+onMessage('show copyLinkItem', () => copyLinkCmi.setVisible(true).catch(logError));
+onMessage('hide copyLinkItem', () => copyLinkCmi.setVisible(false).catch(logError));
 
 // Context menu: Copy page as Markdown link
 const copyPageCmi = new ContextMenuItem({
@@ -76,10 +76,10 @@ const copyPageCmi = new ContextMenuItem({
   },
 });
 Preferences.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown: x }) => {
-  copyPageCmi.setEnabled(x).catch(logError);
+  copyPageCmi.setVisible(x).catch(logError);
 });
-onMessage('show copyPageItem', () => copyPageCmi.setEnabled(true).catch(logError));
-onMessage('hide copyPageItem', () => copyPageCmi.setEnabled(false).catch(logError));
+onMessage('show copyPageItem', () => copyPageCmi.setVisible(true).catch(logError));
+onMessage('hide copyPageItem', () => copyPageCmi.setVisible(false).catch(logError));
 
 /** Global shortcut: Copy active tab as a Markdown link */
 onCommand('copy_tab_as_markdown', function() {

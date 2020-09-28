@@ -26,8 +26,8 @@ export default class ContextMenuItem {
     this.id = browser.contextMenus.create(props);
   }
 
-  setEnabled(enabled: boolean) {
-    return browser.contextMenus.update(this.id, { enabled });
+  setVisible(visible: boolean) {
+    return browser.contextMenus.update(this.id, { visible });
   }
 
 }
