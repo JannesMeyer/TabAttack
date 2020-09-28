@@ -1,5 +1,4 @@
 import getString from './browser/getString.js';
-import assertDefined from './assertDefined.js';
 
 type MenuProps = Parameters<(typeof browser.contextMenus.create)>[0];
 
@@ -14,34 +13,21 @@ type MenuProps = Parameters<(typeof browser.contextMenus.create)>[0];
  */
 export default class ContextMenuItem {
 
-  readonly id: string;
-  props: MenuProps;
+  readonly id: string | number;
 
   /**
-   * Instantiate a context menu item (but don't show it yet)
+   * Registers a context menu item
    */
   constructor(props: MenuProps) {
-    this.id = assertDefined(props.id);
-    this.props = {
-      title: getString('context_menu_' + this.id),
+    props = {
+      title: (props.id != null ? getString('context_menu_' + props.id) : undefined),
       ...props,
     };
+    this.id = browser.contextMenus.create(props);
   }
 
-  setVisible(visible: boolean) {
-    if (visible) {
-      this.show();
-    } else {
-      this.hide();
-    }
-  }
-
-  show() {
-    browser.contextMenus.create(this.props);
-  }
-
-  hide() {
-    browser.contextMenus.remove(this.id);
+  setEnabled(enabled: boolean) {
+    return browser.contextMenus.update(this.id, { enabled });
   }
 
 }

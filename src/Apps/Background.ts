@@ -5,10 +5,10 @@ import markdownLink from '../lib/markdownLink.js';
 import * as TabService from '../lib/tabs.js';
 import { onCommand } from '../lib/browser/onCommand.js';
 import ContextMenuItem from '../lib/ContextMenuItem.js';
-import onMessage from '../Lib/browser/onMessage.js';
-import getString from '../Lib/browser/getString.js';
+import onMessage from '../lib/browser/onMessage.js';
+import getString from '../lib/browser/getString.js';
 import Popup from '../lib/Popup.js';
-import assertDefined from '../Lib/assertDefined.js';
+import assertDefined from '../lib/assertDefined.js';
 import writeClipboard from '../lib/writeClipboard.js';
 
 /**
@@ -16,37 +16,23 @@ import writeClipboard from '../lib/writeClipboard.js';
  */
 var _doc: IDoc | undefined;
 
-/*
- * Handle browser action
- */
+// Browser action: All windows
 browser.browserAction.onClicked.addListener(exportAllWindows);
 
-/**
- * Context menu: Export current window (browser action)
- */
-// const exportWindowCmi = 'export_current_window';
-// browser.contextMenus.create({
-//   id: exportWindowCmi,
-//   contexts: [ 'browser_action' ],
-//   title: getString('context_menu_' + exportWindowCmi),
-//   onclick(info, sourceTab) {
-//     exportCurrentWindow(sourceTab);
-//   },
-// });
-
-/**
- * Keyboard shortcut: Export current window
- */
-onCommand('export_current_window', function() {
-	TabService.getActive().then(exportCurrentWindow);
+// Browser action: Only current window
+new ContextMenuItem({
+  id: 'export_current_window',
+  contexts: ['browser_action'],
+  onclick: (_, tab) => exportCurrentWindow(tab),
 });
 
-/*
- * Context menu: Copy link as Markdown
- */
+// Keyboard shortcut: Export current window
+onCommand('export_current_window', () => TabService.getActive().then(exportCurrentWindow));
+
+// Context menu: Copy link as Markdown
 const copyLinkCmi = new ContextMenuItem({
   id: 'copy_link',
-  contexts: [ 'link' ],
+  contexts: ['link'],
   onclick(info, tab) {
     let url = assertDefined(info.linkUrl);
     if (info.selectionText) {
@@ -75,25 +61,25 @@ const copyLinkCmi = new ContextMenuItem({
     });
   },
 });
+Preferences.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown: x }) => {
+  copyLinkCmi.setEnabled(x).catch(logError);
+});
+onMessage('show copyLinkItem', () => copyLinkCmi.setEnabled(true).catch(logError));
+onMessage('hide copyLinkItem', () => copyLinkCmi.setEnabled(false).catch(logError));
 
-Preferences.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown }) => copyLinkCmi.setVisible(showCopyLinkAsMarkdown));
-onMessage('show copyLinkItem', () => copyLinkCmi.show());
-onMessage('hide copyLinkItem', () => copyLinkCmi.hide());
-
-/**
- * Context menu: Copy page as Markdown link
- */
-var copyPageItem = new ContextMenuItem({
+// Context menu: Copy page as Markdown link
+const copyPageCmi = new ContextMenuItem({
   id: 'copy_page',
-  contexts: [ 'page' ],
+  contexts: ['page'],
   onclick(_info, tab) {
     copyLink(tab.title, assertDefined(tab.url), 'documentTitle');
   },
 });
-
-Preferences.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown }) => copyPageItem.setVisible(showCopyPageAsMarkdown));
-onMessage('show copyPageItem', () => copyPageItem.show());
-onMessage('hide copyPageItem', () => copyPageItem.hide());
+Preferences.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown: x }) => {
+  copyPageCmi.setEnabled(x).catch(logError);
+});
+onMessage('show copyPageItem', () => copyPageCmi.setEnabled(true).catch(logError));
+onMessage('hide copyPageItem', () => copyPageCmi.setEnabled(false).catch(logError));
 
 /** Global shortcut: Copy active tab as a Markdown link */
 onCommand('copy_tab_as_markdown', function() {
@@ -112,9 +98,7 @@ onCommand('move_tab_right', () => TabService.moveHighlighted(1));
 // /** Global shortcut: Focus tab to the right */
 // onCommand('focus_right', () => TabService.focusRight());
 
-/*
- * Global shortcut: Pin highlighted tabs
- */
+// Global shortcut: Pin highlighted tabs
 onCommand('pin_tab', function() {
 	TabService.getHighlighted().then(tabs => {
 		for (var tab of tabs) {
@@ -125,9 +109,7 @@ onCommand('pin_tab', function() {
 	});
 });
 
-/*
- * Global shortcut: Duplicate highlighted tabs
- */
+// Global shortcut: Duplicate highlighted tabs
 onCommand('duplicate_tab', function() {
 	TabService.getHighlighted().then(tabs => {
 		for (var tab of tabs) {
@@ -138,9 +120,7 @@ onCommand('duplicate_tab', function() {
 	});
 });
 
-/*
- * Message from output.html: Get document
- */
+// Message from output.html: Get document
 onMessage('get_document', (_message, _sender, sendResponse) => {
 	if (_doc) {
 		sendResponse(_doc);
@@ -149,9 +129,7 @@ onMessage('get_document', (_message, _sender, sendResponse) => {
 	}
 });
 
-/*
- * Global shortcut: Send the highlighted tabs to another window
- */
+// Global shortcut: Send the highlighted tabs to another window
 onCommand('send_tab', function() {
 	Promise.all([
 		TabService.getHighlighted(),
@@ -206,11 +184,6 @@ function copyLink(originalTitle: string | undefined, url: string, _type: 'docume
 		if (title === '') {
 			title = new URL(url).hostname.replace(/^www\./, '');
 		}
-
-		// Log title changes. This will not happen in production.
-		// if (isDev) {
-		// 	TitleChangelog.logChange(originalTitle, title, url, type);
-		// }
 
 		// Copy the title and URL as a Markdown link
 		writeClipboard(markdownLink(title, url));
@@ -356,15 +329,20 @@ interface IDoc {
   message?: string;
 }
 
-/**
- * Update browser action icon with the current tab count
- */
-function updateIcon() {
-	TabService.count().then(count => {
-		browser.browserAction.setIcon({ imageData: drawIcon(count.toString()) });
-	});
-}
 
 browser.tabs.onCreated.addListener(updateIcon);
 browser.tabs.onRemoved.addListener(updateIcon);
 addEventListener('load', updateIcon);
+
+/**
+ * Update browser action with the current tab count
+ */
+function updateIcon() {
+	TabService.count().then(count => {
+		browser.browserAction.setIcon({ imageData: drawIcon(count.toString()) });
+	}).catch(logError);
+}
+
+function logError(error: Error) {
+  console.error(error.message);
+}
