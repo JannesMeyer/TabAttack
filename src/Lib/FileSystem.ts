@@ -6,7 +6,6 @@ var MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 megabyte
  * Download a given text as a file
  *
  * https://github.com/eligrey/FileSaver.js
- * http://html5-demos.appspot.com/static/a.download.html
  */
 export function saveTextFile(filename: string, text: string) {
 	if (a === undefined) {

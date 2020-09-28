@@ -86,12 +86,10 @@ Pull requests and bug reports are welcome. If you submit a pull request, please 
 
 Special thanks to these projects:
 
-- [Ace](http://ace.c9.io/)
-- [React](http://facebook.github.io/react/)
-- [marked](https://github.com/chjj/marked)
-- [Chromium](http://www.chromium.org/Home)
-- [webpack](http://webpack.github.io/)
+- [Ace](https://ace.c9.io/)
+- [React](https://reactjs.org/)
+- [marked](https://github.com/markedjs/marked)
 
 ## License
 
-[GPLv3](http://www.gnu.org/licenses/gpl-3.0.txt)
+[GPL-3.0-only](https://spdx.org/licenses/GPL-3.0-only.html)

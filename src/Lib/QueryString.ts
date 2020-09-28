@@ -26,7 +26,7 @@ export function parseQuery(string: string): { [key: string]: string } {
 	for (var i = 0; i < length; i++) {
 		v = splits[i].split('=');
 		name = decodeURIComponent(v.shift() as string);
-		// no "=" is null according to http://dvcs.w3.org/hg/url/raw-file/tip/Overview.html#collect-url-parameters
+		// no "=" is null according to https://url.spec.whatwg.org/#concept-url-query
 		value = v.length ? decodeURIComponent(v.join('=')) : null;
 
 		if (items[name]) {

@@ -1,6 +1,7 @@
 {
   "name": "tabattack",
   "private": true,
+  "license": "GPL-3.0-only",
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
   "scripts": {

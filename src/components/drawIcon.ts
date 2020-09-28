@@ -59,7 +59,7 @@ export default function drawIcon(text: string) {
 /**
  * Draws a rounded rectangle using the current state of the canvas.
  *
- * http://stackoverflow.com/questions/1255512/how-to-draw-a-rounded-rectangle-on-html-canvas
+ * https://stackoverflow.com/questions/1255512/how-to-draw-a-rounded-rectangle-on-html-canvas
  */
 function roundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
 	ctx.beginPath();
