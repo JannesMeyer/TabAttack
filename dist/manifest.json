@@ -14,8 +14,7 @@
 	"permissions": [ "tabs", "storage", "clipboardWrite", "contextMenus", "activeTab" ],
 	"icons": {
 		"16": "images/icon-h16.png",
-		"48": "images/icon-h48.png",
-		"128": "images/icon-h128.png"
+		"128": "images/icon.svg"
 	},
 	"background": {
 		"page": "Apps/Background.html"
