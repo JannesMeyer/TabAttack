@@ -1,16 +1,16 @@
-import Preferences from '../preferences.js';
-import drawIcon from '../components/drawIcon.js';
-import { buildQuery } from '../lib/QueryString.js';
-import markdownLink from '../lib/markdownLink.js';
-import * as TabService from '../lib/tabs.js';
-import { onCommand } from '../lib/browser/onCommand.js';
-import ContextMenuItem from '../lib/ContextMenuItem.js';
-import onMessage from '../lib/browser/onMessage.js';
-import getString from '../lib/browser/getString.js';
-import Popup from '../lib/Popup.js';
-import assertDefined from '../lib/assertDefined.js';
-import writeClipboard from '../lib/writeClipboard.js';
-import isDefined from '../lib/isDefined.js';
+import Preferences from './preferences.js';
+import drawIcon from './components/drawIcon.js';
+import { buildQuery } from './lib/QueryString.js';
+import markdownLink from './lib/markdownLink.js';
+import * as TabService from './lib/tabs.js';
+import { onCommand } from './lib/browser/onCommand.js';
+import ContextMenuItem from './lib/ContextMenuItem.js';
+import onMessage from './lib/browser/onMessage.js';
+import getString from './lib/browser/getString.js';
+import Popup from './lib/Popup.js';
+import assertDefined from './lib/assertDefined.js';
+import writeClipboard from './lib/writeClipboard.js';
+import isDefined from './lib/isDefined.js';
 
 /**
  * The last generated document
@@ -279,6 +279,8 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
 		if (loadingTabs > 0) {
 			doc.message = getString('toast_loading_tab', loadingTabs);
 		}
+
+		console.log('done', doc);
 
 		return doc;
 	});

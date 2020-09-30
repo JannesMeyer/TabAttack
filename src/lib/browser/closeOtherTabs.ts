@@ -1,4 +1,4 @@
-import assertDefined from '../assertDefined';
+import assertDefined from '../assertDefined.js';
 
 export default async function closeOtherTabs() {
   const [sourceTab, windows] = await Promise.all([

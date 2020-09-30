@@ -1,9 +1,9 @@
 import KeyPress from 'keypress-tool';
-import { parseQuery } from '../lib/QueryString';
-import { removeChildren } from '../lib/DOM';
-import getString from '../Lib/browser/getString';
-import { sendMessage } from '../lib/browser/sendMessage';
-import assertDefined from '../lib/assertDefined';
+import { parseQuery } from './lib/QueryString';
+import { removeChildren } from './lib/DOM';
+import getString from './lib/browser/getString';
+import { sendMessage } from './lib/browser/sendMessage';
+import assertDefined from './lib/assertDefined';
 
 let returned = false;
 

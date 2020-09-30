@@ -1,5 +1,6 @@
 import prefs from '../preferences';
-import * as React from 'react';
+import type _React from 'react';
+declare var React: typeof _React;
 import * as ace from 'brace';
 import 'brace/ext/searchbox';
 import 'brace/ext/settings_menu';

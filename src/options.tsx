@@ -1,10 +1,10 @@
-import preferences, { Prefs } from '../preferences';
-import { lightThemes, darkThemes } from '../lib/AceThemes';
-import getString from '../lib/browser/getString';
+import preferences, { Prefs } from './preferences';
+import { lightThemes, darkThemes } from './lib/AceThemes';
+import getString from './lib/browser/getString';
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { sendMessage } from '../lib/browser/sendMessage';
-import assertDefined from '../lib/assertDefined';
+import { sendMessage } from './lib/browser/sendMessage';
+import assertDefined from './lib/assertDefined';
 
 // Useful for testing purposes:
 // import Storage from 'chrome-tool/storage-sync';

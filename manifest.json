@@ -17,10 +17,10 @@
 		"128": "images/icon.svg"
 	},
 	"background": {
-		"page": "Apps/Background.html"
+		"page": "background.html"
 	},
 	"options_ui": {
-		"page": "Apps/Options.html",
+		"page": "options.html",
 		"chrome_style": true
 	},
 	"browser_action": {

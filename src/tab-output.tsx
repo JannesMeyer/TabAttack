@@ -1,18 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import marked from 'marked';
-import KeyPress from 'keypress-tool';
-import { getIsoDateString } from 'date-tool';
-import { parseHTML } from '../lib/DOM';
-import * as FileSystem from '../lib/FileSystem';
-import Editor from '../components/Editor';
-import Toast from '../components/Toast';
-import ActionButton from '../components/ActionButton';
-import getString from '../lib/browser/getString';
-import { sendMessage } from '../lib/browser/sendMessage';
-import closeOtherTabs from '../lib/browser/closeOtherTabs';
-import { openWindows } from '../components/openWindows';
-import assertDefined from '../lib/assertDefined';
+// Fake imports
+import type _React from 'react';
+declare var React: typeof _React;
+import type _ReactDOM from 'react-dom';
+declare var ReactDOM: typeof _ReactDOM;
+import type _marked from 'marked';
+declare var marked: typeof _marked;
+
+
+// import KeyPress from 'keypress-tool';
+
+import { parseHTML } from './lib/DOM.js';
+import * as FileSystem from './lib/FileSystem.js';
+import Editor from './components/Editor.js';
+import Toast from './components/Toast.js';
+import ActionButton from './components/ActionButton.js';
+import getString from './lib/browser/getString.js';
+import { sendMessage } from './lib/browser/sendMessage.js';
+import closeOtherTabs from './lib/browser/closeOtherTabs.js';
+import { openWindows } from './components/openWindows.js';
+import assertDefined from './lib/assertDefined.js';
+
 
 // Load strings
 document.title = getString('ext_name');
@@ -23,10 +30,10 @@ var strings = {
 	openLinks: getString('action_open_links')
 };
 
-var ctrlS      = KeyPress('S', 'ctrl');
-var ctrlQ      = KeyPress('Q', 'ctrl');
-var ctrlO      = KeyPress('O', 'ctrl');
-var ctrlShiftO = KeyPress('O', 'ctrl', 'shift');
+// var ctrlS      = KeyPress('S', 'ctrl');
+// var ctrlQ      = KeyPress('Q', 'ctrl');
+// var ctrlO      = KeyPress('O', 'ctrl');
+// var ctrlShiftO = KeyPress('O', 'ctrl', 'shift');
 
 // Load document
 sendMessage<Doc>('get_document').then(doc => {
@@ -134,15 +141,39 @@ class TabOutput extends React.Component<P, S> {
 			<div className="m-container">
 				<div className="m-toolbar">
 					<input type="file" ref={this.fileInput} style={{ display: 'none' }} />
-					<ActionButton className="item-save" onClick={this.downloadAsTextFile} keyPress={ctrlS} title={strings.save} />
-					<ActionButton className="item-close" onClick={closeOtherTabs} keyPress={ctrlQ} title={strings.close} />
-					<ActionButton className="item-load-file" onClick={this.loadFile} keyPress={ctrlO} title={strings.loadFile} />
+					<ActionButton className="item-save" onClick={this.downloadAsTextFile} title={strings.save} />
+					<ActionButton className="item-close" onClick={closeOtherTabs} title={strings.close} />
+					<ActionButton className="item-load-file" onClick={this.loadFile} title={strings.loadFile} />
 					{s.doc?.format === 'markdown' &&
-					<ActionButton className="item-open" onClick={this.openLinks} keyPress={ctrlShiftO} title={strings.openLinks} />}
+					<ActionButton className="item-open" onClick={this.openLinks} title={strings.openLinks} />}
 				</div>
 				<Toast duration={4}>{this.state.toastMessage}</Toast>
 				<Editor ref={this.editor} doc={s.doc} showToast={this.showToast} />
 			</div>
 		);
 	}
+}
+
+/**
+ * Formats the current date as per ISO 8601
+ * For example: 2015-02-05
+ */
+export function getIsoDateString(date = new Date()): string {
+	var year = date.getFullYear();
+	var month = addLeadingZero(date.getMonth() + 1);
+	var day = addLeadingZero(date.getDate());
+
+	return `${year}-${month}-${day}`;
+}
+
+/**
+ * Add a leading zero and convert to string if the number is
+ * smaller than 10
+ */
+function addLeadingZero(number: number): string {
+	var str = String(number);
+	if (str.length < 2) {
+		str = '0' + str;
+	}
+	return str;
 }
