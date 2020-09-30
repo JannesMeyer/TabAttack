@@ -18,7 +18,7 @@ import isDefined from '../lib/isDefined.js';
 var _doc: IDoc | undefined;
 
 // Browser action: All windows
-browser.browserAction.onClicked.addListener(exportAllWindows);
+browser.browserAction.onClicked.addListener(tab => exportAllWindows(tab).catch(logError));
 
 // Browser action: Only current window
 new ContextMenuItem({
@@ -189,22 +189,22 @@ function copyLink(originalTitle: string | undefined, url: string, _type: 'docume
 /**
  * Exports all windows
  */
-function exportAllWindows(sourceTab: browser.tabs.Tab) {
-	browser.windows.getAll({ populate: true })
-		.then(windows => buildDocument(sourceTab, windows))
-		.then(doc => openDocument(sourceTab, doc));
+async function exportAllWindows(sourceTab: browser.tabs.Tab) {
+	let windows = await browser.windows.getAll({ populate: true });
+	let doc = await buildDocument(sourceTab, windows);
+	return openDocument(sourceTab, doc);
 }
 
 /**
  * Exports only the current window
  */
-function exportCurrentWindow(sourceTab: browser.tabs.Tab) {
+async function exportCurrentWindow(sourceTab: browser.tabs.Tab) {
 	if (sourceTab.windowId == null) {
 		return;
 	}
-	browser.windows.get(sourceTab.windowId, { populate: true })
-		.then(wnd => buildDocument(sourceTab, [ wnd ]))
-		.then(doc => openDocument(sourceTab, doc));
+	let w = await browser.windows.get(sourceTab.windowId, { populate: true })
+	let doc = await buildDocument(sourceTab, [w]);
+	return openDocument(sourceTab, doc);
 }
 
 /**
@@ -212,7 +212,7 @@ function exportCurrentWindow(sourceTab: browser.tabs.Tab) {
  */
 function openDocument(sourceTab: browser.tabs.Tab, doc: IDoc) {
 	_doc = doc;
-	TabService.open(sourceTab, browser.runtime.getURL('Apps/TabOutput.html'));
+	return TabService.open(sourceTab, browser.runtime.getURL('Apps/TabOutput.html'));
 }
 
 /**
