@@ -47,11 +47,11 @@
 	"toast_highlighted_tabs": {
 		"message": "Highlighted tabs exported"
 	},
-	"toast_loading_tab": {
+	"toast_loading_tab_one": {
 		"message": "$num$ tab is still loading, its [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"toast_loading_tabs": {
+	"toast_loading_tab_many": {
 		"message": "$num$ tabs are still loading, their [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
 	},
@@ -61,19 +61,19 @@
 	"toast_copied_document": {
 		"message": "Copied the whole document"
 	},
-	"headline_window": {
+	"headline_window_one": {
 		"message": "$num$ tab",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"headline_windows": {
+	"headline_window_many": {
 		"message": "$num$ tabs",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"headline_incognito_window": {
+	"headline_incognito_window_one": {
 		"message": "$num$ tab – Incognito",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"headline_incognito_windows": {
+	"headline_incognito_window_many": {
 		"message": "$num$ tabs – Incognito",
 		"placeholders": { "num": { "content": "$1" } }
 	},
@@ -137,22 +137,22 @@
 		"message": "Focus tab to the right"
 	},
 
-	"move_tab": {
+	"move_tab_one": {
 		"message": "Send $num$ tab to…",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"move_tabs": {
+	"move_tab_many": {
 		"message": "Send $num$ tabs to…",
 		"placeholders": { "num": { "content": "$1" } }
 	},
 	"new_window": {
 		"message": "New window"
 	},
-	"window_with_tab": {
+	"window_with_tab_one": {
 		"message": "Window with $num$ tab",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"window_with_tabs": {
+	"window_with_tab_many": {
 		"message": "Window with $num$ tabs",
 		"placeholders": { "num": { "content": "$1" } }
 	}
