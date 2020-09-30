@@ -10,6 +10,7 @@ import getString from '../lib/browser/getString.js';
 import Popup from '../lib/Popup.js';
 import assertDefined from '../lib/assertDefined.js';
 import writeClipboard from '../lib/writeClipboard.js';
+import isDefined from '../lib/isDefined.js';
 
 /**
  * The last generated document
@@ -111,13 +112,9 @@ onCommand('pin_tab', function() {
 
 // Global shortcut: Duplicate highlighted tabs
 onCommand('duplicate_tab', function() {
-	TabService.getHighlighted().then(tabs => {
-		for (var tab of tabs) {
-      if (tab.id != null) {
-        browser.tabs.duplicate(tab.id);
-      }
-		}
-	});
+	TabService.getHighlighted()
+		.then(tabs => Promise.all(tabs.map(t => t.id).filter(isDefined).map(id => browser.tabs.duplicate(id))))
+		.catch(logError);
 });
 
 // Message from output.html: Get document
