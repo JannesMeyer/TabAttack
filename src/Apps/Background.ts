@@ -22,9 +22,9 @@ browser.browserAction.onClicked.addListener(exportAllWindows);
 
 // Browser action: Only current window
 new ContextMenuItem({
-  id: 'export_current_window',
-  contexts: ['browser_action'],
-  onclick: (_, tab) => exportCurrentWindow(tab),
+	id: 'export_current_window',
+	contexts: ['browser_action'],
+	onclick: (_, tab) => exportCurrentWindow(tab),
 });
 
 // Keyboard shortcut: Export current window
@@ -32,52 +32,52 @@ onCommand('export_current_window', () => TabService.getActive().then(exportCurre
 
 // Context menu: Copy link as Markdown
 const copyLinkCmi = new ContextMenuItem({
-  id: 'copy_link',
-  contexts: ['link'],
-  onclick(info, tab) {
-    let url = assertDefined(info.linkUrl);
-    if (info.selectionText) {
-      copyLink(info.selectionText, url, 'linkTitle');
-      return;
-    }
-    if (tab.id == null) {
-      return;
-    }
+	id: 'copy_link',
+	contexts: ['link'],
+	onclick(info, tab) {
+		let url = assertDefined(info.linkUrl);
+		if (info.selectionText) {
+			copyLink(info.selectionText, url, 'linkTitle');
+			return;
+		}
+		if (tab.id == null) {
+			return;
+		}
 
-    // Attention: textContent includes text from hidden elements
-    let linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
-    browser.tabs.executeScript(tab.id, { code: linkProbe, allFrames: true }).then(x => {
-      let results: (string | undefined)[] = x as any;
-      let title: string | undefined;
-      if (results) {
-        // The first truthy element
-        title = results.filter(Boolean)[0];
-        if (title != null) {
-          // Do the same processing that a browser does when displaying links
-          title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
-        }
-      }
-      // Copy the link, whether we have a title or not
-      copyLink(title, url, 'linkTitle');
-    });
-  },
+		// Attention: textContent includes text from hidden elements
+		let linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
+		browser.tabs.executeScript(tab.id, { code: linkProbe, allFrames: true }).then(x => {
+			let results: (string | undefined)[] = x as any;
+			let title: string | undefined;
+			if (results) {
+				// The first truthy element
+				title = results.filter(Boolean)[0];
+				if (title != null) {
+					// Do the same processing that a browser does when displaying links
+					title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
+				}
+			}
+			// Copy the link, whether we have a title or not
+			copyLink(title, url, 'linkTitle');
+		});
+	},
 });
 Preferences.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown: x }) => {
-  copyLinkCmi.setVisible(x).catch(logError);
+	copyLinkCmi.setVisible(x).catch(logError);
 });
 onMessage('show copyLinkItem', () => copyLinkCmi.setVisible(true).catch(logError));
 onMessage('hide copyLinkItem', () => copyLinkCmi.setVisible(false).catch(logError));
 
 // Context menu: Copy page as Markdown link
 const copyPageCmi = new ContextMenuItem({
-  id: 'copy_page',
-  contexts: ['page'],
-  onclick(_info, tab) {
-    copyLink(tab.title, assertDefined(tab.url), 'documentTitle');
-  },
+	id: 'copy_page',
+	contexts: ['page'],
+	onclick(_info, tab) {
+		copyLink(tab.title, assertDefined(tab.url), 'documentTitle');
+	},
 });
 Preferences.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown: x }) => {
-  copyPageCmi.setVisible(x).catch(logError);
+	copyPageCmi.setVisible(x).catch(logError);
 });
 onMessage('show copyPageItem', () => copyPageCmi.setVisible(true).catch(logError));
 onMessage('hide copyPageItem', () => copyPageCmi.setVisible(false).catch(logError));
@@ -103,9 +103,9 @@ onCommand('move_tab_right', () => TabService.moveHighlighted(1));
 onCommand('pin_tab', function() {
 	TabService.getHighlighted().then(tabs => {
 		for (var tab of tabs) {
-      if (tab.id != null) {
-        browser.tabs.update(tab.id, { pinned: !tab.pinned });
-      }
+			if (tab.id != null) {
+				browser.tabs.update(tab.id, { pinned: !tab.pinned });
+			}
 		}
 	});
 });
@@ -132,7 +132,7 @@ onCommand('send_tab', function() {
 		TabService.getHighlighted(),
 		browser.windows.getAll()
 	]).then(([tabs, windows]) => {
-    let sourceWindow = assertDefined(windows.find(w => w.focused));
+		let sourceWindow = assertDefined(windows.find(w => w.focused));
 		// Get target windows
 		windows = windows.filter(w => w.type === 'normal' && !w.focused && sourceWindow.incognito === w.incognito);
 		if (windows.length === 0) {
@@ -146,11 +146,11 @@ onCommand('send_tab', function() {
 					windowIds: windows.map(w => w.id).join(';')
 				}),
 				parent: {
-          top: assertDefined(sourceWindow.top),
-          left: assertDefined(sourceWindow.left),
-          width: assertDefined(sourceWindow.width),
-          height: assertDefined(sourceWindow.height),
-        },
+					top: assertDefined(sourceWindow.top),
+					left: assertDefined(sourceWindow.left),
+					width: assertDefined(sourceWindow.width),
+					height: assertDefined(sourceWindow.height),
+				},
 				width: 240,
 				height: 400
 			}).closed.then(msg => {
@@ -199,9 +199,9 @@ function exportAllWindows(sourceTab: browser.tabs.Tab) {
  * Exports only the current window
  */
 function exportCurrentWindow(sourceTab: browser.tabs.Tab) {
-  if (sourceTab.windowId == null) {
-    return;
-  }
+	if (sourceTab.windowId == null) {
+		return;
+	}
 	browser.windows.get(sourceTab.windowId, { populate: true })
 		.then(wnd => buildDocument(sourceTab, [ wnd ]))
 		.then(doc => openDocument(sourceTab, doc));
@@ -238,8 +238,8 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
 		for (var wnd of windows) {
 			wnd.tabs = assertDefined(wnd.tabs).filter(tab => {
 
-        // Compatibility with The Great Suspender
-        let urlStr = assertDefined(tab.url);
+				// Compatibility with The Great Suspender
+				let urlStr = assertDefined(tab.url);
 				if (urlStr.startsWith('chrome-extension://klbibkeccnjlkjkiokjodocebajanakg/suspended.html#uri=')) {
 					tab.url = urlStr.replace(/^chrome-extension:\/\/klbibkeccnjlkjkiokjodocebajanakg\/suspended\.html#uri=/, '');
 				}
@@ -247,8 +247,8 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
 				let url = new URL(urlStr);
 
 				return !prefs.protocolBlacklist.includes(url.protocol) &&
-				       !prefs.domainBlacklist.includes(url.hostname) &&
-				       !(prefs.ignorePinned && tab.pinned);
+							 !prefs.domainBlacklist.includes(url.hostname) &&
+							 !(prefs.ignorePinned && tab.pinned);
 			});
 			// Count the number of loading tabs
 			loadingTabs += wnd.tabs.reduce((n, tab) => n + (tab.status === 'loading' ? 1 : 0), 0);
@@ -290,9 +290,9 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
 function buildJSONDocument(windows: browser.windows.Window[], _sourceTabId: number): IDoc {
 	let wnd = windows.map(w => assertDefined(w.tabs).map(t => ({ title: t.title, url: t.url })));
 	return {
-    format: 'json',
-    text: JSON.stringify(wnd, undefined, 2),
-  };
+		format: 'json',
+		text: JSON.stringify(wnd, undefined, 2),
+	};
 }
 
 /**
@@ -302,7 +302,7 @@ function buildMarkdownDocument(windows: browser.windows.Window[], sourceTabId: n
 	var lines = [];
 	var highlightLine = 0;
 	for (var wnd of windows) {
-    let tabs = assertDefined(wnd.tabs);
+		let tabs = assertDefined(wnd.tabs);
 		var name = (wnd.incognito ? 'headline_incognito_window' : 'headline_window');
 		lines.push('# ' + getString(name, tabs.length));
 		lines.push('');
@@ -320,10 +320,10 @@ function buildMarkdownDocument(windows: browser.windows.Window[], sourceTabId: n
 }
 
 interface IDoc {
-  format: 'markdown' | 'json';
-  text: string;
-  highlightLine?: number;
-  message?: string;
+	format: 'markdown' | 'json';
+	text: string;
+	highlightLine?: number;
+	message?: string;
 }
 
 
@@ -341,5 +341,5 @@ function updateIcon() {
 }
 
 function logError(error: Error) {
-  console.error(error.message);
+	console.error(error.message);
 }
