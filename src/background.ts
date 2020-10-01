@@ -212,7 +212,7 @@ async function exportCurrentWindow(sourceTab: browser.tabs.Tab) {
  */
 function openDocument(sourceTab: browser.tabs.Tab, doc: IDoc) {
 	_doc = doc;
-	return TabService.open(sourceTab, browser.runtime.getURL('Apps/TabOutput.html'));
+	return TabService.open(sourceTab, browser.runtime.getURL('tab-output.html'));
 }
 
 /**

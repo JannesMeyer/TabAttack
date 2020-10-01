@@ -1,8 +1,6 @@
 import preferences, { Prefs } from './preferences';
 import { lightThemes, darkThemes } from './lib/AceThemes';
 import getString from './lib/browser/getString';
-import ReactDOM from 'react-dom';
-import React from 'react';
 import { sendMessage } from './lib/browser/sendMessage';
 import assertDefined from './lib/assertDefined';
 

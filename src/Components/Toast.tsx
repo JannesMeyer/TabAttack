@@ -1,8 +1,3 @@
-import type _React from 'react';
-declare var React: typeof _React;
-import type _ReactDOM from 'react-dom';
-declare var ReactDOM: typeof _ReactDOM;
-
 interface P {
 	children?: React.ReactNode;
 

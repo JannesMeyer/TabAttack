@@ -1,14 +1,6 @@
-// Fake imports
-import type _React from 'react';
-declare var React: typeof _React;
-import type _ReactDOM from 'react-dom';
-declare var ReactDOM: typeof _ReactDOM;
 import type _marked from 'marked';
 declare var marked: typeof _marked;
-
-
 // import KeyPress from 'keypress-tool';
-
 import { parseHTML } from './lib/DOM.js';
 import * as FileSystem from './lib/FileSystem.js';
 import Editor from './components/Editor.js';

@@ -1,44 +1,8 @@
-import prefs from '../preferences';
-import type _React from 'react';
-declare var React: typeof _React;
-import * as ace from 'brace';
-import 'brace/ext/searchbox';
-import 'brace/ext/settings_menu';
-import 'brace/mode/json';
-import 'brace/mode/markdown';
-import 'brace/theme/chrome';
-import 'brace/theme/clouds';
-import 'brace/theme/crimson_editor';
-import 'brace/theme/dawn';
-import 'brace/theme/dreamweaver';
-import 'brace/theme/eclipse';
-import 'brace/theme/github';
-import 'brace/theme/solarized_light';
-import 'brace/theme/textmate';
-import 'brace/theme/tomorrow';
-import 'brace/theme/xcode';
-import 'brace/theme/kuroir';
-import 'brace/theme/katzenmilch';
-import 'brace/theme/ambiance';
-import 'brace/theme/chaos';
-import 'brace/theme/clouds_midnight';
-import 'brace/theme/cobalt';
-import 'brace/theme/idle_fingers';
-import 'brace/theme/kr_theme';
-import 'brace/theme/merbivore';
-import 'brace/theme/merbivore_soft';
-import 'brace/theme/mono_industrial';
-import 'brace/theme/monokai';
-import 'brace/theme/pastel_on_dark';
-import 'brace/theme/solarized_dark';
-import 'brace/theme/terminal';
-import 'brace/theme/tomorrow_night';
-import 'brace/theme/tomorrow_night_blue';
-import 'brace/theme/tomorrow_night_bright';
-import 'brace/theme/tomorrow_night_eighties';
-import 'brace/theme/twilight';
-import 'brace/theme/vibrant_ink';
-import getString from '../lib/browser/getString';
+import prefs from '../preferences.js';
+import getString from '../lib/browser/getString.js';
+import type { Ace } from 'ace-builds';
+import type _ace from 'ace-builds';
+declare const ace: typeof _ace;
 
 interface P {
 	doc: any;
@@ -50,7 +14,7 @@ interface P {
  */
 export default class Editor extends React.Component<P> {
 
-	editor!: ace.Editor;
+	editor!: Ace.Editor;
 
 	constructor(p: P) {
 		super(p);
@@ -58,8 +22,8 @@ export default class Editor extends React.Component<P> {
 
 	componentDidMount() {
 		this.editor = ace.edit('editor');
-		this.editor.$blockScrolling = Infinity;
-		this.editor.setOption('fontSize', '14px');
+		(this.editor as any).$blockScrolling = Infinity;
+		this.editor.setOption('fontSize', 14);
 		this.editor.setOption('showLineNumbers', false);
 		this.editor.setOption('showPrintMargin', false);
 		prefs.get('editorTheme').then(({ editorTheme }) => {
@@ -81,7 +45,7 @@ export default class Editor extends React.Component<P> {
 	}
 
 	handleUnload = (ev: BeforeUnloadEvent) => {
-		if (this.editor.session.getUndoManager().isClean()) {
+		if ((this.editor.session.getUndoManager() as any).isClean()) {
 			return;
 		}
 		let message = getString('confirm_unload');
@@ -108,12 +72,12 @@ export default class Editor extends React.Component<P> {
 		this.editor.session.setMode('ace/mode/' + doc.format);
 		// session.setValue: see https://github.com/ajaxorg/ace/issues/1243
 		this.editor.session.setValue(doc.text);
-		this.editor.gotoLine(doc.highlightLine || 0);
+		this.editor.gotoLine(doc.highlightLine ?? 0, 0, false);
 		this.editor.focus();
 	}
 
 	getContent() {
-		this.editor.session.getUndoManager().markClean();
+		(this.editor.session.getUndoManager() as any).markClean();
 		return this.editor.getValue();
 	}
 

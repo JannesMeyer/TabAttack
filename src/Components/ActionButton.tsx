@@ -1,5 +1,3 @@
-import type _React from 'react';
-declare var React: typeof _React;
 // import { ListenerBucket } from 'keypress-tool';
 
 interface P {
