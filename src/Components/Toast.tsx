@@ -24,9 +24,9 @@ export default class Toast extends React.Component<P, S> {
 		}
 	}
 
-	componentWillReceiveProps(nextProps: P) {
-		this.setState({ visible: Boolean(nextProps.children) });
-	}
+	// componentWillReceiveProps(nextProps: P) {
+	// 	this.setState({ visible: Boolean(nextProps.children) });
+	// }
 
 	render() {
 		let p = this.props;
