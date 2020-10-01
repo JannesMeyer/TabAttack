@@ -82,7 +82,7 @@ Pull requests and bug reports are welcome. If you submit a pull request, please 
 
 ## Acknowledgments
 
-[Icon shape created by Catia Marsh Wallow from the Noun Project](http://thenounproject.com/term/star/28082/)
+Icon shape based on [Diamond by Catia Marsh Mallow from the Noun Project](https://thenounproject.com/term/star/28082/)
 
 Special thanks to these projects:
 
