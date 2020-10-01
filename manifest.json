@@ -1,11 +1,11 @@
 {
-  "manifest_version": 2,
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "tabattack@jannesmeyer.com",
-      "strict_min_version": "60.0"
-    }
-  },
+	"manifest_version": 2,
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "tabattack@jannesmeyer.com",
+			"strict_min_version": "60.0"
+		}
+	},
 	"name": "__MSG_ext_name__",
 	"version": "3.0",
 	"description": "__MSG_ext_description__",
