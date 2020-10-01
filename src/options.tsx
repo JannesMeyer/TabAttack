@@ -5,9 +5,8 @@ import { sendMessage } from './lib/browser/sendMessage';
 import assertDefined from './lib/assertDefined';
 
 // Useful for testing purposes:
-// import Storage from 'chrome-tool/storage-sync';
-// Storage.clear()
-// Storage.get(function(p) { console.log(p) })
+// browser.storage.sync.clear();
+// browser.storage.sync.get().then(console.log);
 
 // Load strings
 document.title = getString('options');
