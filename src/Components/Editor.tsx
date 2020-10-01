@@ -45,7 +45,7 @@ export default class Editor extends React.Component<P> {
 	}
 
 	handleUnload = (ev: BeforeUnloadEvent) => {
-		if ((this.editor.session.getUndoManager() as any).isClean()) {
+		if (this.editor.session.getUndoManager().isAtBookmark()) {
 			return;
 		}
 		let message = getString('confirm_unload');
@@ -77,7 +77,7 @@ export default class Editor extends React.Component<P> {
 	}
 
 	getContent() {
-		(this.editor.session.getUndoManager() as any).markClean();
+		this.editor.session.getUndoManager().bookmark();
 		return this.editor.getValue();
 	}
 
