@@ -3,23 +3,24 @@ import Preferences from "./lib/Preferences.js";
 const prefs = new Preferences({
 	format: 'markdown',
 	protocolBlacklist: [
+		'about:',
+		'extension:',
+		'moz-extension:',
 		'chrome:',
 		'chrome-extension:',
 		'chrome-devtools:',
-		'opera:'
+		'opera:',
 	],
 	domainBlacklist: [
 		'mail.google.com',
-		'inbox.google.com',
-		'www.facebook.com',
 		'web.whatsapp.com',
-		'play.spotify.com',
-		'grooveshark.com'
+		'teams.microsoft.com',
+		'open.spotify.com',
 	],
 	ignorePinned: true,
 	editorTheme: 'katzenmilch',
 	showCopyLinkAsMarkdown: true,
-	showCopyPageAsMarkdown: false
+	showCopyPageAsMarkdown: false,
 });
 export type Prefs = typeof prefs.defaults;
 export default prefs;
