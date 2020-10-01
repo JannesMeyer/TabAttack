@@ -28,11 +28,12 @@ var strings = {
 // var ctrlShiftO = KeyPress('O', 'ctrl', 'shift');
 
 // Load document
+let root = document.querySelector('body > main');
 sendMessage<Doc>('get_document').then(doc => {
-  doc ??= { format: 'markdown', text: '' };
-	ReactDOM.render(<TabOutput message={doc.message} doc={doc} />, document.body);
+	ReactDOM.render(<TabOutput message={doc.message} doc={doc} />, root);
 }).catch(err => {
-	ReactDOM.render(<TabOutput message={err} />, document.body);
+	console.error(err, browser.runtime.lastError);
+	ReactDOM.render(<TabOutput message={err} />, root);
 });
 
 interface P {
@@ -47,8 +48,8 @@ interface S {
 
 interface Doc {
 	format: 'markdown' | 'json';
-  text?: string;
-  message?: string;
+	text?: string;
+	message?: string;
 }
 
 class TabOutput extends React.Component<P, S> {
@@ -124,11 +125,11 @@ class TabOutput extends React.Component<P, S> {
 		openWindows(windows);
 	}
 
-  fileInput = React.createRef<HTMLInputElement>();
-  editor = React.createRef<Editor>();
+	fileInput = React.createRef<HTMLInputElement>();
+	editor = React.createRef<Editor>();
 
 	render() {
-    let s = this.state;
+		let s = this.state;
 		return (
 			<div className="m-container">
 				<div className="m-toolbar">
