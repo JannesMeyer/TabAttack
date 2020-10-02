@@ -2,7 +2,8 @@ import type _marked from 'marked';
 declare var marked: typeof _marked;
 // import KeyPress from 'keypress-tool';
 import { parseHTML } from './lib/DOM.js';
-import * as FileSystem from './lib/FileSystem.js';
+import { saveTextFile } from './lib/files/saveTextFile.js';
+import FileLoader from './lib/files/FileLoader.js';
 import Editor from './components/Editor.js';
 import Toast from './components/Toast.js';
 import ActionButton from './components/ActionButton.js';
@@ -53,38 +54,36 @@ interface Doc {
 }
 
 class TabOutput extends React.Component<P, S> {
+
+	private editor = React.createRef<Editor>();
+	private fileInput = React.createRef<HTMLInputElement>();
+	private fileLoader?: FileLoader;
+
 	constructor(p: P) {
 		super(p);
 		this.state = {
 			doc: p.doc,
 			toastMessage: p.message,
 		};
-
-		// Bind methods
-		this.showToast = this.showToast.bind(this);
-		this.downloadAsTextFile = this.downloadAsTextFile.bind(this);
-		this.loadFile = this.loadFile.bind(this);
-		this.openLinks = this.openLinks.bind(this);
-	}
-
-	showToast(message: string) {
-		this.setState({ toastMessage: message });
 	}
 
 	componentDidMount() {
-		// File loading
-		FileSystem.onFile(text => this.setState({
-			doc: { format: 'markdown', text },
-			toastMessage: undefined
-		}));
-		FileSystem.setupFileInput(assertDefined(this.fileInput.current));
-		FileSystem.setupFileTarget(document.body);
+		this.fileLoader = new FileLoader(text => this.setState({
+			doc: { text, format: 'markdown' },
+			toastMessage: undefined,
+		}), this.fileInput.current, document.body);
+	}
+	
+	componentWillUnmount() {
+		this.fileLoader?.dispose();
 	}
 
-	/**
-	 * Action: Download the editor's content as a text file
-	 */
-	downloadAsTextFile() {
+	showToast = (message: string) => {
+		this.setState({ toastMessage: message });
+	};
+
+	/** Download the editor's content as a text file */
+	downloadAsTextFile = () => {
 		let doc = this.state.doc;
 		if (doc == null) {
 			throw new Error('No document loaded');
@@ -92,20 +91,14 @@ class TabOutput extends React.Component<P, S> {
 		let ext = (doc.format === 'json' ? '.json' : '.md');
 		let filename = getIsoDateString() + ext;
 		let text = assertDefined(this.editor.current).getContent();
-		FileSystem.saveTextFile(filename, text);
-	}
+		saveTextFile(filename, text, 'text/markdown');
+	};
 
-	/**
-	 * Action: Load file
-	 */
-	loadFile() {
-		this.fileInput.current?.click();
-	}
+	/** Open file upload dialog */
+	loadFile = () => this.fileInput.current?.click();
 
-	/**
-	 * Action: Open all links in tabs
-	 */
-	openLinks() {
+	/** Open all links in tabs */
+	openLinks = () => {
 		// Markdown → HTML → DOM
 		let text = assertDefined(this.editor.current).getContent();
 		let doc = parseHTML(marked(text));
@@ -123,10 +116,7 @@ class TabOutput extends React.Component<P, S> {
 		}
 
 		openWindows(windows);
-	}
-
-	fileInput = React.createRef<HTMLInputElement>();
-	editor = React.createRef<Editor>();
+	};
 
 	render() {
 		let s = this.state;
@@ -140,7 +130,7 @@ class TabOutput extends React.Component<P, S> {
 					{s.doc?.format === 'markdown' &&
 					<ActionButton className="item-open" onClick={this.openLinks} title={strings.openLinks} />}
 				</div>
-				<Toast duration={4}>{this.state.toastMessage}</Toast>
+				<Toast duration={4}>{s.toastMessage}</Toast>
 				<Editor ref={this.editor} doc={s.doc} showToast={this.showToast} />
 			</div>
 		);
@@ -151,11 +141,10 @@ class TabOutput extends React.Component<P, S> {
  * Formats the current date as per ISO 8601
  * For example: 2015-02-05
  */
-export function getIsoDateString(date = new Date()): string {
-	var year = date.getFullYear();
-	var month = addLeadingZero(date.getMonth() + 1);
-	var day = addLeadingZero(date.getDate());
-
+function getIsoDateString(date = new Date()): string {
+	let year = date.getFullYear();
+	let month = addLeadingZero(date.getMonth() + 1);
+	let day = addLeadingZero(date.getDate());
 	return `${year}-${month}-${day}`;
 }
 
@@ -164,7 +153,7 @@ export function getIsoDateString(date = new Date()): string {
  * smaller than 10
  */
 function addLeadingZero(number: number): string {
-	var str = String(number);
+	let str = String(number);
 	if (str.length < 2) {
 		str = '0' + str;
 	}
