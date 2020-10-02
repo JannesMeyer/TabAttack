@@ -10,7 +10,7 @@ import ActionButton from './components/ActionButton.js';
 import getString from './lib/browser/getString.js';
 import { sendMessage } from './lib/browser/sendMessage.js';
 import closeOtherTabs from './lib/browser/closeOtherTabs.js';
-import { openWindows } from './components/openWindows.js';
+import { openWindows } from './lib/browser/openWindows.js';
 import assertDefined from './lib/assertDefined.js';
 
 
@@ -95,13 +95,13 @@ class TabOutput extends React.Component<P, S> {
 	};
 
 	/** Open file upload dialog */
-	loadFile = () => this.fileInput.current?.click();
+	loadFile = () => assertDefined(this.fileInput.current).click();
 
 	/** Open all links in tabs */
 	openLinks = () => {
 		// Markdown → HTML → DOM
-		let text = assertDefined(this.editor.current).getContent();
-		let doc = parseHTML(marked(text));
+    let text = assertDefined(this.editor.current).getContent();
+    let doc = parseHTML(marked(text));
 
 		// Get all links inside of an <ul>
 		let windows = Array.from(doc.getElementsByTagName('ul')).map(ul => {
@@ -113,7 +113,7 @@ class TabOutput extends React.Component<P, S> {
 		if (doc.getElementsByTagName('a').length > 0) {
 			this.showToast(getString('link_outside_list_error'));
 			return;
-		}
+    }
 
 		openWindows(windows);
 	};
