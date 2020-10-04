@@ -1,8 +1,8 @@
-import preferences, { Prefs } from './preferences';
-import { lightThemes, darkThemes } from './lib/AceThemes';
-import getString from './lib/browser/getString';
-import { sendMessage } from './lib/browser/sendMessage';
-import assertDefined from './lib/assertDefined';
+import preferences, { Prefs } from './preferences.js';
+import { lightThemes, darkThemes } from './lib/AceThemes.js';
+import getString from './lib/browser/getString.js';
+import { sendMessage } from './lib/browser/sendMessage.js';
+import assertDefined from './lib/assertDefined.js';
 
 // Useful for testing purposes:
 // browser.storage.sync.clear();
@@ -25,25 +25,22 @@ let strings = {
 
 // Load preferences
 preferences.getAll().then(prefs => {
-	ReactDOM.render(<Page {...prefs} />, document.body);
+	ReactDOM.render(<Page {...prefs} />, document.querySelector('body > main'));
 });
 
-/**
- * Page component
- */
 class Page extends React.Component<Prefs, Prefs> {
-  
+
 	constructor(p: Prefs) {
 		super(p);
 		this.state = p;
 	}
 
-	// componentWillUpdate(nextProps, nextState) {
-	// 	preferences.set(nextState);
-	// }
+	componentWillUpdate(_: Prefs, nextState: Prefs) {
+		preferences.set(nextState);
+	}
 
 	handleChange<K extends keyof Prefs>(field: K, ev: React.ChangeEvent) {
-    let target: any = ev.target;
+		let target: any = ev.target;
 		let value = (target.type === 'checkbox' ? target.checked : target.value);
 		this.setState({ [field]: value } as any);
 
@@ -63,9 +60,9 @@ class Page extends React.Component<Prefs, Prefs> {
 		}
 	}
 
-	addDomain(ev: React.FormEvent) {
+	addDomain = (ev: React.FormEvent) => {
 		ev.preventDefault();
-    let input = assertDefined(this.domainInput.current);
+		let input = assertDefined(this.domainInput.current);
 		let list = this.state.domainBlacklist;
 
 		// Check if the blacklist already contains the domain
@@ -78,15 +75,15 @@ class Page extends React.Component<Prefs, Prefs> {
 		list.unshift(input.value);
 		input.value = '';
 		this.forceUpdate();
-	}
+	};
 
-	deleteDomain(index: number, ev: React.MouseEvent) {
+	deleteDomain = (index: number, ev: React.MouseEvent) => {
 		ev.preventDefault();
 		this.state.domainBlacklist.splice(index, 1);
 		this.forceUpdate();
-	}
+	};
 
-  domainInput = React.createRef<HTMLInputElement>();
+	domainInput = React.createRef<HTMLInputElement>();
 
 	render() {
 		let s = this.state;
@@ -107,15 +104,15 @@ class Page extends React.Component<Prefs, Prefs> {
 					{strings.exportIgnoreDomains}
 					<div className="settings-list" ref="domainBlacklist">
 						<div className="row editing">
-              <form onSubmit={this.addDomain}>
-                <input type="text" ref={this.domainInput} placeholder={strings.exportAddDomain} required />
-              </form>
-            </div>
+							<form onSubmit={this.addDomain}>
+								<input type="text" ref={this.domainInput} placeholder={strings.exportAddDomain} required />
+							</form>
+						</div>
 						{s.domainBlacklist && s.domainBlacklist.map((domain, i) =>
 							<div className="row" key={domain}>
-                <span>{domain}</span>
-                <a className="delete-button" href="" onClick={ev => this.deleteDomain(i, ev)} />
-              </div>
+								<span>{domain}</span>
+								<a className="delete-button" href="" onClick={ev => this.deleteDomain(i, ev)} />
+							</div>
 						)}
 					</div>
 				</label>
