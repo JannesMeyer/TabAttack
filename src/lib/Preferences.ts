@@ -9,14 +9,14 @@ export default class Preferences<T> {
    */
   get<X extends keyof T>(...keys: X[]): Promise<Pick<T, X>> {
     let defaults = filterObject(this.defaults, keys);
-    return browser.storage.sync.get(defaults) as Promise<any>;
+    return browser.storage.sync.get(defaults) as any;
   }
 
   /**
    * Requests all values
    */
   getAll(): Promise<T> {
-    return browser.storage.sync.get() as Promise<any>;
+    return browser.storage.sync.get(this.defaults) as any;
   }
 
   /**
