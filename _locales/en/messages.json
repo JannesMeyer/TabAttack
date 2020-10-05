@@ -51,7 +51,7 @@
 		"message": "$num$ tab is still loading, its [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"toast_loading_tab_many": {
+	"toast_loading_tab": {
 		"message": "$num$ tabs are still loading, their [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
 	},
@@ -65,7 +65,7 @@
 		"message": "$num$ tab",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"headline_window_many": {
+	"headline_window": {
 		"message": "$num$ tabs",
 		"placeholders": { "num": { "content": "$1" } }
 	},
@@ -73,7 +73,7 @@
 		"message": "$num$ tab – Incognito",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"headline_incognito_window_many": {
+	"headline_incognito_window": {
 		"message": "$num$ tabs – Incognito",
 		"placeholders": { "num": { "content": "$1" } }
 	},
@@ -141,7 +141,7 @@
 		"message": "Send $num$ tab to…",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"move_tab_many": {
+	"move_tab": {
 		"message": "Send $num$ tabs to…",
 		"placeholders": { "num": { "content": "$1" } }
 	},
@@ -152,7 +152,7 @@
 		"message": "Window with $num$ tab",
 		"placeholders": { "num": { "content": "$1" } }
 	},
-	"window_with_tab_many": {
+	"window_with_tab": {
 		"message": "Window with $num$ tabs",
 		"placeholders": { "num": { "content": "$1" } }
 	}

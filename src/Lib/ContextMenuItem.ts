@@ -20,7 +20,7 @@ export default class ContextMenuItem {
    */
   constructor(props: MenuProps) {
     props = {
-      title: (props.id != null ? getString('context_menu_' + props.id) : undefined),
+      title: (props.id != null ? getString('context_menu_' + props.id as any) : undefined),
       ...props,
     };
     this.id = browser.contextMenus.create(props);

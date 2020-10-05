@@ -2,7 +2,7 @@ import preferences, { Prefs } from './preferences.js';
 import { lightThemes, darkThemes } from './lib/AceThemes.js';
 import getString from './lib/browser/getString.js';
 import { sendMessage } from './lib/browser/sendMessage.js';
-import assertDefined from './lib/assertDefined.js';
+
 
 // Useful for testing purposes:
 // browser.storage.sync.clear();
@@ -60,30 +60,30 @@ class Page extends React.Component<Prefs, Prefs> {
 		}
 	}
 
-	addDomain = (ev: React.FormEvent) => {
-		ev.preventDefault();
-		let input = assertDefined(this.domainInput.current);
-		let list = this.state.domainBlacklist;
+	// addDomain = (ev: React.FormEvent) => {
+	// 	ev.preventDefault();
+	// 	let input = assertDefined(this.domainInput.current);
+	// 	let list = this.state.domainBlacklist;
 
-		// Check if the blacklist already contains the domain
-		if (list.indexOf(input.value) !== -1) {
-			// TODO: Toast instead
-			return alert('Already exists');
-		}
+	// 	// Check if the blacklist already contains the domain
+	// 	if (list.indexOf(input.value) !== -1) {
+	// 		// TODO: Toast instead
+	// 		return alert('Already exists');
+	// 	}
 
-		// Add the domain to the beginning of the blacklist
-		list.unshift(input.value);
-		input.value = '';
-		this.forceUpdate();
-	};
+	// 	// Add the domain to the beginning of the blacklist
+	// 	list.unshift(input.value);
+	// 	input.value = '';
+	// 	this.forceUpdate();
+	// };
 
-	deleteDomain = (index: number, ev: React.MouseEvent) => {
-		ev.preventDefault();
-		this.state.domainBlacklist.splice(index, 1);
-		this.forceUpdate();
-	};
+	// deleteDomain = (index: number, ev: React.MouseEvent) => {
+	// 	ev.preventDefault();
+	// 	this.state.domainBlacklist.splice(index, 1);
+	// 	this.forceUpdate();
+	// };
 
-	domainInput = React.createRef<HTMLInputElement>();
+	// domainInput = React.createRef<HTMLInputElement>();
 
 	render() {
 		let s = this.state;

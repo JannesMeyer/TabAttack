@@ -1,15 +1,16 @@
 {
-  "compilerOptions": {
-    "sourceMap": true,
-    "jsx": "react",
-    "strict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2020",
-    "outDir": "../dist"
-  }
+	"compilerOptions": {
+		"sourceMap": true,
+		"jsx": "react",
+		"strict": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"target": "ES2020",
+		"outDir": "../dist"
+	}
 }

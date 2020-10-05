@@ -316,7 +316,7 @@ function buildMarkdownDocument(windows: browser.windows.Window[], sourceTabId: n
 	var highlightLine = 0;
 	for (var wnd of windows) {
 		let tabs = assertDefined(wnd.tabs);
-		var name = (wnd.incognito ? 'headline_incognito_window' : 'headline_window');
+		const name = (wnd.incognito ? 'headline_incognito_window' : 'headline_window');
 		lines.push('# ' + getString(name, tabs.length));
 		lines.push('');
 		for (var tab of tabs) {
