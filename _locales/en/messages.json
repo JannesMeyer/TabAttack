@@ -85,10 +85,10 @@
 		"message": "Export"
 	},
 	"options_export_format": {
-		"message": "Format:"
+		"message": "Format"
 	},
 	"options_export_ignore_domains": {
-		"message": "Ignore these domains:"
+		"message": "Ignore these domains"
 	},
 	"options_export_add_domain": {
 		"message": "Add a domain"
@@ -100,16 +100,16 @@
 		"message": "Editor"
 	},
 	"options_editor_theme": {
-		"message": "Color scheme:"
+		"message": "Color scheme"
 	},
 	"options_context_menu": {
 		"message": "Context menu items"
 	},
 	"options_show_copy_link": {
-		"message": "Copy Link As Markdown"
+		"message": "Copy Link as Markdown"
 	},
 	"options_show_copy_page": {
-		"message": "Copy Page As Markdown Link"
+		"message": "Copy Page as Markdown Link"
 	},
 
 	"shortcut_copy_tab_as_markdown": {

@@ -39,7 +39,7 @@ class Page extends React.Component<Prefs, Prefs> {
 		preferences.set(nextState);
 	}
 
-	handleChange<K extends keyof Prefs>(field: K, ev: React.ChangeEvent) {
+	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent, field: K) {
 		let target: any = ev.target;
 		let value = (target.type === 'checkbox' ? target.checked : target.value);
 		this.setState({ [field]: value } as any);
@@ -87,72 +87,76 @@ class Page extends React.Component<Prefs, Prefs> {
 
 	render() {
 		let s = this.state;
-		return (
-			<div>
+		return <>
+			<h3>{strings.exportHeadline}</h3>
 
-				<h3>{strings.exportHeadline}</h3>
-
+			<div className="row">
 				<label>
-					{strings.exportFormat}
-					<select value={s.format} onChange={ev => this.handleChange('format', ev)}>
+					<span>Export Format</span>
+					<select value={s.format} onChange={ev => this.handleChange(ev, 'format')} style={{ width: 121 }}>
 						<option value="markdown">Markdown</option>
 						<option value="json">JSON</option>
 					</select>
 				</label>
+			</div>
 
+			<div className="row">
+				<span>Ignore Tabs</span>
+				<a href="">{s.domainBlacklist.length} domains</a>
+			</div>
+
+			<div className="row">
+				<span/>
 				<label>
-					{strings.exportIgnoreDomains}
-					<div className="settings-list" ref="domainBlacklist">
-						<div className="row editing">
-							<form onSubmit={this.addDomain}>
-								<input type="text" ref={this.domainInput} placeholder={strings.exportAddDomain} required />
-							</form>
-						</div>
-						{s.domainBlacklist && s.domainBlacklist.map((domain, i) =>
-							<div className="row" key={domain}>
-								<span>{domain}</span>
-								<a className="delete-button" href="" onClick={ev => this.deleteDomain(i, ev)} />
-							</div>
-						)}
-					</div>
+					<input type="checkbox" checked={s.ignorePinned} onChange={ev => this.handleChange(ev, 'ignorePinned')} />
+					Pinned Tabs
 				</label>
+			</div>
 
+			<h3>Icon Color</h3>
+
+			<div className="row">
+				<input type="color" value={s.iconColor} onChange={ev => this.handleChange(ev, 'iconColor')} />
+				<input type="color" value={s.iconColorDarkMode} onChange={ev => this.handleChange(ev, 'iconColorDarkMode')} />
+			</div>
+
+			<h3>Editor Color Scheme</h3>
+
+			<div className="row">
+				<select value={s.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')}>
+					<optgroup label="Light">
+					{lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
+					</optgroup>
+					<optgroup label="Dark">
+					{darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
+					</optgroup>
+				</select>
+				<select value={s.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')}>
+					<optgroup label="Light">
+					{lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
+					</optgroup>
+					<optgroup label="Dark">
+					{darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
+					</optgroup>
+				</select>
+			</div>
+
+			<h3>Context Menu Items</h3>
+
+			<div className="row">
 				<label>
-					<input type="checkbox" checked={s.ignorePinned} onChange={this.handleChange.bind(this, 'ignorePinned')} />
-					{strings.exportIgnorePinned}
-				</label>
-
-				<h3>{strings.editorHeadline}</h3>
-
-				<label>
-					{strings.editorTheme}
-					<select ref="editorTheme" value={s.editorTheme} onChange={this.handleChange.bind(this, 'editorTheme')}>
-						<optgroup label="Light">
-						{lightThemes.map(t =>
-							<option value={t.name} key={t.name}>{t.caption}</option>
-						)}
-						</optgroup>
-						<optgroup label="Dark">
-						{darkThemes.map(t =>
-							<option value={t.name} key={t.name}>{t.caption}</option>
-						)}
-						</optgroup>
-					</select>
-				</label>
-
-				<h3>{strings.contextMenuHeadline}</h3>
-
-				<label>
-					<input type="checkbox" checked={s.showCopyLinkAsMarkdown} onChange={this.handleChange.bind(this, 'showCopyLinkAsMarkdown')} />
+					<input type="checkbox" checked={s.showCopyLinkAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyLinkAsMarkdown')} />
 					{strings.showCopyLink}
 				</label>
+			</div>
 
+			<div className="row">
 				<label>
-					<input type="checkbox" checked={s.showCopyPageAsMarkdown} onChange={this.handleChange.bind(this, 'showCopyPageAsMarkdown')} />
+					<input type="checkbox" checked={s.showCopyPageAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyPageAsMarkdown')} />
 					{strings.showCopyPage}
 				</label>
-
 			</div>
-		);
+
+		</>;
 	}
 }

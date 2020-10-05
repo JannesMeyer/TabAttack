@@ -215,11 +215,22 @@ function openDocument(sourceTab: browser.tabs.Tab, doc: IDoc) {
 	return TabService.open(sourceTab, browser.runtime.getURL('tabs.html'));
 }
 
+const protocolBlacklist = new Set([
+	'about:',
+	'extension:',
+	'moz-extension:',
+	'chrome:',
+	'chrome-extension:',
+	'chrome-devtools:',
+	'opera:',
+	'edge:',
+]);
+
 /**
  * Filter some tabs and windows out, then build the document
  */
 function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Window[]) {
-	return Preferences.get('format', 'ignorePinned', 'domainBlacklist', 'protocolBlacklist').then(prefs => {
+	return Preferences.get('format', 'ignorePinned', 'domainBlacklist').then(prefs => {
 		// TODO: reverse the order of the windows
 		// Pull a window to the top
 		var index = windows.findIndex(wnd => wnd.id === sourceTab.windowId);
@@ -246,7 +257,7 @@ function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Win
 
 				let url = new URL(urlStr);
 
-				return !prefs.protocolBlacklist.includes(url.protocol) &&
+				return !protocolBlacklist.has(url.protocol) &&
 							 !prefs.domainBlacklist.includes(url.hostname) &&
 							 !(prefs.ignorePinned && tab.pinned);
 			});

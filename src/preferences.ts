@@ -2,16 +2,6 @@ import Preferences from './lib/Preferences.js';
 
 const prefs = new Preferences({
 	format: 'markdown',
-	protocolBlacklist: [
-		'about:',
-		'extension:',
-		'moz-extension:',
-		'chrome:',
-		'chrome-extension:',
-		'chrome-devtools:',
-		'opera:',
-		'edge:',
-	],
 	domainBlacklist: [
 		'mail.google.com',
 		'web.whatsapp.com',
@@ -19,7 +9,10 @@ const prefs = new Preferences({
 		'open.spotify.com',
 	],
 	ignorePinned: true,
+	iconColor: '#000000',
+	iconColorDarkMode: '#ffffff',
 	editorTheme: 'katzenmilch',
+	editorThemeDarkMode: 'katzenmilch',
 	showCopyLinkAsMarkdown: true,
 	showCopyPageAsMarkdown: false,
 });
