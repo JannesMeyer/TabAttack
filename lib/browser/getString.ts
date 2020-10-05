@@ -1,4 +1,4 @@
-import type str from '../../../_locales/en/messages.json';
+import type str from '../../_locales/en/messages.json';
 
 type Key = keyof typeof str;
 

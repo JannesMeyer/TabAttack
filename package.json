@@ -5,7 +5,7 @@
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
   "scripts": {
-    "start": "tsc -p src -w",
+    "start": "tsc -w",
     "pack": "rimraf TabAttack.zip && tsc && zip -vx '*.DS_Store' -r TabAttack.zip dist",
     "postinstall": "rimraf ./node_modules/@types/node"
   },
