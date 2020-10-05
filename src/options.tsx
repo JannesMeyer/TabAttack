@@ -3,25 +3,12 @@ import { lightThemes, darkThemes } from './lib/AceThemes.js';
 import getString from './lib/browser/getString.js';
 import { sendMessage } from './lib/browser/sendMessage.js';
 
-
 // Useful for testing purposes:
 // browser.storage.sync.clear();
 // browser.storage.sync.get().then(console.log);
 
 // Load strings
 document.title = getString('options');
-let strings = {
-	exportHeadline:      getString('options_export'),
-	exportFormat:        getString('options_export_format'),
-	exportAddDomain:     getString('options_export_add_domain'),
-	exportIgnoreDomains: getString('options_export_ignore_domains'),
-	exportIgnorePinned:  getString('options_export_ignore_pinned'),
-	editorHeadline:      getString('options_editor'),
-	editorTheme:         getString('options_editor_theme'),
-	contextMenuHeadline: getString('options_context_menu'),
-	showCopyLink:        getString('options_show_copy_link'),
-	showCopyPage:        getString('options_show_copy_page')
-};
 
 // Load preferences
 preferences.getAll().then(prefs => {
@@ -88,7 +75,7 @@ class Page extends React.Component<Prefs, Prefs> {
 	render() {
 		let s = this.state;
 		return <>
-			<h3>{strings.exportHeadline}</h3>
+			<h3>{getString('options_export')}</h3>
 
 			<div className="row">
 				<label>
@@ -146,14 +133,14 @@ class Page extends React.Component<Prefs, Prefs> {
 			<div className="row">
 				<label>
 					<input type="checkbox" checked={s.showCopyLinkAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyLinkAsMarkdown')} />
-					{strings.showCopyLink}
+					{getString('options_show_copy_link')}
 				</label>
 			</div>
 
 			<div className="row">
 				<label>
 					<input type="checkbox" checked={s.showCopyPageAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyPageAsMarkdown')} />
-					{strings.showCopyPage}
+					{getString('options_show_copy_page')}
 				</label>
 			</div>
 
