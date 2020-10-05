@@ -10,6 +10,7 @@ const prefs = new Preferences({
 		'chrome-extension:',
 		'chrome-devtools:',
 		'opera:',
+		'edge:',
 	],
 	domainBlacklist: [
 		'mail.google.com',

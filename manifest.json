@@ -13,7 +13,8 @@
 	"homepage_url": "https://github.com/JannesMeyer/TabAttack",
 	"permissions": [ "tabs", "storage", "clipboardWrite", "contextMenus", "activeTab" ],
 	"icons": {
-		"16": "images/icon-h16.png",
+		"32": "images/icon.svg",
+		"96": "images/icon.svg",
 		"128": "images/icon.svg"
 	},
 	"background": {
@@ -21,11 +22,12 @@
 	},
 	"options_ui": {
 		"page": "options.html",
+		"open_in_tab": false,
 		"chrome_style": true
 	},
 	"browser_action": {
 		"default_icon": {
-			"19": "images/icon.svg"
+			"32": "images/icon.svg"
 		},
 		"default_title": "__MSG_icon_tooltip__"
 	},
