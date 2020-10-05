@@ -1,8 +1,6 @@
 import prefs from '../preferences.js';
 import getString from '../lib/browser/getString.js';
-import type { Ace } from 'ace-builds';
-import type _ace from 'ace-builds';
-declare const ace: typeof _ace;
+import { Ace } from 'ace-builds';
 
 interface P {
 	doc: any;
