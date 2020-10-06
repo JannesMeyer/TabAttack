@@ -2,13 +2,12 @@ import assertDefined from '../lib/assertDefined.js';
 
 export default class Icon {
 
-	bgColor?: string;
 	readonly canvas: HTMLCanvasElement;
 	private size: number;
 	private scale: number;
 	private ctx: CanvasRenderingContext2D;
 
-	constructor(private color: string) {
+	constructor(private textColor: string, private bgColor?: string) {
 		this.canvas = document.createElement('canvas');
 		this.size = 16;
 		this.scale = devicePixelRatio;
@@ -16,11 +15,13 @@ export default class Icon {
 	}
 
 	setSize(size: number) {
+		if (this.size === size) { return; }
 		this.size = size;
 		this.updateContext();
 	}
 
 	setScale(scale: number) {
+		if (this.scale === scale) { return; }
 		this.scale = scale;
 		this.updateContext();
 	}
@@ -36,7 +37,7 @@ export default class Icon {
 	 */
 	render(text: string | number) {
 		text = text.toString();
-		let { canvas, scale, ctx, color } = this;
+		let { canvas, scale, ctx } = this;
 
 		// Clear everything
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -50,7 +51,7 @@ export default class Icon {
 
 		// Draw the text
 		ctx.font = `${scale * 11}px Roboto` + (text.length > 2 ? ' Condensed' : '');
-		ctx.fillStyle = color;
+		ctx.fillStyle = this.textColor;
 		ctx.textAlign = 'center';
 		ctx.fillText(text, canvas.width / 2, 12 * scale);
 
