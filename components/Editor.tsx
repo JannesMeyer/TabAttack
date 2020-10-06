@@ -1,12 +1,18 @@
 import prefs from '../preferences.js';
 import getString from '../lib/browser/getString.js';
 import { Ace } from 'ace-builds';
+import css from '../lib/css.js';
 
 interface P {
 	doc: any;
 	fontSize?: number;
 	showToast: (message: string) => void;
 }
+
+css`
+.ace_underline {
+	text-decoration: none !important;
+}`;
 
 /**
  * Ace editor component

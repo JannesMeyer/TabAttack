@@ -1,8 +1,29 @@
 import assertDefined from '../assertDefined.js';
+import css from '../css.js';
 
 export default class FileLoader {
-  
-	readonly dragOverClass = 'file-dragover';
+
+	static css = css`
+	&::before,
+	&::after {
+		content: ' ';
+		position: absolute;
+		z-index: 1000;
+		display: block;
+		pointer-events: none;
+	}
+	&::before {
+		width: 100%;
+		height: 100%;
+		background: rgba(255, 255, 255, 0.5);
+	}
+	&::after {
+		top: 9px;
+		left: 9px;
+		right: 9px;
+		bottom: 9px;
+		border: 7px dashed #1f68e0;
+	}`;
 
 	constructor(
 		private onFile: (contents: string, type: string, bytes: number, name: string) => void,
@@ -41,11 +62,11 @@ export default class FileLoader {
 			return;
 		}
 		ev.preventDefault();
-		assertDefined(this.dragTarget).classList.add(this.dragOverClass);
+		assertDefined(this.dragTarget).classList.add(FileLoader.css);
 	};
 
 	private handleDragLeave = () => {
-		assertDefined(this.dragTarget).classList.remove(this.dragOverClass);
+		assertDefined(this.dragTarget).classList.remove(FileLoader.css);
 	};
 
 	private handleDrop = (ev: DragEvent) => {

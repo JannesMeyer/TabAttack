@@ -14,6 +14,7 @@ import { openWindows } from './lib/browser/openWindows.js';
 import assertDefined from './lib/assertDefined.js';
 import prefs from './preferences.js';
 import getAceThemes, { AceThemeModule, getAceTheme } from './lib/getAceThemes.js';
+import css from './lib/css.js';
 
 
 // Load strings
@@ -61,6 +62,22 @@ interface Doc {
 	text?: string;
 	message?: string;
 }
+
+css`
+.Toolbar {
+	flex: 0 0 auto;
+}
+.Toolbar > *:first-child {
+	margin-left: 25px;
+}
+.Toolbar .ace_print-margin {
+	position: static;
+	width: 100%;
+	height: 1px;
+}
+input[type=file] {
+	display: none;
+}`;
 
 class TabsApp extends React.Component<P, S> {
 
@@ -135,7 +152,7 @@ class TabsApp extends React.Component<P, S> {
 				<ActionButton className="item-load-file" onClick={this.loadFile} title={strings.loadFile} />
 				<ActionButton className="item-close" onClick={closeOtherTabs} title={strings.close} />
 				{s.doc?.format === 'markdown' &&
-				<ActionButton className="item-open" onClick={this.openLinks} title={strings.openLinks} />}
+					<ActionButton className="item-open" onClick={this.openLinks} title={strings.openLinks} />}
 				<input type="file" ref={this.fileInput} />
 				<div className="ace_print-margin" />
 			</div>

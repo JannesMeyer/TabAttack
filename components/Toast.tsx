@@ -1,3 +1,5 @@
+import css, { X } from '../lib/css.js';
+
 interface P {
 	children?: React.ReactNode;
 
@@ -10,7 +12,7 @@ interface S {
 }
 
 export default class Toast extends React.Component<P, S> {
-	
+
 	timeoutId: number | undefined;
 
 	constructor(p: P) {
@@ -28,6 +30,31 @@ export default class Toast extends React.Component<P, S> {
 	// 	this.setState({ visible: Boolean(nextProps.children) });
 	// }
 
+	static css = css`
+	& {
+		position: fixed;
+		left: 0;
+		bottom: 25%;
+		width: 100%;
+		z-index: 900;
+
+		text-align: center;
+		pointer-events: none;
+	}
+	&.hidden {
+		opacity: 0;
+		transition: opacity 0.2s linear;
+	}
+	& > div {
+		display: inline-block;
+		padding: 8px 11px;
+
+		border-radius: 3px;
+		background: #262626;
+		color: #f0f0f0;
+		box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
+	}`;
+
 	render() {
 		let p = this.props;
 		let s = this.state;
@@ -44,7 +71,7 @@ export default class Toast extends React.Component<P, S> {
 			this.timeoutId = setTimeout(() => this.setState({ visible: false }), duration * 1000);
 
 			return ReactDOM.createPortal(
-				<div className={'m-toast' + (s.visible ? '' : ' s-hidden')}>
+				<div className={X(Toast.css, { hidden: !s.visible })}>
 					<div>{p.children}</div>
 				</div>, document.body);
 		} else {
