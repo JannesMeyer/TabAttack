@@ -13,6 +13,7 @@ import closeOtherTabs from './lib/browser/closeOtherTabs.js';
 import { openWindows } from './lib/browser/openWindows.js';
 import assertDefined from './lib/assertDefined.js';
 import prefs from './preferences.js';
+import getAceThemes, { AceThemeModule, getAceTheme } from './lib/getAceThemes.js';
 
 
 // Load strings
@@ -33,9 +34,12 @@ var strings = {
 let root = document.querySelector('body > main');
 Promise.all([
 	prefs.get('editorTheme'),
+	getAceThemes(),
 	sendMessage<Doc>('get_document'),
-]).then(([prefs, doc]) => {
-	ReactDOM.render(<TabsApp message={doc.message} doc={doc} theme={prefs.editorTheme} />, root);
+]).then(([prefs, tl, doc]) => {
+	return getAceTheme(tl.themesByName[prefs.editorTheme].theme).then(theme => {
+		ReactDOM.render(<TabsApp message={doc.message} doc={doc} theme={theme} />, root);
+	});
 }).catch(err => {
 	console.error(err, browser.runtime.lastError);
 	ReactDOM.render(<TabsApp message={err} />, root);
@@ -44,7 +48,7 @@ Promise.all([
 interface P {
 	doc?: Doc;
 	message?: string;
-	theme?: string;
+	theme?: AceThemeModule;
 }
 
 interface S {
@@ -126,7 +130,7 @@ class TabsApp extends React.Component<P, S> {
 	render() {
 		let { props: p, state: s} = this;
 		return <>
-			<div className={'ace-' + p.theme}>
+			<div className={p.theme?.cssClass}>
 				<div className="Toolbar ace_gutter">
 					<input type="file" ref={this.fileInput} />
 					<ActionButton className="item-save" onClick={this.downloadAsTextFile} title={strings.save} />

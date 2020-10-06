@@ -30,7 +30,7 @@ export default class ActionButton extends React.Component<P> {
 	render() {
 		let p = this.props;
 		let className = 'ActionButton ' + (p.className ?? '');
-		return <button onClick={this.handleClick} className={className} title={`${p.title}`}>{p.title}</button>;
+		return <button onClick={this.handleClick} className={className}>{p.title}</button>;
 	}
 
 }

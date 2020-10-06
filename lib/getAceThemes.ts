@@ -11,8 +11,14 @@ export default function getAceThemes() {
 	});
 }
 
+export interface AceThemeModule {
+	isDark: boolean;
+	cssClass: string;
+	cssText: string;
+}
+
 export function getAceTheme(theme: string) {
-	return new Promise<any>(resolve => {
+	return new Promise<AceThemeModule>(resolve => {
 		ace.config.loadModule(theme, resolve);
 	});
 }
