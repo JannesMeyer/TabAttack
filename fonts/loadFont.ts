@@ -19,14 +19,14 @@ declare namespace document {
 /**
  * Load font asynchronously
  */
-export default async function loadFont(family: string, url: string, weight = 700) {
+export default function loadFont(family: string, url: string, weight = 700) {
 	if (typeof FontFace === 'undefined') {
 		throw new Error('FontFace is not supported');
 	}
-	let font = new FontFace(family, `url('${url}')`, { weight });
-	await font.load();
-	if (typeof document !== 'undefined') {
-		document.fonts?.add(font);
+	if (typeof document === 'undefined' || document.fonts == null) {
+		throw new Error('FontFaceSet is not supported');
 	}
-	return font;
+	let font = new FontFace(family, `url('${url}')`, { weight });
+	document.fonts.add(font);
+	return font.load();
 }

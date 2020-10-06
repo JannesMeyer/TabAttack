@@ -11,6 +11,7 @@ import Popup from './lib/Popup.js';
 import assertDefined from './lib/assertDefined.js';
 import writeClipboard from './lib/writeClipboard.js';
 import isDefined from './lib/isDefined.js';
+import loadFont from './fonts/loadFont.js';
 
 /**
  * The last generated document
@@ -342,7 +343,10 @@ interface IDoc {
 
 browser.tabs.onCreated.addListener(updateIcon);
 browser.tabs.onRemoved.addListener(updateIcon);
-addEventListener('load', updateIcon);
+Promise.all([
+	loadFont('Roboto', '/fonts/Roboto-Bold.woff2'),
+	loadFont('Roboto Condensed', '/fonts/Roboto-Condensed-Bold.woff2'),
+]).then(updateIcon).catch(logError);
 
 /**
  * Update browser action with the current tab count
