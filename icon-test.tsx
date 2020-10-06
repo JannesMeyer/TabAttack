@@ -1,22 +1,9 @@
-// import drawIcon, { createCanvas, getRenderingContext, loadFonts } from "./tabcount/draw";
+import drawIcon from './components/drawIcon.js';
+import loadFont from './fonts/loadFont.js';
 
-// var button = document.querySelector('button');
-// if (button == null) {
-//   throw new Error();
-// }
-// button.addEventListener('click', applyTheme);
-
-
-
-// loadFonts().then(() => {
-//   let scale = devicePixelRatio;
-//   for (let i = 1; i <= 500; ++i) {
-//     let canvas = createCanvas(16 * scale);
-//     let ctx = getRenderingContext(canvas, true);
-//     drawIcon(ctx, i.toString(), scale, '#000');
-//     document.body.appendChild(canvas);
-//     if (i % 10 === 0) {
-//       document.body.appendChild(document.createElement('br'));
-//     }
-//   }
-// });
+Promise.all([
+	loadFont('Roboto', '/fonts/Roboto-Bold.woff2'),
+	loadFont('Roboto Condensed', '/fonts/Roboto-Condensed-Bold.woff2'),
+]).then(() => Array(500).fill(null).forEach((_, i) => {
+	document.body.appendChild(drawIcon(++i));
+}));

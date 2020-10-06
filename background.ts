@@ -1,5 +1,5 @@
 import Preferences from './preferences.js';
-import drawIcon from './components/drawIcon.js';
+import drawIcon, { getImageData } from './components/drawIcon.js';
 import { buildQuery } from './lib/QueryString.js';
 import markdownLink from './lib/markdownLink.js';
 import * as TabService from './lib/tabs.js';
@@ -353,7 +353,7 @@ Promise.all([
  */
 function updateIcon() {
 	TabService.count().then(count => {
-		browser.browserAction.setIcon({ imageData: drawIcon(count.toString()) });
+		browser.browserAction.setIcon({ imageData: assertDefined(getImageData(drawIcon(count))) });
 	}).catch(logError);
 }
 

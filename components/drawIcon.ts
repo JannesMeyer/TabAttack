@@ -11,7 +11,7 @@ const TEXT_POSITION = 13;
 /**
  * Create off-screen canvas and draw the rounded rectangle
  */
-function createBackgroundCanvas() {
+function createCanvas() {
 	let canvas = document.createElement('canvas');
 	canvas.width = SIZE;
 	canvas.height = SIZE;
@@ -29,18 +29,19 @@ function createBackgroundCanvas() {
 	roundedRect(ctx, 0, 0, SIZE, SIZE, BORDER_RADIUS);
 	ctx.fill();
 
-	return ctx;
+	return canvas;
 }
-
-let ctx = createBackgroundCanvas();
 
 /**
  * Draws the text inside the icon
- *
- * @param text: text to draw (String or Number)
  */
-export default function drawIcon(text: string) {
+export default function drawIcon(text: string | number) {
 	text = text.toString();
+	let canvas = createCanvas();
+	let ctx = canvas.getContext('2d');
+	if (ctx == null) {
+		throw new Error('Could not get a canvas context');
+	}
 	// Clear the inner part of the icon, without ever redrawing the border
 	ctx.clearRect(BORDER_WIDTH, BORDER_WIDTH, INNER_SIZE, INNER_SIZE);
 
@@ -53,7 +54,11 @@ export default function drawIcon(text: string) {
 		ctx.fillText(text, SIZE / 2, TEXT_POSITION);
 	}
 
-	return ctx.getImageData(0, 0, SIZE, SIZE)
+	return canvas;
+}
+
+export function getImageData(canvas: HTMLCanvasElement) {
+	return canvas.getContext('2d')?.getImageData(0, 0, canvas.width, canvas.height);
 }
 
 /**
