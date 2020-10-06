@@ -8,7 +8,7 @@ import Editor from './components/Editor.js';
 import Toast from './components/Toast.js';
 import ActionButton from './components/ActionButton.js';
 import getString from './lib/browser/getString.js';
-import { sendMessage } from './lib/browser/sendMessage.js';
+import sendMessage from './lib/browser/sendMessage.js';
 import closeOtherTabs from './lib/browser/closeOtherTabs.js';
 import { openWindows } from './lib/browser/openWindows.js';
 import assertDefined from './lib/assertDefined.js';

@@ -1,6 +1,5 @@
 import preferences, { Prefs } from './preferences.js';
 import getString from './lib/browser/getString.js';
-import { sendMessage } from './lib/browser/sendMessage.js';
 import getAceThemes, { AceTheme } from './lib/getAceThemes.js';
 
 // Useful for testing purposes:
@@ -45,21 +44,6 @@ class OptionsApp extends React.Component<P, Prefs> {
 		let target: any = ev.target;
 		let value = (target.type === 'checkbox' ? target.checked : target.value);
 		this.setState({ [field]: value } as any);
-
-		// Live update
-		if (field === 'showCopyLinkAsMarkdown') {
-			if (value) {
-				sendMessage('show copyLinkItem');
-			} else {
-				sendMessage('hide copyLinkItem');
-			}
-		} else if (field === 'showCopyPageAsMarkdown') {
-			if (value) {
-				sendMessage('show copyPageItem');
-			} else {
-				sendMessage('hide copyPageItem');
-			}
-		}
 	}
 
 	// addDomain = (ev: React.FormEvent) => {

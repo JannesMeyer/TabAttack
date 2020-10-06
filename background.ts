@@ -344,6 +344,13 @@ interface IDoc {
 
 
 var icon: Icon | undefined;
+prefs.onChange(({ iconColor }) => {
+	if (icon == null || icon.textColor === iconColor) {
+		return;
+	}
+	icon.textColor = iconColor;
+	updateIcon();
+});
 
 browser.tabs.onCreated.addListener(updateIcon);
 browser.tabs.onRemoved.addListener(updateIcon);

@@ -1,3 +1,7 @@
+import onMessage from './browser/onMessage.js';
+import sendMessage from './browser/sendMessage.js';
+import logError from './logError.js';
+
 export default class Preferences<T> {
 
   constructor(readonly defaults: T) {}
@@ -22,9 +26,15 @@ export default class Preferences<T> {
   /**
    * Sets multiple values
    */
-  set<X extends keyof T>(items: Pick<T, X>) {
-    return browser.storage.sync.set(items);
-  }
+  async set<X extends keyof T>(items: Pick<T, X>, notify = true) {
+		await browser.storage.sync.set(items);
+		notify && sendMessage('prefs changed');
+	}
+
+	/** Allows to listen for preference changes */
+	onChange(callback: (prefs: T) => void) {
+		onMessage('prefs changed', () => this.getAll().then(callback).catch(logError));
+	}
 }
 
 function filterObject<T, K extends keyof T>(obj: T, keys: K[]) {

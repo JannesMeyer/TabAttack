@@ -7,7 +7,7 @@ export default class Icon {
 	private scale: number;
 	private ctx: CanvasRenderingContext2D;
 
-	constructor(private textColor: string, private bgColor?: string) {
+	constructor(public textColor: string, public bgColor?: string) {
 		this.canvas = document.createElement('canvas');
 		this.size = 16;
 		this.scale = devicePixelRatio;
