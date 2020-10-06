@@ -13,8 +13,8 @@
 	"homepage_url": "https://github.com/JannesMeyer/TabAttack",
 	"permissions": [ "tabs", "storage", "clipboardWrite", "contextMenus", "activeTab" ],
 	"icons": {
-		"32": "images/icon.svg",
-		"96": "images/icon.svg",
+		"48": "images/icon-48.png",
+		"96": "images/icon-96.png",
 		"128": "images/icon.svg"
 	},
 	"background": {
