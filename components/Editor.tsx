@@ -63,9 +63,10 @@ export default class Editor extends React.Component<P> {
 	}
 
 	updateContent() {
-		var doc = this.props.doc;
-		if (!doc) { return; }
-
+		let doc = this.props.doc;
+		if (doc == null) {
+			return;
+		}
 		this.editor.session.setMode('ace/mode/' + doc.format);
 		// session.setValue: see https://github.com/ajaxorg/ace/issues/1243
 		this.editor.session.setValue(doc.text);
