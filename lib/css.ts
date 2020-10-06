@@ -14,7 +14,9 @@ function getRandomId(length: number): string {
 	return Math.floor(Math.random() * Math.pow(36, length)).toString(36).padStart(length, '0');
 }
 
-/** Concatenates classNames */
+/**
+ * Concatenates classNames
+ */
 export function X(...names: (string | undefined | null | { [name: string]: unknown })[]) {
 	return names.map(n => {
 		if (n == null) {
