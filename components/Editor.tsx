@@ -4,6 +4,7 @@ import { Ace } from 'ace-builds';
 
 interface P {
 	doc: any;
+	fontSize?: number;
 	showToast: (message: string) => void;
 }
 
@@ -19,8 +20,11 @@ export default class Editor extends React.Component<P> {
 	}
 
 	componentDidMount() {
+		let p = this.props;
 		this.editor = ace.edit('editor');
-		this.editor.setOption('fontSize', 14);
+		if (p.fontSize != null) {
+			this.editor.setOption('fontSize', p.fontSize);
+		}
 		this.editor.setOption('showLineNumbers', false);
 		this.editor.setOption('showPrintMargin', false);
 		prefs.get('editorTheme').then(({ editorTheme }) => {

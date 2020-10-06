@@ -141,7 +141,7 @@ class TabsApp extends React.Component<P, S> {
 				</div>
 			</div>
 			<Toast duration={4}>{s.toastMessage}</Toast>
-			<Editor ref={this.editor} doc={s.doc} showToast={this.showToast} />
+			<Editor ref={this.editor} doc={s.doc} showToast={this.showToast} fontSize={16} />
 		</>;
 	}
 }
