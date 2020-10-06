@@ -1,5 +1,4 @@
 import Preferences from './preferences.js';
-import drawIcon, { getImageData } from './components/drawIcon.js';
 import { buildQuery } from './lib/QueryString.js';
 import markdownLink from './lib/markdownLink.js';
 import * as TabService from './lib/tabs.js';
@@ -12,6 +11,9 @@ import assertDefined from './lib/assertDefined.js';
 import writeClipboard from './lib/writeClipboard.js';
 import isDefined from './lib/isDefined.js';
 import loadFont from './fonts/loadFont.js';
+import logError from './lib/logError.js';
+import Icon from './components/Icon.js';
+import prefs from './preferences.js';
 
 /**
  * The last generated document
@@ -341,22 +343,22 @@ interface IDoc {
 }
 
 
+var icon: Icon | undefined;
+
 browser.tabs.onCreated.addListener(updateIcon);
 browser.tabs.onRemoved.addListener(updateIcon);
 Promise.all([
+	prefs.get('iconColor'),
 	loadFont('Roboto', '/fonts/Roboto-Bold.woff2'),
 	loadFont('Roboto Condensed', '/fonts/Roboto-Condensed-Bold.woff2'),
-]).then(updateIcon).catch(logError);
+]).then(([{ iconColor }]) => {
+	icon = new Icon(iconColor);
+	return updateIcon();
+}).catch(logError);
 
 /**
  * Update browser action with the current tab count
  */
 function updateIcon() {
-	TabService.count().then(count => {
-		browser.browserAction.setIcon({ imageData: assertDefined(getImageData(drawIcon(count))) });
-	}).catch(logError);
-}
-
-function logError(error: Error) {
-	console.error(error.message);
+	return TabService.count().then(x => icon?.renderToIcon(x)).catch(logError);
 }

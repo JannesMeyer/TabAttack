@@ -19,7 +19,7 @@ declare namespace document {
 /**
  * Load font asynchronously
  */
-export default function loadFont(family: string, url: string, weight = 700) {
+export default function loadFont(family: string, url: string, weight?: number) {
 	if (typeof FontFace === 'undefined') {
 		throw new Error('FontFace is not supported');
 	}
