@@ -2,7 +2,7 @@ import assertDefined from '../assertDefined.js';
 
 export default class FileLoader {
   
-	private readonly dragOverClass = 'file-dragover';
+	readonly dragOverClass = 'file-dragover';
 
 	constructor(
 		private onFile: (contents: string, type: string, bytes: number, name: string) => void,
@@ -49,6 +49,7 @@ export default class FileLoader {
 	};
 
 	private handleDrop = (ev: DragEvent) => {
+		this.handleDragLeave();
 		let file = ev.dataTransfer?.items[0]?.getAsFile();
 		if (file == null) {
 			return;

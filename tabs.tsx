@@ -12,6 +12,7 @@ import { sendMessage } from './lib/browser/sendMessage.js';
 import closeOtherTabs from './lib/browser/closeOtherTabs.js';
 import { openWindows } from './lib/browser/openWindows.js';
 import assertDefined from './lib/assertDefined.js';
+import prefs from './preferences.js';
 
 
 // Load strings
@@ -30,16 +31,20 @@ var strings = {
 
 // Load document
 let root = document.querySelector('body > main');
-sendMessage<Doc>('get_document').then(doc => {
-	ReactDOM.render(<TabOutput message={doc.message} doc={doc} />, root);
+Promise.all([
+	prefs.get('editorTheme'),
+	sendMessage<Doc>('get_document'),
+]).then(([prefs, doc]) => {
+	ReactDOM.render(<TabsApp message={doc.message} doc={doc} theme={prefs.editorTheme} />, root);
 }).catch(err => {
 	console.error(err, browser.runtime.lastError);
-	ReactDOM.render(<TabOutput message={err} />, root);
+	ReactDOM.render(<TabsApp message={err} />, root);
 });
 
 interface P {
 	doc?: Doc;
 	message?: string;
+	theme?: string;
 }
 
 interface S {
@@ -53,7 +58,7 @@ interface Doc {
 	message?: string;
 }
 
-class TabOutput extends React.Component<P, S> {
+class TabsApp extends React.Component<P, S> {
 
 	private editor = React.createRef<Editor>();
 	private fileInput = React.createRef<HTMLInputElement>();
@@ -119,21 +124,21 @@ class TabOutput extends React.Component<P, S> {
 	};
 
 	render() {
-		let s = this.state;
-		return (
-			<div className="m-container">
-				<div className="m-toolbar">
-					<input type="file" ref={this.fileInput} style={{ display: 'none' }} />
+		let { props: p, state: s} = this;
+		return <>
+			<div className={'ace-' + p.theme}>
+				<div className="Toolbar ace_gutter">
+					<input type="file" ref={this.fileInput} />
 					<ActionButton className="item-save" onClick={this.downloadAsTextFile} title={strings.save} />
 					<ActionButton className="item-close" onClick={closeOtherTabs} title={strings.close} />
 					<ActionButton className="item-load-file" onClick={this.loadFile} title={strings.loadFile} />
 					{s.doc?.format === 'markdown' &&
 					<ActionButton className="item-open" onClick={this.openLinks} title={strings.openLinks} />}
 				</div>
-				<Toast duration={4}>{s.toastMessage}</Toast>
-				<Editor ref={this.editor} doc={s.doc} showToast={this.showToast} />
 			</div>
-		);
+			<Toast duration={4}>{s.toastMessage}</Toast>
+			<Editor ref={this.editor} doc={s.doc} showToast={this.showToast} />
+		</>;
 	}
 }
 

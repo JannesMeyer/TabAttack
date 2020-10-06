@@ -20,7 +20,6 @@ export default class Editor extends React.Component<P> {
 
 	componentDidMount() {
 		this.editor = ace.edit('editor');
-		(this.editor as any).$blockScrolling = Infinity;
 		this.editor.setOption('fontSize', 14);
 		this.editor.setOption('showLineNumbers', false);
 		this.editor.setOption('showPrintMargin', false);
@@ -28,12 +27,12 @@ export default class Editor extends React.Component<P> {
 			this.editor.setTheme('ace/theme/' + editorTheme);
 		});
 		this.updateContent();
-
 		addEventListener('beforeunload', this.handleUnload);
 		addEventListener('copy', this.handleCopy);
 	}
 
 	componentWillUnmount() {
+		this.editor.destroy();
 		removeEventListener('beforeunload', this.handleUnload);
 		removeEventListener('copy', this.handleCopy);
 	}
