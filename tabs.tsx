@@ -130,15 +130,14 @@ class TabsApp extends React.Component<P, S> {
 	render() {
 		let { props: p, state: s} = this;
 		return <>
-			<div className={p.theme?.cssClass}>
-				<div className="Toolbar ace_gutter">
-					<input type="file" ref={this.fileInput} />
-					<ActionButton className="item-save" onClick={this.downloadAsTextFile} title={strings.save} />
-					<ActionButton className="item-close" onClick={closeOtherTabs} title={strings.close} />
-					<ActionButton className="item-load-file" onClick={this.loadFile} title={strings.loadFile} />
-					{s.doc?.format === 'markdown' &&
-					<ActionButton className="item-open" onClick={this.openLinks} title={strings.openLinks} />}
-				</div>
+			<div className={(p.theme?.cssClass ?? '') + ' Toolbar'}>
+				<ActionButton className="item-save" onClick={this.downloadAsTextFile} title={strings.save} />
+				<ActionButton className="item-load-file" onClick={this.loadFile} title={strings.loadFile} />
+				<ActionButton className="item-close" onClick={closeOtherTabs} title={strings.close} />
+				{s.doc?.format === 'markdown' &&
+				<ActionButton className="item-open" onClick={this.openLinks} title={strings.openLinks} />}
+				<input type="file" ref={this.fileInput} />
+				<div className="ace_print-margin" />
 			</div>
 			<Toast duration={4}>{s.toastMessage}</Toast>
 			<Editor ref={this.editor} doc={s.doc} showToast={this.showToast} fontSize={16} />

@@ -27,16 +27,16 @@
 		"message": "You have unsaved changes."
 	},
 	"action_save": {
-		"message": "Download"
+		"message": "Save File"
 	},
 	"action_close_tabs": {
-		"message": "Close all tabs"
+		"message": "Close All Tabs"
 	},
 	"action_load_file": {
-		"message": "Load file"
+		"message": "Load File"
 	},
 	"action_open_links": {
-		"message": "Open links"
+		"message": "Open Links"
 	},
 	"toast_no_document": {
 		"message": "No document found"
