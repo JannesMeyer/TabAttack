@@ -1,7 +1,7 @@
 import preferences, { Prefs } from './preferences.js';
-import { lightThemes, darkThemes } from './lib/AceThemes.js';
 import getString from './lib/browser/getString.js';
 import { sendMessage } from './lib/browser/sendMessage.js';
+import getAceThemes, { AceTheme } from './lib/getAceThemes.js';
 
 // Useful for testing purposes:
 // browser.storage.sync.clear();
@@ -11,19 +11,29 @@ import { sendMessage } from './lib/browser/sendMessage.js';
 document.title = getString('options');
 
 // Load preferences
-preferences.getAll().then(prefs => {
-	ReactDOM.render(<Page {...prefs} />, document.querySelector('body > main'));
+Promise.all([preferences.getAll(), getAceThemes()]).then(([prefs, themes]) => {
+	ReactDOM.render(<OptionsApp
+		prefs={prefs}
+		lightThemes={themes.filter(t => !t.isDark)}
+		darkThemes={themes.filter(t => t.isDark)}
+	/>, document.querySelector('body > main'));
 });
 
-class Page extends React.Component<Prefs, Prefs> {
+interface P {
+	prefs: Prefs;
+	lightThemes: AceTheme[];
+	darkThemes: AceTheme[];
+}
 
-	constructor(p: Prefs) {
+class OptionsApp extends React.Component<P, Prefs> {
+
+	constructor(p: P) {
 		super(p);
-		this.state = p;
+		this.state = { ...p.prefs };
 	}
 
-	componentWillUpdate(_: Prefs, nextState: Prefs) {
-		preferences.set(nextState);
+	componentDidUpdate() {
+		preferences.set(this.state);
 	}
 
 	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent, field: K) {
@@ -73,7 +83,7 @@ class Page extends React.Component<Prefs, Prefs> {
 	// domainInput = React.createRef<HTMLInputElement>();
 
 	render() {
-		let s = this.state;
+		let { props: p, state: s } = this;
 		return <>
 			<h3>{getString('options_export')}</h3>
 
@@ -112,18 +122,18 @@ class Page extends React.Component<Prefs, Prefs> {
 			<div className="row">
 				<select value={s.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')}>
 					<optgroup label="Light">
-					{lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
+					{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 					<optgroup label="Dark">
-					{darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
+					{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 				</select>
 				<select value={s.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')}>
 					<optgroup label="Light">
-					{lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
+					{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 					<optgroup label="Dark">
-					{darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
+					{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 				</select>
 			</div>
