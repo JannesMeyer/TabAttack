@@ -11,11 +11,12 @@ import getAceThemes, { AceTheme } from './lib/getAceThemes.js';
 document.title = getString('options');
 
 // Load preferences
-Promise.all([preferences.getAll(), getAceThemes()]).then(([prefs, themes]) => {
+Promise.all([preferences.getAll(), getAceThemes()]).then(([prefs, tl]) => {
 	ReactDOM.render(<OptionsApp
 		prefs={prefs}
-		lightThemes={themes.filter(t => !t.isDark)}
-		darkThemes={themes.filter(t => t.isDark)}
+		lightThemes={tl.themes.filter(t => !t.isDark)}
+		darkThemes={tl.themes.filter(t => t.isDark)}
+		themesByName={tl.themesByName}
 	/>, document.querySelector('body > main'));
 });
 
@@ -23,6 +24,7 @@ interface P {
 	prefs: Prefs;
 	lightThemes: AceTheme[];
 	darkThemes: AceTheme[];
+	themesByName: { [name: string]: AceTheme };
 }
 
 class OptionsApp extends React.Component<P, Prefs> {
@@ -34,6 +36,9 @@ class OptionsApp extends React.Component<P, Prefs> {
 
 	componentDidUpdate() {
 		preferences.set(this.state);
+		// if (os.editorTheme !== this.state.editorTheme) {
+		// 	getAceTheme(this.props.themesByName[this.state.editorTheme].theme).then(theme => console.log(theme));
+		// }
 	}
 
 	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent, field: K) {
