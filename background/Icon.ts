@@ -5,8 +5,10 @@ export default class Icon {
 	readonly canvas: HTMLCanvasElement;
 	private size = 16;
 	private ctx: CanvasRenderingContext2D;
+	public textColor = '#000';
+	public bgColor?: string;
 
-	constructor(private scale: number, public textColor: string, public bgColor?: string) {
+	constructor(private scale: number) {
 		this.canvas = document.createElement('canvas');
 		this.setScale(scale);
 		this.ctx = assertDefined(this.canvas.getContext('2d'))

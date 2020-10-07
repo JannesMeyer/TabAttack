@@ -25,11 +25,12 @@ async function updateIconColor() {
 browser.tabs.onCreated.addListener(updateIcon);
 browser.tabs.onRemoved.addListener(updateIcon);
 Promise.all([
-	prefs.get('iconColor'),
+	prefs.get('iconColor', 'iconColorDarkMode'),
 	loadFont('Roboto', '/fonts/Roboto-Bold.woff2'),
 	loadFont('Roboto Condensed', '/fonts/Roboto-Condensed-Bold.woff2'),
-]).then(([{ iconColor }]) => {
-	icon = new Icon(devicePixelRatio, iconColor);
+]).then(([p]) => {
+	icon = new Icon(devicePixelRatio);
+	icon.textColor = (prefersDark.matches ? p.iconColorDarkMode : p.iconColor);
 	return updateIcon();
 }).catch(logError);
 
