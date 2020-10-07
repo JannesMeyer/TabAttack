@@ -13,21 +13,26 @@ type MenuProps = Parameters<(typeof browser.contextMenus.create)>[0];
  */
 export default class ContextMenuItem {
 
-  readonly id: string | number;
+	readonly id: string | number;
 
-  /**
-   * Registers a context menu item
-   */
-  constructor(props: MenuProps) {
-    props = {
-      title: (props.id != null ? getString('context_menu_' + props.id as any) : undefined),
-      ...props,
-    };
-    this.id = browser.contextMenus.create(props);
-  }
+	/**
+	 * Registers a context menu item
+	 */
+	constructor(props: MenuProps) {
+		let createProps = {
+			title: (props.id != null ? getString('context_menu_' + props.id as any) : undefined),
+			...props,
+		};
+		this.id = browser.contextMenus.create(createProps);
+	}
 
-  setVisible(visible: boolean) {
-    return browser.contextMenus.update(this.id, { visible });
-  }
+	setVisible(visible: boolean) {
+		return browser.contextMenus.update(this.id, { visible });
+	}
 
 }
+
+// For event pages:
+// browser.contextMenus.onClicked.addListener((info, tab) => {
+// 	console.log(info, tab);
+// })

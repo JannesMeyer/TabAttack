@@ -7,7 +7,7 @@ const listeners = new Map<string, () => void>();
  * Note: Currently this only accepts one listener per name. A subsequent
  * call just overrides the previous listener.
  */
-export function onCommand(command: string, listener: () => void) {
+export default function onCommand(command: string, listener: () => void) {
   if (listeners.size === 0) {
     browser.commands.onCommand.addListener(command => listeners.get(command)?.());
   }

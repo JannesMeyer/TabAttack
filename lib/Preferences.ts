@@ -1,6 +1,5 @@
 import onMessage from './browser/onMessage.js';
 import sendMessage from './browser/sendMessage.js';
-import logError from './logError.js';
 
 export default class Preferences<T> {
 
@@ -33,7 +32,7 @@ export default class Preferences<T> {
 
 	/** Allows to listen for preference changes */
 	onChange(callback: (prefs: T) => void) {
-		onMessage('prefs changed', () => this.getAll().then(callback).catch(logError));
+		onMessage('prefs changed', callback);
 	}
 }
 
