@@ -141,7 +141,8 @@ class TabsApp extends React.Component<P, S> {
 			return;
     }
 
-		openWindows(windows);
+		// TODO: Show errors in a popup
+		return openWindows(windows);
 	};
 
 	render() {
