@@ -77,6 +77,24 @@ class OptionsApp extends React.Component<P, Prefs> {
 			<h3>{getString('options_export')}</h3>
 
 			<label className="row">
+				<span>Ignore Domains</span>
+				<a href="">{s.domainBlacklist.length} domains</a>
+			</label>
+
+			<label className="row">
+				<span>Ignore Pinned Tabs</span>
+				<input type="checkbox" checked={s.ignorePinned} onChange={ev => this.handleChange(ev, 'ignorePinned')} />
+			</label>
+
+			<label className="row">
+				<span>Export Format</span>
+				<select value={s.format} onChange={ev => this.handleChange(ev, 'format')} style={{ width: 121 }}>
+					<option value="markdown">Markdown</option>
+					<option value="json">JSON</option>
+				</select>
+			</label>
+
+			<label className="row">
 				<span>Color Scheme</span>
 				<select value={s.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')}>
 					<optgroup label="Light">
@@ -97,24 +115,6 @@ class OptionsApp extends React.Component<P, Prefs> {
 					<optgroup label="Dark">
 					{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
-				</select>
-			</label>
-
-			<label className="row">
-				<span>Ignore Domains</span>
-				<a href="">{s.domainBlacklist.length} domains</a>
-			</label>
-
-			<label className="row">
-				<span>Ignore Pinned Tabs</span>
-				<input type="checkbox" checked={s.ignorePinned} onChange={ev => this.handleChange(ev, 'ignorePinned')} />
-			</label>
-
-			<label className="row">
-				<span>Export Format</span>
-				<select value={s.format} onChange={ev => this.handleChange(ev, 'format')} style={{ width: 121 }}>
-					<option value="markdown">Markdown</option>
-					<option value="json">JSON</option>
 				</select>
 			</label>
 
