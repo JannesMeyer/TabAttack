@@ -31,7 +31,7 @@ export default class Preferences<T> {
 	}
 
 	/** Allows to listen for preference changes */
-	onChange(callback: (prefs: T) => void) {
+	onChange(callback: () => void) {
 		onMessage('prefs changed', callback);
 	}
 }
