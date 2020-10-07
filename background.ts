@@ -377,6 +377,9 @@ function updateIcon() {
 			scales = [devicePixelRatio];
 		}
 
+		// TODO: support dark mode
+		// TODO: cache last 20 renderings in memory
+		// TODO: pre-render +1 and -1
 		// Render each scale factor
 		let imageData: Record<number, ImageData> = {};
 		for (let scale of scales) {
