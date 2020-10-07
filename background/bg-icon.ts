@@ -59,7 +59,7 @@ function updateIcon() {
 		let imageData: Record<number, ImageData> = {};
 		for (let scale of scales) {
 			icon.setScale(scale);
-			imageData[icon.getSize()] = icon.render(x).imageData;
+			imageData[icon.canvas.width] = icon.render(x).imageData;
 		}
 		
 		return browser.browserAction.setIcon({ imageData });

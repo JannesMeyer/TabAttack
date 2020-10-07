@@ -23,10 +23,6 @@ export default class Icon {
 		return this;
 	}
 
-	getSize() {
-		return this.size;
-	}
-
 	/**
 	 * Draws the text (max 3 characters)
 	 */
