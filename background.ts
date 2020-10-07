@@ -359,7 +359,7 @@ Promise.all([
 	loadFont('Roboto', '/fonts/Roboto-Bold.woff2'),
 	loadFont('Roboto Condensed', '/fonts/Roboto-Condensed-Bold.woff2'),
 ]).then(([{ iconColor }]) => {
-	icon = new Icon(iconColor);
+	icon = new Icon(devicePixelRatio, iconColor);
 	return updateIcon();
 }).catch(logError);
 
@@ -367,5 +367,5 @@ Promise.all([
  * Update browser action with the current tab count
  */
 function updateIcon() {
-	return TabService.count().then(x => icon?.renderToIcon(x)).catch(logError);
+	return TabService.count().then(x => icon?.setScale(devicePixelRatio).renderToIcon(x)).catch(logError);
 }

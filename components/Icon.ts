@@ -3,33 +3,22 @@ import assertDefined from '../lib/assertDefined.js';
 export default class Icon {
 
 	readonly canvas: HTMLCanvasElement;
-	private size: number;
-	private scale: number;
+	private size = 16;
 	private ctx: CanvasRenderingContext2D;
 
-	constructor(public textColor: string, public bgColor?: string) {
+	constructor(private scale: number, public textColor: string, public bgColor?: string) {
 		this.canvas = document.createElement('canvas');
-		this.size = 16;
-		this.scale = devicePixelRatio;
-		this.ctx = this.updateContext();
-	}
-
-	setSize(size: number) {
-		if (this.size === size) { return; }
-		this.size = size;
-		this.updateContext();
+		this.setScale(scale);
+		this.ctx = assertDefined(this.canvas.getContext('2d'))
 	}
 
 	setScale(scale: number) {
-		if (this.scale === scale) { return; }
 		this.scale = scale;
-		this.updateContext();
-	}
-
-	updateContext() {
-		let { canvas, size, scale } = this;
-		canvas.width = canvas.height = (size * scale);
-		return this.ctx = assertDefined(canvas.getContext('2d'));
+		let { canvas, size } = this;
+		let w = Math.floor(size * scale);
+		if (canvas.width  !== w) { canvas.width = w; }
+		if (canvas.height !== w) { canvas.height = w; }
+		return this;
 	}
 
 	/**
@@ -53,6 +42,7 @@ export default class Icon {
 		ctx.font = `${scale * 11}px Roboto` + (text.length > 2 ? ' Condensed' : '');
 		ctx.fillStyle = this.textColor;
 		ctx.textAlign = 'center';
+		//ctx.textBaseline = 'middle';
 		ctx.fillText(text, canvas.width / 2, 12 * scale);
 
 		return this;
