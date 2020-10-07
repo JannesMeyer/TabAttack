@@ -6,16 +6,14 @@ import * as TabService from '../lib/tabs.js';
 
 var icon: Icon | undefined;
 var prefersDark = matchMedia('(prefers-color-scheme: dark)');
-prefersDark.addEventListener('change', ev => console.log(ev.matches));
-prefs.onChange(() => updateIconColor());
+prefersDark.addEventListener('change', updateIconColor);
+prefs.onChange(updateIconColor);
 
 async function updateIconColor() {
-	console.log('darkmode:', prefersDark.matches);
 	if (icon == null) {
 		return;
 	}
 	let p = await prefs.get('iconColor', 'iconColorDarkMode');
-	
 	let color = (prefersDark.matches ? p.iconColorDarkMode : p.iconColor);
 	if (icon.textColor === color) {
 		return;

@@ -9,6 +9,7 @@
 	--in-content-link-color-active: #002275;
 }
 body {
+	font-family: system-ui, sans-serif;
 	color: #0c0c0d;
 }
 h3 {
@@ -16,13 +17,14 @@ h3 {
 	font-weight: bold;
 	margin-top: 16px;
 	margin-bottom: 10px;
+	color: inherit;
 }
 h3:first-child {
 	margin-top: 8px;
 }
 .row {
 	display: block;
-	min-height: 30px;
+	min-height: 28px;
 }
 .row span {
 	display: inline-block;
@@ -45,6 +47,15 @@ a:hover {
 a:active {
 	color: var(--in-content-link-color-active);
 	text-decoration: none;
+}
+@media (prefers-color-scheme: dark) {
+	body {
+		background: #3b3b3b;
+		color: #a7a7a7;
+	}
+	h3 {
+		color: white;
+	}
 }
 </style>
 <script src="/node_modules/react/umd/react.development.js"></script>
