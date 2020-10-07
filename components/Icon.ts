@@ -21,6 +21,10 @@ export default class Icon {
 		return this;
 	}
 
+	getSize() {
+		return this.size;
+	}
+
 	/**
 	 * Draws the text (max 3 characters)
 	 */
@@ -50,11 +54,6 @@ export default class Icon {
 
 	get imageData() {
 		return this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-	}
-
-	renderToIcon(text: string | number) {
-		this.render(text);
-		return browser.browserAction.setIcon({ imageData: this.imageData });
 	}
 }
 

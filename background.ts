@@ -367,5 +367,23 @@ Promise.all([
  * Update browser action with the current tab count
  */
 function updateIcon() {
-	return TabService.count().then(x => icon?.setScale(devicePixelRatio).renderToIcon(x)).catch(logError);
+	return TabService.count().then(x => {
+		if (icon == null) {
+			return;
+		}
+		// Determine scale factors to render
+		let scales = [1, 2];
+		if (!scales.includes(devicePixelRatio)) {
+			scales = [devicePixelRatio];
+		}
+
+		// Render each scale factor
+		let imageData: Record<number, ImageData> = {};
+		for (let scale of scales) {
+			icon.setScale(scale);
+			imageData[icon.getSize()] = icon.render(x).imageData;
+		}
+		
+		return browser.browserAction.setIcon({ imageData });
+	}).catch(logError);
 }
