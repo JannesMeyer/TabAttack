@@ -76,40 +76,8 @@ class OptionsApp extends React.Component<P, Prefs> {
 		return <>
 			<h3>{getString('options_export')}</h3>
 
-			<div className="row">
-				<label>
-					<span>Export Format</span>
-					<select value={s.format} onChange={ev => this.handleChange(ev, 'format')} style={{ width: 121 }}>
-						<option value="markdown">Markdown</option>
-						<option value="json">JSON</option>
-					</select>
-				</label>
-			</div>
-
-			<div className="row">
-				<span>Ignore Tabs</span>
-				<a href="">{s.domainBlacklist.length} domains</a>
-			</div>
-
-			<div className="row">
-				<span/>
-				<label>
-					<input type="checkbox" checked={s.ignorePinned} onChange={ev => this.handleChange(ev, 'ignorePinned')} />
-					Pinned Tabs
-				</label>
-			</div>
-
-			<h3>Icon</h3>
-
-			<div className="row">
-				<span>Text Color</span>
-				<input type="color" value={s.iconColor} onChange={ev => this.handleChange(ev, 'iconColor')} />
-				<input type="color" value={s.iconColorDarkMode} onChange={ev => this.handleChange(ev, 'iconColorDarkMode')} />
-			</div>
-
-			<h3>Editor Color Scheme</h3>
-
-			<div className="row">
+			<label className="row">
+				<span>Color Scheme</span>
 				<select value={s.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')}>
 					<optgroup label="Light">
 					{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
@@ -118,6 +86,10 @@ class OptionsApp extends React.Component<P, Prefs> {
 					{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 				</select>
+			</label>
+
+			<label className="row">
+				<span>Color Scheme - Dark Mode</span>
 				<select value={s.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')}>
 					<optgroup label="Light">
 					{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
@@ -126,7 +98,37 @@ class OptionsApp extends React.Component<P, Prefs> {
 					{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 				</select>
-			</div>
+			</label>
+
+			<label className="row">
+				<span>Ignore Domains</span>
+				<a href="">{s.domainBlacklist.length} domains</a>
+			</label>
+
+			<label className="row">
+				<span>Ignore Pinned Tabs</span>
+				<input type="checkbox" checked={s.ignorePinned} onChange={ev => this.handleChange(ev, 'ignorePinned')} />
+			</label>
+
+			<label className="row">
+				<span>Export Format</span>
+				<select value={s.format} onChange={ev => this.handleChange(ev, 'format')} style={{ width: 121 }}>
+					<option value="markdown">Markdown</option>
+					<option value="json">JSON</option>
+				</select>
+			</label>
+
+			<h3>Icon</h3>
+
+			<label className="row">
+				<span>Text Color</span>
+				<input type="color" value={s.iconColor} onChange={ev => this.handleChange(ev, 'iconColor')} />
+			</label>
+
+			<label className="row">
+				<span>Text Color - Dark Mode</span>
+				<input type="color" value={s.iconColorDarkMode} onChange={ev => this.handleChange(ev, 'iconColorDarkMode')} />
+			</label>
 
 			<h3>Context Menu Items</h3>
 
