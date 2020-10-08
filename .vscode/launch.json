@@ -8,7 +8,7 @@
 			"type": "firefox",
 			"request": "launch",
 			"reAttach": true,
-			"name": "Launch add-on",
+			"name": "Firefox",
 			"addonPath": "${workspaceFolder}"
 		}
 	]
