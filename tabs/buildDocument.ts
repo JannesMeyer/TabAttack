@@ -28,11 +28,11 @@ export default function buildDocument(sourceTab: browser.tabs.Tab, windows: brow
 	// Pull a window to the top
 	let index = windows.findIndex(wnd => wnd.id === sourceTab.windowId);
 	if (index > 0) {
-		windows.unshift(windows.splice(index, 1)[0]);
+		windows.unshift(assertDefined(windows.splice(index, 1)[0]));
 	}
 
 	// Count highlighted tabs. If >1 only export those.
-	let highlightedTabs = assertDefined(windows[0].tabs).filter(t => t.highlighted);
+	let highlightedTabs = assertDefined(windows.first().tabs).filter(t => t.highlighted);
 	if (highlightedTabs.length > 1) {
 		windows = [ { tabs: highlightedTabs, focused: false, incognito: false, alwaysOnTop: false } ];
 	}

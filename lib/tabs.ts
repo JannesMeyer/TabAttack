@@ -1,3 +1,5 @@
+import assertDefined from './assertDefined.js';
+
 const isOpera = (navigator.vendor.indexOf('Opera') !== -1);
 
 /**
@@ -33,11 +35,11 @@ export function moveHighlighted(direction: number) {
       throw new Error('The window does not have tabs');
     }
     // Opera reports all tabs as not highlighted, even the active one
-    let highlighted: Array<browser.tabs.Tab> = wnd.tabs.filter(t => t.highlighted || t.active);
+    let highlighted: browser.tabs.Tab[] = wnd.tabs.filter(t => t.highlighted || t.active);
 
     // Change the iteration behaviour to backwards
     if (direction > 0) {
-      highlighted[Symbol.iterator] = valuesBackwards;
+      highlighted[Symbol.iterator] = valuesReversed;
     }
 
     // Iterate through all highlighted tabs
@@ -45,7 +47,7 @@ export function moveHighlighted(direction: number) {
       let index = tab.index;
       do {
         index = (wnd.tabs.length + index + direction) % wnd.tabs.length;
-      } while (tab.pinned !== wnd.tabs[index].pinned);
+      } while (tab.pinned !== assertDefined(wnd.tabs[index]).pinned);
       if (tab.id != null) {
         browser.tabs.move(tab.id, { index });
       }
@@ -58,18 +60,10 @@ export function moveHighlighted(direction: number) {
  * Does not handle sparse arrays in a special way, just like
  * the original iterator.
  */
-function valuesBackwards<X>(this: X[]): IterableIterator<X> {
-  let i = this.length;
-  return {
-    [Symbol.iterator]() { return this; },
-    next: () => {
-      --i;
-      return {
-        done: (i < 0),
-        value: this[i],
-      };
-    }
-  };
+function* valuesReversed<X>(this: readonly X[]) {
+	for (let i = this.length - 1; 0 <= i; --i) {
+			yield this[i] as X;
+	}
 }
 
 /**

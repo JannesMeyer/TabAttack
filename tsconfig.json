@@ -3,6 +3,7 @@
 		"sourceMap": true,
 		"jsx": "react",
 		"strict": true,
+		"noUncheckedIndexedAccess": true,
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedLocals": true,

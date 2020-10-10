@@ -1,10 +1,11 @@
 {
-  "files.exclude": {
-    "node_modules": true,
-    "**/*.js": true,
-    "**/*.js.map": true,
-  },
-  "editor.tabSize": 2,
-  "editor.insertSpaces": false,
-  "editor.detectIndentation": false
+	"files.exclude": {
+		"node_modules": true,
+		"**/*.js": true,
+		"**/*.js.map": true,
+	},
+	"editor.tabSize": 2,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"typescript.tsdk": "node_modules\\typescript\\lib"
 }

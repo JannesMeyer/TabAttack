@@ -1,9 +1,10 @@
 import Icon from './background/Icon.js';
 import loadFont from './fonts/loadFont.js';
+import assertDefined from './lib/assertDefined.js';
 
 const scales = [1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4];
 const prefersDark = matchMedia('(prefers-color-scheme: dark)');
-const icons = Array(500).fill(null).map((_, i) => new Icon(scales[i % scales.length]));
+const icons = Array(500).fill(null).map((_, i) => new Icon(assertDefined(scales[i % scales.length])));
 
 // Wait for fonts to load
 Promise.all([

@@ -5,6 +5,7 @@ import { openWindows } from '../lib/browser/openWindows.js';
 import css from '../lib/css.js';
 import getIsoDate from '../lib/date/getIsoDate.js';
 import { parseHTML } from '../lib/DOM.js';
+import getUrlParams from '../lib/dom/getUrlParams.js';
 import ready from '../lib/dom/ready.js';
 import FileLoader from '../lib/files/FileLoader.js';
 import { saveTextFile } from '../lib/files/saveTextFile.js';
@@ -16,10 +17,12 @@ import ActionButton from './ActionButton.js';
 import Editor from './Editor.js';
 import Toast from './Toast.js';
 
-ready().then(root => ReactDOM.render(<TabsApp />, root));
+let params = getUrlParams();
+ready().then(root => ReactDOM.render(<TabsApp sourceTabId={params.t} />, root));
 
 interface P {
 	window?: number;
+	sourceTabId?: string;
 }
 
 interface S {
