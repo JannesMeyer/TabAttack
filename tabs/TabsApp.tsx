@@ -16,9 +16,7 @@ import ActionButton from './ActionButton.js';
 import Editor from './Editor.js';
 import Toast from './Toast.js';
 
-ready().then(() => {
-	ReactDOM.render(<TabsApp />, document.querySelector('body > main'));
-});
+ready().then(root => ReactDOM.render(<TabsApp />, root));
 
 interface P {
 	window?: number;
