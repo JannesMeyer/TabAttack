@@ -1,17 +1,17 @@
 import assertDefined from '../lib/assertDefined.js';
+import getActiveTab from '../lib/browser/getActiveTab.js';
 import getString from '../lib/browser/getString.js';
 import onCommand from '../lib/browser/onCommand.js';
 import onMessage from '../lib/browser/onMessage.js';
 import ContextMenuItem from '../lib/ContextMenuItem.js';
 import logError from '../lib/logError.js';
 import markdownLink from '../lib/markdownLink.js';
-import * as TabService from '../lib/tabs.js';
 import writeClipboard from '../lib/writeClipboard.js';
 import prefs from '../preferences.js';
 
 /** Global shortcut: Copy active tab as a Markdown link */
 onCommand('copy_tab_as_markdown', function() {
-	TabService.getActive().then(tab => copyLink(tab.title, assertDefined(tab.url), 'documentTitle'));
+	getActiveTab().then(t => copyLink(t.title, assertDefined(t.url), 'documentTitle'));
 });
 
 

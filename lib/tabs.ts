@@ -15,23 +15,6 @@ export function getHighlighted(): Promise<browser.tabs.Tab[]> {
 }
 
 /**
- * Gets active tab in the last focused window.
- */
-export function getActive(): Promise<browser.tabs.Tab> {
-  return browser.tabs.query({ lastFocusedWindow: true, active: true }).then(results => results[0]);
-}
-
-/**
- * Show a URL by opening it in a new tab
- */
-export function open(openerTab: browser.tabs.Tab, url: string) {
-  // if (openerTab.url === 'chrome://newtab/' && !openerTab.incognito) {
-  //  return Promise.all([ create({ url }), remove(openerTab.id) ]);
-  // }
-  return browser.tabs.create({ url, openerTabId: openerTab.id });
-}
-
-/**
  * Return the total number of tabs
  */
 export function count(): Promise<number> {

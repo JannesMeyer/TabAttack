@@ -1,5 +1,6 @@
 import onMessage from './browser/onMessage.js';
 import sendMessage from './browser/sendMessage.js';
+import logError from './logError.js';
 
 export default class Preferences<T> {
 
@@ -14,6 +15,12 @@ export default class Preferences<T> {
     let defaults = filterObject(this.defaults, keys);
     return browser.storage.sync.get(defaults) as any;
   }
+
+	async getWithUpdates<X extends keyof T>(...keys: X[]) {
+		let x = await this.get(...keys);
+		this.onChange(() => this.get(...keys).then(res => Object.assign(x, res)).catch(logError));
+		return x;
+	}
 
   /**
    * Requests all values
@@ -31,8 +38,9 @@ export default class Preferences<T> {
 	}
 
 	/** Allows to listen for preference changes */
-	onChange(callback: () => void) {
+	onChange(callback: () => void, leadingCall = false) {
 		onMessage('prefs changed', callback);
+		leadingCall && callback();
 	}
 }
 

@@ -1,6 +1,6 @@
 import preferences, { Prefs } from './preferences.js';
 import getString from './lib/browser/getString.js';
-import getAceThemes, { AceTheme } from './lib/getAceThemes.js';
+import { getAceThemeList, AceTheme } from './lib/getAceThemes.js';
 
 // Useful for testing purposes:
 // browser.storage.sync.clear();
@@ -10,7 +10,7 @@ import getAceThemes, { AceTheme } from './lib/getAceThemes.js';
 document.title = getString('options');
 
 // Load preferences
-Promise.all([preferences.getAll(), getAceThemes()]).then(([prefs, tl]) => {
+Promise.all([preferences.getAll(), getAceThemeList()]).then(([prefs, tl]) => {
 	ReactDOM.render(<OptionsApp
 		prefs={prefs}
 		lightThemes={tl.themes.filter(t => !t.isDark)}
