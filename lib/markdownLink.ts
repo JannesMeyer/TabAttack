@@ -2,9 +2,7 @@
  * Create markdown link with proper escaping
  */
 export default function markdownLink(title: string | undefined, url: string): string {
-	if (title === '' || title == null) {
-		title = 'Untitled';
-	}
+	title ||= 'Untitled';
 	
 	// Escape []*`_\ and < in the title
 	title = title.replace(/[\[\]\*\`_\\]/g, char => '\\' + char).replace(/</g, '&lt;');
