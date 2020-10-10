@@ -5,6 +5,7 @@ import { openWindows } from '../lib/browser/openWindows.js';
 import css from '../lib/css.js';
 import getIsoDate from '../lib/date/getIsoDate.js';
 import { parseHTML } from '../lib/DOM.js';
+import ready from '../lib/dom/ready.js';
 import FileLoader from '../lib/files/FileLoader.js';
 import { saveTextFile } from '../lib/files/saveTextFile.js';
 import { AceThemeModule, getAceThemeModule } from '../lib/getAceThemes.js';
@@ -14,6 +15,10 @@ import prefs from '../preferences.js';
 import ActionButton from './ActionButton.js';
 import Editor from './Editor.js';
 import Toast from './Toast.js';
+
+ready().then(() => {
+	ReactDOM.render(<TabsApp />, document.querySelector('body > main'));
+});
 
 interface P {
 	window?: number;
@@ -27,7 +32,7 @@ interface S {
 	toastMessage?: string;
 }
 
-export default class TabsApp extends React.Component<P, S> {
+class TabsApp extends React.Component<P, S> {
 
 	private editor = React.createRef<Editor>();
 	private fileInput = React.createRef<HTMLInputElement>();
