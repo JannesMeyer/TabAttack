@@ -4,17 +4,17 @@ import logError from './logError.js';
 
 export default class Preferences<T> {
 
-  constructor(readonly defaults: T) {}
+	constructor(readonly defaults: T) {}
 
-  /**
-   * Requests one ore more preference values and
-   * returns the value itself or an object containing
-   * all keys and values
-   */
-  get<X extends keyof T>(...keys: X[]): Promise<Pick<T, X>> {
-    let defaults = filterObject(this.defaults, keys);
-    return browser.storage.sync.get(defaults) as any;
-  }
+	/**
+	 * Requests one ore more preference values and
+	 * returns the value itself or an object containing
+	 * all keys and values
+	 */
+	get<X extends keyof T>(...keys: X[]): Promise<Pick<T, X>> {
+		let defaults = filterObject(this.defaults, keys);
+		return browser.storage.sync.get(defaults) as any;
+	}
 
 	async getWithUpdates<X extends keyof T>(...keys: X[]) {
 		let x = await this.get(...keys);
@@ -22,17 +22,17 @@ export default class Preferences<T> {
 		return x;
 	}
 
-  /**
-   * Requests all values
-   */
-  getAll(): Promise<T> {
-    return browser.storage.sync.get(this.defaults) as any;
-  }
+	/**
+	 * Requests all values
+	 */
+	getAll(): Promise<T> {
+		return browser.storage.sync.get(this.defaults) as any;
+	}
 
-  /**
-   * Sets multiple values
-   */
-  async set<X extends keyof T>(items: Pick<T, X>, notify = true) {
+	/**
+	 * Sets multiple values
+	 */
+	async set<X extends keyof T>(items: Pick<T, X>, notify = true) {
 		await browser.storage.sync.set(items);
 		notify && sendMessage('prefs changed');
 	}
@@ -45,11 +45,11 @@ export default class Preferences<T> {
 }
 
 function filterObject<T, K extends keyof T>(obj: T, keys: K[]) {
-  let result: any = {};
-  for (let key of keys) {
-    if (key in obj) {
-      result[key] = obj[key];
-    }
-  }
-  return result;
+	let result: any = {};
+	for (let key of keys) {
+		if (key in obj) {
+			result[key] = obj[key];
+		}
+	}
+	return result;
 }

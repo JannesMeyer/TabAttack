@@ -93,8 +93,8 @@ class TabsApp extends React.Component<P, S> {
 	/** Open all links in tabs */
 	openLinks = () => {
 		// Markdown → HTML → DOM
-    let text = assertDefined(this.editor.current).getContent();
-    let doc = parseHTML(marked(text));
+		let text = assertDefined(this.editor.current).getContent();
+		let doc = parseHTML(marked(text));
 
 		// Get all links inside of an <ul>
 		let windows = Array.from(doc.getElementsByTagName('ul')).map(ul => {
@@ -106,7 +106,7 @@ class TabsApp extends React.Component<P, S> {
 		if (doc.getElementsByTagName('a').length > 0) {
 			this.showToast(getString('link_outside_list_error'));
 			return;
-    }
+		}
 
 		// TODO: Show errors in a popup
 		return openWindows(windows);

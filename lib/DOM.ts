@@ -15,9 +15,9 @@ export function parseHTML(str: string) {
  */
 export function isInputElement(element: HTMLElement) {
 	return element.tagName === 'INPUT' ||
-	       element.tagName === 'TEXTAREA' ||
-	       element.tagName === 'SELECT' ||
-	       element.isContentEditable;
+				 element.tagName === 'TEXTAREA' ||
+				 element.tagName === 'SELECT' ||
+				 element.isContentEditable;
 }
 
 /**
@@ -25,7 +25,7 @@ export function isInputElement(element: HTMLElement) {
  */
 export function removeChildren(node: Node) {
 	while (node.lastChild) {
-	  node.removeChild(node.lastChild);
+		node.removeChild(node.lastChild);
 	}
 }
 
@@ -42,18 +42,18 @@ export function findNode(nodeName: string, node: Node | null) {
 			return node;
 		}
 		node = node.parentNode;
-  }
-  return;
+	}
+	return;
 }
 
 /**
  * Select a node's contents
  */
 export function selectNodeContents(node: Node) {
-  let selection = window.getSelection();
-  if (selection == null) {
-    return;
-  }
+	let selection = window.getSelection();
+	if (selection == null) {
+		return;
+	}
 	selection.removeAllRanges();
 	let range = document.createRange();
 	range.selectNodeContents(node); // range.selectNode(node);

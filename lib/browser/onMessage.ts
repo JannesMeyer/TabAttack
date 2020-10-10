@@ -4,7 +4,7 @@ const listeners = new Map<string, Callback>();
 
 /** Collective listener */
 const globalHandler: Callback = (message: any, sender, sendResponse) => {
-  listeners.get(message._operation)?.(message, sender, sendResponse);
+	listeners.get(message._operation)?.(message, sender, sendResponse);
 };
 
 /**
@@ -12,12 +12,12 @@ const globalHandler: Callback = (message: any, sender, sendResponse) => {
  * To unlisten, just leave the handler blank
  */
 export default function onMessage(operation: string, handler?: Callback) {
-  if (listeners.size === 0) {
-    browser.runtime.onMessage.addListener(globalHandler);
-  }
-  if (handler) {
-    listeners.set(operation, handler);
-  } else {
-    listeners.delete(operation);
-  }
+	if (listeners.size === 0) {
+		browser.runtime.onMessage.addListener(globalHandler);
+	}
+	if (handler) {
+		listeners.set(operation, handler);
+	} else {
+		listeners.delete(operation);
+	}
 }

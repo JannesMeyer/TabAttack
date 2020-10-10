@@ -8,12 +8,12 @@ const listeners = new Map<string, () => void>();
  * call just overrides the previous listener.
  */
 export default function onCommand(command: string, listener: () => void) {
-  if (listeners.size === 0) {
-    browser.commands.onCommand.addListener(command => listeners.get(command)?.());
-  }
-  if (listener) {
-    listeners.set(command, listener);
-  } else {
-    listeners.delete(command);
-  }
+	if (listeners.size === 0) {
+		browser.commands.onCommand.addListener(command => listeners.get(command)?.());
+	}
+	if (listener) {
+		listeners.set(command, listener);
+	} else {
+		listeners.delete(command);
+	}
 }
