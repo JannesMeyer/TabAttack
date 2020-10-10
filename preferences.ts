@@ -12,7 +12,7 @@ const prefs = new Preferences({
 	iconColor: '#000000',
 	iconColorDarkMode: '#ffffff',
 	editorTheme: 'katzenmilch',
-	editorThemeDarkMode: 'katzenmilch',
+	editorThemeDarkMode: 'chaos',
 	showCopyLinkAsMarkdown: true,
 	showCopyPageAsMarkdown: false,
 });
