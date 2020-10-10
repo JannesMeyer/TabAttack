@@ -1,4 +1,4 @@
-import preferences, { Prefs } from './preferences.js';
+import prefs, { Prefs } from './preferences.js';
 import getString from './lib/browser/getString.js';
 import { getAceThemeList, AceTheme } from './lib/getAceThemes.js';
 
@@ -10,10 +10,10 @@ import { getAceThemeList, AceTheme } from './lib/getAceThemes.js';
 document.title = getString('options');
 
 // Load preferences
-Promise.all([preferences.getAll(), getAceThemeList()]).then(([prefs, tl]) => {
+Promise.all([prefs.getAll(), getAceThemeList()]).then(([p, tl]) => {
 	let themes = tl.themes.slice().sort((a, b) => a.name.localeCompare(b.name));
 	ReactDOM.render(<OptionsApp
-		prefs={prefs}
+		prefs={p}
 		lightThemes={themes.filter(t => !t.isDark)}
 		darkThemes={themes.filter(t => t.isDark)}
 	/>, document.querySelector('body > main'));
@@ -33,7 +33,7 @@ class OptionsApp extends React.Component<P, Prefs> {
 	}
 
 	componentDidUpdate() {
-		preferences.set(this.state);
+		prefs.set(this.state);
 	}
 
 	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent, field: K) {
