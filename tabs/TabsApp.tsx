@@ -1,3 +1,4 @@
+import '../lib/Array.extensions.js';
 import assertDefined from '../lib/assertDefined.js';
 import closeOtherTabs from '../lib/browser/closeOtherTabs.js';
 import getString from '../lib/browser/getString.js';
