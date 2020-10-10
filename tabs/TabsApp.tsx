@@ -7,8 +7,9 @@ import getIsoDate from '../lib/date/getIsoDate.js';
 import { parseHTML } from '../lib/DOM.js';
 import FileLoader from '../lib/files/FileLoader.js';
 import { saveTextFile } from '../lib/files/saveTextFile.js';
-import { AceThemeModule, getAceTheme, getAceThemeList } from '../lib/getAceThemes.js';
+import { AceThemeModule, getAceThemeModule } from '../lib/getAceThemes.js';
 import logError from '../lib/logError.js';
+import prefersDark from '../lib/prefersDark.js';
 import prefs from '../preferences.js';
 import ActionButton from './ActionButton.js';
 import Editor from './Editor.js';
@@ -49,6 +50,7 @@ export default class TabsApp extends React.Component<P, S> {
 
 		// Load theme
 		prefs.onChange(() => this.updateTheme().catch(logError), true);
+		prefersDark.addEventListener('change', () => this.updateTheme().catch(logError));
 
 		// import KeyPress from 'keypress-tool';
 		// var ctrlS      = KeyPress('S', 'ctrl');
@@ -58,10 +60,9 @@ export default class TabsApp extends React.Component<P, S> {
 	}
 
 	async updateTheme() {
-		let { editorTheme } = await prefs.get('editorTheme');
-		let { themesByName } = await getAceThemeList();
-		let theme = await getAceTheme(themesByName[editorTheme]);
-		this.setState({ theme });
+		let { editorTheme, editorThemeDarkMode } = await prefs.get('editorTheme', 'editorThemeDarkMode');
+		let name = (prefersDark.matches ? editorThemeDarkMode : editorTheme);
+		this.setState({ theme: await getAceThemeModule(name) });
 	}
 	
 	componentWillUnmount() {

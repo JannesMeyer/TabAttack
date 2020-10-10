@@ -15,8 +15,10 @@ export function getAceThemeList() {
 	});
 }
 
-export function getAceTheme(theme: AceTheme) {
+export async function getAceThemeModule(name: string) {
+	let { themesByName } = await getAceThemeList();
+	let t = themesByName[name];
 	return new Promise<AceThemeModule>(resolve => {
-		ace.config.loadModule(theme.theme, ({ cssClass }) => resolve({ ...theme, cssClass }));
+		ace.config.loadModule(t.theme, ({ cssClass }) => resolve({ ...t, cssClass }));
 	});
 }

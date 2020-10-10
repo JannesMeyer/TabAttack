@@ -4,12 +4,10 @@ import prefs from '../preferences.js';
 import Icon from './Icon.js';
 import * as TabService from '../lib/tabs.js';
 import assertDefined from '../lib/assertDefined.js';
+import prefersDark from '../lib/prefersDark.js';
 
 /** Icon renderer */
 const icon = new Icon(devicePixelRatio);
-
-/** Dark mode media query */
-const prefersDark = matchMedia('(prefers-color-scheme: dark)');
 
 /** Icon text color (normal mode) */
 let iconColor: string | undefined;

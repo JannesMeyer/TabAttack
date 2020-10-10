@@ -1,7 +1,7 @@
 import assertDefined from '../lib/assertDefined.js';
 import getString from '../lib/browser/getString.js';
 import markdownLink from '../lib/markdownLink.js';
-import prefs from '../preferences.js';
+import { Prefs } from '../preferences.js';
 
 interface Doc {
 	format: 'markdown' | 'json';
@@ -20,12 +20,10 @@ const protocolBlacklist = new Set([
 	'edge:',
 ]);
 
-const p = await prefs.getWithUpdates('format', 'ignorePinned', 'domainBlacklist');
-
 /**
  * Filter some tabs and windows out, then build the document
  */
-export default function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Window[]) {
+export default function buildDocument(sourceTab: browser.tabs.Tab, windows: browser.windows.Window[], p: Pick<Prefs, 'format' | 'ignorePinned' | 'domainBlacklist'>) {
 	// TODO: reverse the order of the windows
 	// Pull a window to the top
 	let index = windows.findIndex(wnd => wnd.id === sourceTab.windowId);
@@ -89,10 +87,10 @@ export default function buildDocument(sourceTab: browser.tabs.Tab, windows: brow
  * Build a pretty-printed JSON document from an array of windows
  */
 function buildJSONDocument(windows: browser.windows.Window[]): Doc {
-	let wnd = windows.map(w => assertDefined(w.tabs).map(t => ({ title: t.title, url: t.url })));
+	let w = windows.map(w => assertDefined(w.tabs).map(t => ({ title: t.title, url: t.url })));
 	return {
 		format: 'json',
-		text: JSON.stringify(wnd, undefined, 2),
+		text: JSON.stringify(w, undefined, 2),
 	};
 }
 
