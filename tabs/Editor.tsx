@@ -2,7 +2,6 @@ import getString from '../lib/browser/getString.js';
 import { Ace } from 'ace-builds';
 import css from '../lib/css.js';
 import assertDefined from '../lib/assertDefined.js';
-import { AceThemeModule } from '../lib/getAceThemes.js';
 
 export interface Doc {
 	text?: string;
@@ -11,7 +10,7 @@ export interface Doc {
 }
 
 interface P extends Doc {
-	theme: AceThemeModule;
+	theme?: string;
 	fontSize?: number;
 	showToast: (message: string) => void;
 }
@@ -24,7 +23,9 @@ export default class Editor extends React.Component<P> {
 	componentDidMount() {
 		let editor = this.editor = ace.edit(assertDefined(this.ref.current));
 		let p = this.props;
-		editor.setTheme(p.theme.theme);
+		if (p.theme != null) {
+			editor.setTheme(p.theme);
+		}
 		editor.setOption('showLineNumbers', false);
 		editor.setOption('showPrintMargin', false);
 		if (p.fontSize != null) {
@@ -74,7 +75,7 @@ export default class Editor extends React.Component<P> {
 	componentDidUpdate(op: Readonly<P>) {
 		let { props: p, editor } = this;
 		if (p.theme !== op.theme) {
-			editor.setTheme(p.theme.theme);
+			p.theme && editor.setTheme(p.theme);
 		}
 		if (p.format !== op.format) {
 			this.setFormat();

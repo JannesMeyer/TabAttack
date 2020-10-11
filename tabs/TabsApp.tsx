@@ -154,7 +154,7 @@ class TabsApp extends React.Component<{}, S> {
 				ref={this.editor}
 				text={s.text}
 				highlightLine={s.highlightLine}
-				theme={s.theme}
+				theme={s.theme.theme}
 				format={s.format}
 				showToast={this.showToast}
 				fontSize={16}
