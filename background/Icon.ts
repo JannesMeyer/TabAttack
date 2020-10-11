@@ -11,7 +11,7 @@ export default class Icon {
 	constructor(private scale: number) {
 		this.canvas = document.createElement('canvas');
 		this.setScale(scale);
-		this.ctx = assertDefined(this.canvas.getContext('2d'))
+		this.ctx = assertDefined(this.canvas.getContext('2d'));
 	}
 
 	setScale(scale: number) {

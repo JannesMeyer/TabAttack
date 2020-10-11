@@ -1,7 +1,7 @@
 // APIs not yet included in TypeScript because they are not a Candidate Recommendation
 
 /** https://developer.mozilla.org/en-US/docs/Web/API/FontFace */
-declare var FontFace: {
+declare const FontFace: {
 	new(family: string, source: string, options?: { weight?: number }): FontFace;
 };
 
@@ -11,7 +11,7 @@ interface FontFace {
 
 declare namespace document {
 	/** https://developer.mozilla.org/en-US/docs/Web/API/Document/fonts */
-	var fonts: {
+	const fonts: {
 		add(font: FontFace): void;
 	};
 }

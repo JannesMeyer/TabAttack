@@ -25,7 +25,7 @@ interface S extends Doc {
 	toastMessage?: string;
 }
 
-class TabsApp extends React.Component<{}, S> {
+class TabsApp extends React.Component<unknown, S> {
 
 	private editor = React.createRef<Editor>();
 	private fileInput = React.createRef<HTMLInputElement>();

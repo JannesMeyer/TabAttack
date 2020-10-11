@@ -36,8 +36,8 @@ class OptionsApp extends React.Component<P, Prefs> {
 		prefs.set(this.state);
 	}
 
-	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent, field: K) {
-		let target: any = ev.target;
+	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent<HTMLInputElement>, field: K) {
+		let target = ev.target;
 		let value = (target.type === 'checkbox' ? target.checked : target.value);
 		this.setState({ [field]: value } as any);
 	}
@@ -94,10 +94,10 @@ class OptionsApp extends React.Component<P, Prefs> {
 				<span>Color Scheme</span>
 				<select value={s.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')}>
 					<optgroup label="Light">
-					{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
+						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 					<optgroup label="Dark">
-					{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
+						{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 				</select>
 			</label>
@@ -106,10 +106,10 @@ class OptionsApp extends React.Component<P, Prefs> {
 				<span>Color Scheme - Dark Mode</span>
 				<select value={s.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')}>
 					<optgroup label="Light">
-					{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
+						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 					<optgroup label="Dark">
-					{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
+						{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 				</select>
 			</label>

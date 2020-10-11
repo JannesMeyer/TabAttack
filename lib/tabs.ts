@@ -28,7 +28,7 @@ export function count(): Promise<number> {
  */
 export function moveHighlighted(direction: number) {
 	if (direction === 0) {
-		throw new TypeError("The direction parameter can't be zero");
+		throw new TypeError('The direction parameter can\'t be zero');
 	}
 	browser.windows.getLastFocused({ populate: true }).then(wnd => {
 		if (wnd.tabs == null) {
@@ -62,7 +62,7 @@ export function moveHighlighted(direction: number) {
  */
 function* valuesReversed<X>(this: readonly X[]) {
 	for (let i = this.length - 1; 0 <= i; --i) {
-			yield this[i] as X;
+		yield this[i] as X;
 	}
 }
 
@@ -116,7 +116,7 @@ export function closeOthers() {
 	]).then(([sourceTab, windows]) => {
 		// Identify the window that hosts the sourceTab
 		let sourceWindow: browser.windows.Window | undefined;
-		for (var wnd of windows) {
+		for (let wnd of windows) {
 			if (wnd.id === sourceTab.windowId) {
 				sourceWindow = wnd;
 			} else if (wnd.id != null) {

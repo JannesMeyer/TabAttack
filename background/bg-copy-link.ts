@@ -11,7 +11,7 @@ import prefs from '../preferences.js';
 
 /** Global shortcut: Copy active tab as a Markdown link */
 onCommand('copy_tab_as_markdown', function() {
-	getActiveTab().then(t => copyLink(t.title, assertDefined(t.url), 'documentTitle'));
+	getActiveTab().then(t => copyLink(t.title, assertDefined(t.url)));
 });
 
 
@@ -22,7 +22,7 @@ const copyLinkCmi = new ContextMenuItem({
 	onclick(info, tab) {
 		let url = assertDefined(info.linkUrl);
 		if (info.selectionText) {
-			copyLink(info.selectionText, url, 'linkTitle');
+			copyLink(info.selectionText, url);
 			return;
 		}
 		if (tab.id == null) {
@@ -32,7 +32,7 @@ const copyLinkCmi = new ContextMenuItem({
 		// Attention: textContent includes text from hidden elements
 		let linkProbe = 'var focus = document.querySelector("a:focus"); if (focus) { focus.textContent; }';
 		browser.tabs.executeScript(tab.id, { code: linkProbe, allFrames: true }).then(x => {
-			let results: (string | undefined)[] = x as any;
+			let results: (string | undefined)[] = x;
 			let title: string | undefined;
 			if (results) {
 				// The first truthy element
@@ -43,7 +43,7 @@ const copyLinkCmi = new ContextMenuItem({
 				}
 			}
 			// Copy the link, whether we have a title or not
-			copyLink(title, url, 'linkTitle');
+			copyLink(title, url);
 		});
 	},
 });
@@ -58,7 +58,7 @@ const copyPageCmi = new ContextMenuItem({
 	id: 'copy_page',
 	contexts: ['page'],
 	onclick(_info, tab) {
-		copyLink(tab.title, assertDefined(tab.url), 'documentTitle');
+		copyLink(tab.title, assertDefined(tab.url));
 	},
 });
 prefs.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown: x }) => {
@@ -71,9 +71,9 @@ onMessage('hide copyPageItem', () => copyPageCmi.setVisible(false).catch(logErro
 /**
  * Let the user modify link title and then copy it as Markdown
  */
-function copyLink(originalTitle: string | undefined, url: string, _type: 'documentTitle' | 'linkTitle') {
+function copyLink(originalTitle: string | undefined, url: string) {
 	// Let the user modify the title
-	var title = prompt(getString('prompt_title_change', originalTitle), originalTitle);
+	let title = prompt(getString('prompt_title_change', originalTitle), originalTitle);
 
 	// Cancelled?
 	if (title === null) {

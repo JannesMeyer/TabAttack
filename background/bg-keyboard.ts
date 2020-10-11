@@ -18,7 +18,7 @@ onCommand('move_tab_right', () => TabService.moveHighlighted(1));
 // Global shortcut: Pin highlighted tabs
 onCommand('pin_tab', function() {
 	TabService.getHighlighted().then(tabs => {
-		for (var tab of tabs) {
+		for (let tab of tabs) {
 			if (tab.id != null) {
 				browser.tabs.update(tab.id, { pinned: !tab.pinned });
 			}

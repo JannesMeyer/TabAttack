@@ -5,6 +5,7 @@
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
   "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
     "pack": "rimraf TabAttack.zip && tsc && zip -vx '*.DS_Store' -r TabAttack.zip dist"
   },
   "dependencies": {
@@ -19,5 +20,11 @@
     "react-dom": "^16.13.1",
     "typescript": "^4.1.0-beta",
     "webextension-polyfill": "^0.6.0"
+  },
+  "devDependencies": {
+		"eslint": "^7.11.0",
+    "eslint-plugin-react": "^7.21.4",
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "@typescript-eslint/parser": "^4.4.0"
   }
 }

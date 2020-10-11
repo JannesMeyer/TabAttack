@@ -14,10 +14,12 @@ export function parseHTML(str: string) {
  * Check if the element is a place where text can be entered
  */
 export function isInputElement(element: HTMLElement) {
-	return element.tagName === 'INPUT' ||
-				 element.tagName === 'TEXTAREA' ||
-				 element.tagName === 'SELECT' ||
-				 element.isContentEditable;
+	return (
+		element.tagName === 'INPUT' ||
+		element.tagName === 'TEXTAREA' ||
+		element.tagName === 'SELECT' ||
+		element.isContentEditable
+	);
 }
 
 /**
