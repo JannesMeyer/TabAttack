@@ -13,6 +13,14 @@
 				"isDefault": true
 			},
 			"label": "TypeScript watch"
+		},
+		{
+			"type": "npm",
+			"script": "lint",
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"label": "ESLint"
 		}
 	]
 }
