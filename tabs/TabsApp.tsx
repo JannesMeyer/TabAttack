@@ -2,7 +2,6 @@ import '../lib/Array.extensions.js';
 import assertDefined from '../lib/assertDefined.js';
 import closeOtherTabs from '../lib/browser/closeOtherTabs.js';
 import getString from '../lib/browser/getString.js';
-import { openWindows } from '../lib/browser/openWindows.js';
 import css from '../lib/css.js';
 import getIsoDate from '../lib/date/getIsoDate.js';
 import { parseHTML } from '../lib/DOM.js';
@@ -110,7 +109,7 @@ class TabsApp extends React.Component<{}, S> {
 		}
 
 		// TODO: Show errors in a popup
-		return openWindows(windows);
+		return Promise.all(windows.map(url => browser.windows.create({ url })));
 	};
 
 	static readonly css = css`
