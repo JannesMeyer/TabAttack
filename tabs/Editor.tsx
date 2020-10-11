@@ -4,37 +4,50 @@ import css from '../lib/css.js';
 import assertDefined from '../lib/assertDefined.js';
 import { AceThemeModule } from '../lib/getAceThemes.js';
 
-interface P {
-	theme: AceThemeModule;
+export interface Doc {
 	text?: string;
 	highlightLine?: number;
-	format?: 'markdown' | 'json';
+	format?: 'markdown' | 'json' | 'text' | 'xml';
+}
+
+interface P extends Doc {
+	theme: AceThemeModule;
 	fontSize?: number;
 	showToast: (message: string) => void;
 }
 
-/**
- * Ace editor component
- */
+/** Ace editor component */
 export default class Editor extends React.Component<P> {
 
 	editor!: Ace.Editor;
 
-	constructor(p: P) {
-		super(p);
-	}
-
 	componentDidMount() {
+		let editor = this.editor = ace.edit(assertDefined(this.ref.current));
 		let p = this.props;
-		this.editor = ace.edit(assertDefined(this.ref.current));
-		this.editor.setTheme(p.theme.theme);
-		this.editor.setOption('showLineNumbers', false);
-		this.editor.setOption('showPrintMargin', false);
+		editor.setTheme(p.theme.theme);
+		editor.setOption('showLineNumbers', false);
+		editor.setOption('showPrintMargin', false);
 		if (p.fontSize != null) {
-			this.editor.setOption('fontSize', p.fontSize);
+			editor.setOption('fontSize', p.fontSize);
 		}
+		this.setFormat();
+		this.setText();
 		addEventListener('beforeunload', this.handleUnload);
 		addEventListener('copy', this.handleCopy);
+	}
+
+	setFormat() {
+		let { props: p, editor } = this;
+		if (p.format == null) { return; }
+		editor.session.setMode('ace/mode/' + p.format);
+	}
+
+	setText() {
+		let { props: p, editor } = this;
+		// session.setValue: see https://github.com/ajaxorg/ace/issues/1243
+		editor.session.setValue(p.text ?? '');
+		editor.gotoLine(p.highlightLine ?? 0, 0, false);
+		editor.focus();
 	}
 
 	componentWillUnmount() {
@@ -63,14 +76,11 @@ export default class Editor extends React.Component<P> {
 		if (p.theme !== op.theme) {
 			editor.setTheme(p.theme.theme);
 		}
-		if (p.format !== op.format && p.format != null) {
-			editor.session.setMode('ace/mode/' + p.format);
+		if (p.format !== op.format) {
+			this.setFormat();
 		}
 		if (p.text !== op.text) {
-			// session.setValue: see https://github.com/ajaxorg/ace/issues/1243
-			editor.session.setValue(this.props.text ?? '');
-			editor.gotoLine(p.highlightLine ?? 0, 0, false);
-			editor.focus();
+			this.setText();
 		}
 	}
 

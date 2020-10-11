@@ -6,7 +6,7 @@ import { openWindows } from '../lib/browser/openWindows.js';
 import css from '../lib/css.js';
 import getIsoDate from '../lib/date/getIsoDate.js';
 import { parseHTML } from '../lib/DOM.js';
-import getUrlParams from '../lib/dom/getUrlParams.js';
+import UrlQuery from '../lib/dom/UrlQuery.js';
 import ready from '../lib/dom/ready.js';
 import FileLoader from '../lib/files/FileLoader.js';
 import { saveTextFile } from '../lib/files/saveTextFile.js';
@@ -15,26 +15,18 @@ import logError from '../lib/logError.js';
 import prefersDark from '../lib/prefersDark.js';
 import prefs from '../preferences.js';
 import ActionButton from './ActionButton.js';
-import Editor from './Editor.js';
+import Editor, { Doc } from './Editor.js';
 import Toast from './Toast.js';
+import buildDocument from './buildDocument.js';
 
-let params = getUrlParams();
-ready().then(root => ReactDOM.render(<TabsApp sourceTabId={params.t} />, root));
+ready().then(root => ReactDOM.render(<TabsApp />, root));
 
-interface P {
-	window?: number;
-	sourceTabId?: string;
-}
-
-interface S {
+interface S extends Doc {
 	theme?: AceThemeModule;
-	format?: 'markdown' | 'json';
-	text?: string;
-	highlightLine?: number;
 	toastMessage?: string;
 }
 
-class TabsApp extends React.Component<P, S> {
+class TabsApp extends React.Component<{}, S> {
 
 	private editor = React.createRef<Editor>();
 	private fileInput = React.createRef<HTMLInputElement>();
@@ -47,6 +39,14 @@ class TabsApp extends React.Component<P, S> {
 	};
 
 	state: Readonly<S> = {};
+
+	loadPromise = this.load().catch(logError);
+
+	async load() {
+		let p = UrlQuery.fromString();
+		let doc = await buildDocument(p.getNumber('t'), p.getNumber('w'));
+		this.setState(doc);
+	}
 
 	componentDidMount() {
 		this.fileLoader = new FileLoader(text => this.setState({
