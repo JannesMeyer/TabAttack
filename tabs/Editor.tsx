@@ -39,8 +39,7 @@ export default class Editor extends React.Component<P> {
 
 	setFormat() {
 		let { props: p, editor } = this;
-		if (p.format == null) { return; }
-		editor.session.setMode('ace/mode/' + p.format);
+		editor.session.setMode('ace/mode/' + (p.format ?? 'text'));
 	}
 
 	setText() {
