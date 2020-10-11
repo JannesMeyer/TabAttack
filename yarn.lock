@@ -25,9 +25,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^16.9.49":
-  version "16.9.51"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.51.tgz#f8aa51ffa9996f1387f63686696d9b59713d2b60"
-  integrity sha512-lQa12IyO+DMlnSZ3+AGHRUiUcpK47aakMMoBG8f7HGxJT8Yfe+WE128HIXaHOHVPReAW0oDS3KAI0JI2DDe1PQ==
+  version "16.9.52"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.52.tgz#c46c72d1a1d8d9d666f4dd2066c0e22600ccfde1"
+  integrity sha512-EHRjmnxiNivwhGdMh9sz1Yw9AUxTSZFxKqdBWAAzyZx3sufWwx6ogqHYh/WB1m/I4ZpjkoZLExF5QTy2ekVi/Q==
   dependencies:
     "@types/prop-types" "*"
     csstype "^3.0.2"
@@ -111,9 +111,9 @@ scheduler@^0.19.1:
     object-assign "^4.1.1"
 
 typescript@^4.1.0-beta:
-  version "4.1.0-dev.20201010"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.0-dev.20201010.tgz#8b72294d900f29e08127b893bd1c4cd4a3bf4157"
-  integrity sha512-YpQlIVQIWu72RGboL/UaO3inEPeYDWjpQC9LwRoSvZF5K9o9lvaCe7B0XV26N/mZ5GzIsRVY3PmN2CWxcS9xBg==
+  version "4.1.0-dev.20201011"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.0-dev.20201011.tgz#cf671aeef05c7af2f930e69f3afae8c30114bb3f"
+  integrity sha512-+Lfj2Q+dXFAJbfB1jQQRlhTssgl0CQVo8a+CNzlNXsnC1cN1yoH40wkEjWd6uB8NGkamxKda1xrEb2miJtpP5g==
 
 webextension-polyfill@^0.6.0:
   version "0.6.0"
