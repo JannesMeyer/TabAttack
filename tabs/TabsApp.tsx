@@ -4,7 +4,6 @@ import closeOtherTabs from '../lib/browser/closeOtherTabs.js';
 import getString from '../lib/browser/getString.js';
 import css from '../lib/css.js';
 import getIsoDate from '../lib/date/getIsoDate.js';
-import { parseHTML } from '../lib/DOM.js';
 import UrlQuery from '../lib/dom/UrlQuery.js';
 import ready from '../lib/dom/ready.js';
 import FileLoader from '../lib/files/FileLoader.js';
@@ -88,28 +87,30 @@ class TabsApp extends React.Component<unknown, S> {
 	};
 
 	/** Open file upload dialog */
-	loadFile = () => assertDefined(this.fileInput.current).click();
+	loadFile = () => this.fileInput.current?.click();
 
 	/** Open all links in tabs */
 	openLinks = () => {
 		// Markdown → HTML → DOM
-		let text = assertDefined(this.editor.current).getContent();
-		let doc = parseHTML(marked(text));
+		let text = assertDefined(this.editor.current?.getContent());
+		let html = marked(text);
+		let dom = new DOMParser().parseFromString(html, 'text/html');
 
 		// Get all links inside of an <ul>
-		let windows = Array.from(doc.getElementsByTagName('ul')).map(ul => {
+		let windows: string[][] = [];
+		for (let ul of dom.getElementsByTagName('ul')) {
 			ul.parentNode?.removeChild(ul);
-			return Array.from(ul.getElementsByTagName('a')).map(a => a.href);
-		});
-
+			windows.push(Array.from(ul.getElementsByTagName('a')).map(a => a.href));
+		}
+		
 		// Check for leftovers
-		if (doc.getElementsByTagName('a').length > 0) {
-			this.showToast(getString('link_outside_list_error'));
-			return;
+		let extras = dom.getElementsByTagName('a');
+		if (extras.length > 0) {
+			windows.push(Array.from(extras).map(a => a.href));
 		}
 
-		// TODO: Show errors in a popup
-		return Promise.all(windows.map(url => browser.windows.create({ url })));
+		// TODO: Handle errors
+		return Promise.all(windows.map(url => browser.windows.create({ url }))).catch(logError);
 	};
 
 	static readonly css = css`
