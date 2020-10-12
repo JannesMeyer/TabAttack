@@ -36,9 +36,9 @@ class OptionsApp extends React.Component<P, Prefs> {
 		prefs.set(this.state);
 	}
 
-	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent<HTMLInputElement>, field: K) {
+	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: K) {
 		let target = ev.target;
-		let value = (target.type === 'checkbox' ? target.checked : target.value);
+		let value = ('checked' in target ? target.checked : target.value);
 		this.setState({ [field]: value } as any);
 	}
 
