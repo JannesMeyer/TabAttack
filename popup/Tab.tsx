@@ -38,9 +38,6 @@ export default class Tab extends React.Component<P> {
 	body:not(.inactive) .Tab.selected {
 		box-shadow: inset 0 0 0 1px #0a84ff;
 	}
-	.Tab:hover {
-		background: #eee;
-	}
 	.Tab img {
 		box-sizing: content-box;
 		display: block;
@@ -75,12 +72,17 @@ export default class Tab extends React.Component<P> {
 		left: 4px;
 		background: #0a84ff;
 	}
+	.Tab:hover,
+	.Tab.active:hover {
+		background: #eee;
+	}
 	@media (prefers-color-scheme: dark) {
-		.Tab:hover {
-			background: #252526;
-		}
 		.Tab.active {
 			background: #323234;
+		}
+		.Tab:hover,
+		.Tab.active:hover {
+			background: #252526;
 		}
 	}`;
 
