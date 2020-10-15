@@ -114,10 +114,6 @@ class TabsApp extends React.Component<unknown, S> {
 	};
 
 	static readonly css = css`
-	body > main {
-		display: flex;
-		flex-direction: column;
-	}
 	.Toolbar {
 		flex: 0 0 auto;
 	}

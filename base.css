@@ -6,7 +6,13 @@ html {
 }
 body {
 	margin: 0;
+	user-select: none;
+	font: message-box;
 }
 html, body, body > main {
 	height: 100%;
+}
+body > main {
+	display: flex;
+	flex-direction: column;
 }

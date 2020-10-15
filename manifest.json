@@ -29,9 +29,16 @@
 		"default_icon": "images/transparent.png",
 		"default_title": "__MSG_icon_tooltip__"
 	},
+  "sidebar_action": {
+    "default_title": "Tabs",
+    "default_icon": "images/tab.svg",
+    "default_panel": "popup.html?sidebar=1",
+    "browser_style": false,
+    "open_at_install": false
+  },
 	"commands": {
 		"_execute_browser_action": {
-			"suggested_key": { "default": "Ctrl+Shift+S" }
+			"suggested_key": { "default": "Alt+Q" }
 		},
 		"export_current_window": {
 			"description": "Export only current window"

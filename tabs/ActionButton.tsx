@@ -13,9 +13,9 @@ export default class ActionButton extends React.Component<P> {
 	static css = css`
 	& {
 		padding: 7px 12px 9px;
-		font-size: 16px;
 		cursor: pointer;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+		font-family: inherit;
+		font-size: 16px;
 	
 		outline: 0;
 		border: none;
