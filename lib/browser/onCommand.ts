@@ -1,3 +1,7 @@
+import type manifest from '../../manifest.json';
+
+type Command = keyof typeof manifest.commands;
+
 const listeners = new Map<string, () => void>();
 
 /**
@@ -7,8 +11,9 @@ const listeners = new Map<string, () => void>();
  * Note: Currently this only accepts one listener per name. A subsequent
  * call just overrides the previous listener.
  */
-export default function onCommand(command: string, listener: () => void) {
+export default function onCommand(command: Command, listener: () => void) {
 	if (listeners.size === 0) {
+		// First time this function is called
 		browser.commands.onCommand.addListener(command => listeners.get(command)?.());
 	}
 	if (listener) {

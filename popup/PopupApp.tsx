@@ -343,27 +343,23 @@ export default class PopupApp extends React.Component<P, S> {
 		this.setState({ selectedTabId: selected.id });
 	}
 
-	handleMouseDown = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+	handleMouseUp = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
 		if (tab.id == null) {
 			return;
 		}
 		if (ev.button === 0) {
-			// Left click action
+			// Left click
+			ev.preventDefault();
 			browser.tabs.update(tab.id, { active: true }).catch(logError);
 
 			// Optimistic update (the event will arrive later)
 			if (this.state.selectedTabId != null) {
 				this.setState({ selectedTabId: tab.id });
 			}
-		}
-	};
-
-	handleMouseUp = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
-		if (tab.id == null) {
-			return;
-		}
-		if (ev.button === 1) {
-			// Middle click action
+		
+		} else if (ev.button === 1) {
+			// Middle click
+			ev.preventDefault();
 			browser.tabs.remove(tab.id).catch(logError);
 		}
 	};
@@ -383,7 +379,6 @@ export default class PopupApp extends React.Component<P, S> {
 		display: block; /* Overwrite Firefox sidebar style */
 		background: #fcfcfc;
 		color: #1a1a1a;
-		font: message-box;
 	}
 	h1 {
 		font-size: 16px;
@@ -439,7 +434,6 @@ export default class PopupApp extends React.Component<P, S> {
 				key={wnd.id}
 				id={wnd.id}
 				focused={wnd.focused}
-				onMouseDown={this.handleMouseDown}
 				onMouseUp={this.handleMouseUp}
 				selectedTabId={s.selectedTabId}
 				tabs={wnd.tabs}

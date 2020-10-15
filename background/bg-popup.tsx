@@ -1,3 +1,4 @@
+import onCommand from '../lib/browser/onCommand.js';
 import logError from '../lib/logError.js';
 import FocusOrder from './FocusOrder.js';
 
@@ -14,6 +15,12 @@ function goToLastFocused() {
 /** Window ID of the TabAttack popup window */
 let popupId: number | undefined;
 browser.browserAction.onClicked.addListener(tab => openPopup(tab).catch(logError));
+
+onCommand('open_tab_list', () => getActiveTab().then(openPopup).catch(logError));
+
+function getActiveTab() {
+	return browser.tabs.query({ active: true, lastFocusedWindow: true }).then(tabs => tabs.single());
+}
 
 /** Opens popup or switches back to previous window */
 async function openPopup(tab: browser.tabs.Tab) {
@@ -38,10 +45,15 @@ async function openPopup(tab: browser.tabs.Tab) {
 	}
 }
 
+let defaultPopupWindow: Parameters<typeof browser.windows.create>[0] = {
+	width: 300,
+	height: 600,
+	top: 0,
+	left: 0,
+};
+
 async function showPopup() {
-	let { popupWindow } = await browser.storage.local.get({
-		popupWindow: { width: 300, height: 600 },
-	});
+	let { popupWindow } = await browser.storage.local.get({ popupWindow: defaultPopupWindow });
 	return browser.windows.create({
 		...popupWindow,
 		type: 'popup',

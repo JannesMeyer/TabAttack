@@ -104,8 +104,8 @@ export default class Tab extends React.Component<P> {
 			favicon = 'loading';
 		} else if (tab.favIconUrl == null || tab.favIconUrl === '') {
 			// Edge
-			if (tab.url?.startsWith('edge://extensions/')) {
-				favicon = '/icons/edge/extension.svg';
+			if (tab.url?.startsWith('edge://') || tab.url?.startsWith('chrome://')) {
+				favicon = 'chrome://favicon/' + tab.url;
 			} else {
 				favicon = 'nofavicon';
 			}

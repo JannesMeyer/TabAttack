@@ -11,7 +11,15 @@
 	"description": "__MSG_ext_description__",
 	"default_locale": "en",
 	"homepage_url": "https://github.com/JannesMeyer/TabAttack",
-	"permissions": [ "tabs", "storage", "clipboardWrite", "contextMenus", "activeTab" ],
+	"permissions": [
+		"tabs",
+		"storage",
+		"clipboardWrite",
+		"contextMenus",
+		"activeTab",
+		"chrome://favicon/"
+	],
+	"content_security_policy": "img-src chrome: https: http: data:",
 	"icons": {
 		"48": "images/icon-48.png",
 		"96": "images/icon-96.png",
@@ -26,6 +34,7 @@
 		"chrome_style": true
 	},
 	"browser_action": {
+		"default_popup": "popup.html",
 		"default_icon": "images/transparent.png",
 		"default_title": "__MSG_icon_tooltip__"
 	},
@@ -37,7 +46,8 @@
     "open_at_install": false
   },
 	"commands": {
-		"_execute_browser_action": {
+		"open_tab_list": {
+			"description": "Open Tab List",
 			"suggested_key": { "default": "Alt+Q" }
 		},
 		"export_current_window": {
