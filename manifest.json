@@ -36,7 +36,7 @@
 	"browser_action": {
 		"default_icon": "images/transparent.png",
 		"default_title": "__MSG_icon_tooltip__",
-		"default_popup": "popup.html?sidebar",
+		"default_popup": "popup.html?action_popup",
 		"browser_style": false
 	},
   "sidebar_action": {

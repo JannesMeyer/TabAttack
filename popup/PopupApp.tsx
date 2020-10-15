@@ -13,7 +13,11 @@ import openTabsEditor from '../background/openTabsEditor.js';
 ready().then(root => {
 	browser.windows.getAll({ windowTypes: ['normal'], populate: true }).then(windows => {
 		let q = UrlQuery.fromString();
-		ReactDOM.render(<PopupApp isSidebar={q.getBoolean('sidebar')} windows={windows} />, root);
+		ReactDOM.render(<PopupApp
+			isSidebar={q.getBoolean('sidebar')}
+			isActionPopup={q.getBoolean('action_popup')}
+			windows={windows}
+		/>, root);
 	});
 });
 
@@ -22,6 +26,7 @@ type ChangeInfo = Parameters<Parameters<typeof browser.tabs.onUpdated.addListene
 interface P {
 	windows: browser.windows.Window[];
 	isSidebar?: boolean;
+	isActionPopup?: boolean;
 }
 
 interface S {
@@ -52,7 +57,7 @@ export default class PopupApp extends React.Component<P, S> {
 
 		this.state = {
 			windows: p.windows,
-			selectedTabId: (p.isSidebar ? undefined : firstWindow.tabs.find(t => t.active)?.id),
+			selectedTabId: (p.isSidebar || p.isActionPopup ? undefined : firstWindow.tabs.find(t => t.active)?.id),
 			showURL: false,
 		};
 	}
@@ -167,7 +172,7 @@ export default class PopupApp extends React.Component<P, S> {
 				}
 			}
 			// Update the keyboard selection
-			if (selected?.id != null && !this.props.isSidebar) {
+			if (selected?.id != null && this.state.selectedTabId != null) {
 				this.setState({ selectedTabId: selected.id });
 			} else {
 				this.forceUpdate();
@@ -348,7 +353,7 @@ export default class PopupApp extends React.Component<P, S> {
 		this.setState({ selectedTabId: selected.id });
 	}
 
-	handleMouseDown = (tab: browser.tabs.tab, ev: React.MouseEvent) => {
+	handleMouseDown = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
 		if (tab.id == null) {
 			return;
 		}
