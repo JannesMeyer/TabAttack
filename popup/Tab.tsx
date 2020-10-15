@@ -35,7 +35,7 @@ export default class Tab extends React.Component<P> {
 		border: 2px solid transparent;
 		background-clip: border-box;
 	}
-	.Tab.selected:not(:-moz-window-inactive) {
+	body:not(.inactive) .Tab.selected {
 		box-shadow: inset 0 0 0 1px #0a84ff;
 	}
 	.Tab:hover {

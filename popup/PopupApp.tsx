@@ -22,7 +22,6 @@ type ChangeInfo = Parameters<Parameters<typeof browser.tabs.onUpdated.addListene
 interface P {
 	windows: browser.windows.Window[];
 	isSidebar?: boolean;
-	onGoToLastFocused?(): Promise<browser.windows.Window>;
 }
 
 interface S {
@@ -30,6 +29,7 @@ interface S {
 	selectedTabId?: number;
 	showURL: boolean;
 	search?: string;
+	focus?: boolean;
 }
 
 export default class PopupApp extends React.Component<P, S> {
@@ -58,6 +58,8 @@ export default class PopupApp extends React.Component<P, S> {
 	}
 
 	componentDidMount() {
+		addEventListener('focus', this.handleFocus);
+		addEventListener('blur', this.handleBlur);
 		addEventListener('keydown', this.handleKeyPress);
 		// if (!this.props.isSidebar) {
 		//   addMessageListener(this.handleMessage);
@@ -76,6 +78,14 @@ export default class PopupApp extends React.Component<P, S> {
 		browser.tabs.onCreated.removeListener(this.handleTabCreated);
 		browser.tabs.onUpdated.removeListener(this.handleTabUpdated);
 		browser.tabs.onActivated.removeListener(this.handleTabActivated);
+	}
+
+	handleFocus() {
+		document.body.classList.remove('inactive');
+	}
+
+	handleBlur() {
+		document.body.classList.add('inactive');
 	}
 
 	// handleMessage = (m: Message) => {
@@ -173,11 +183,6 @@ export default class PopupApp extends React.Component<P, S> {
 	handleKeyPress = (ev: KeyboardEvent) => {
 		let key = ev.keyCode || ev.which;
 
-		if (key === KeyCode.B && ev.ctrlKey) { // Ctrl+B
-			ev.preventDefault(); // OSX built-in readline shortcut
-			this.props.onGoToLastFocused?.().catch(logError);
-			return;
-		}
 		if (key === KeyCode.Escape) {
 			close();
 			return;
@@ -343,6 +348,16 @@ export default class PopupApp extends React.Component<P, S> {
 		this.setState({ selectedTabId: selected.id });
 	}
 
+	handleMouseDown = (tab: browser.tabs.tab, ev: React.MouseEvent) => {
+		if (tab.id == null) {
+			return;
+		}
+		ev.preventDefault();
+		if (this.state.selectedTabId != null) {
+			this.setState({ selectedTabId: tab.id });
+		}
+	};
+
 	handleMouseUp = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
 		if (tab.id == null) {
 			return;
@@ -351,11 +366,6 @@ export default class PopupApp extends React.Component<P, S> {
 			// Left click
 			ev.preventDefault();
 			browser.tabs.update(tab.id, { active: true }).catch(logError);
-
-			// Optimistic update (the event will arrive later)
-			if (this.state.selectedTabId != null) {
-				this.setState({ selectedTabId: tab.id });
-			}
 		
 		} else if (ev.button === 1) {
 			// Middle click
@@ -423,20 +433,21 @@ export default class PopupApp extends React.Component<P, S> {
 		let { props: p, state: s } = this;
 		let list = [];
 		for (let i = 0; i < s.windows.length; ++i) {
-			let wnd = s.windows[i];
-			if (wnd == null || wnd.tabs == null || wnd.id == null) {
+			let w = s.windows[i];
+			if (w == null || w.tabs == null || w.id == null) {
 				continue;
 			}
-			if (wnd.incognito) {
+			if (w.incognito) {
 				continue;
 			}
 			list.push(<TabGroup
-				key={wnd.id}
-				id={wnd.id}
-				focused={wnd.focused}
+				key={w.id}
+				id={w.id}
+				focused={w.focused}
+				onMouseDown={this.handleMouseDown}
 				onMouseUp={this.handleMouseUp}
 				selectedTabId={s.selectedTabId}
-				tabs={wnd.tabs}
+				tabs={w.tabs}
 				isSidebar={p.isSidebar}
 				showURL={s.showURL}
 				search={s.search}

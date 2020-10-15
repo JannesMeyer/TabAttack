@@ -34,14 +34,15 @@
 		"chrome_style": true
 	},
 	"browser_action": {
-		"default_popup": "popup.html",
 		"default_icon": "images/transparent.png",
-		"default_title": "__MSG_icon_tooltip__"
+		"default_title": "__MSG_icon_tooltip__",
+		"default_popup": "popup.html?sidebar",
+		"browser_style": false
 	},
   "sidebar_action": {
-    "default_title": "Tabs",
-    "default_icon": "images/tab.svg",
-    "default_panel": "popup.html?sidebar=1",
+		"default_icon": "images/tab.svg",
+		"default_title": "Tabs",
+    "default_panel": "popup.html?sidebar",
     "browser_style": false,
     "open_at_install": false
   },
