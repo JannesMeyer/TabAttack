@@ -10,6 +10,7 @@ export default async function closeOtherTabs() {
 	// Close other windows
 	for (let w of windows) {
 		if (w === sourceWindow) { continue; }
+		if (w.type === 'popup') { continue; }
 		browser.windows.remove(assertDefined(w.id));
 	}
 	// Close other tabs
