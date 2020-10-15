@@ -237,10 +237,10 @@ export default class PopupApp extends React.Component<P, S> {
 			// this.moveSelection(-moveByItems, false);
 
 		} else if (key === KeyCode.Enter || key === KeyCode.Space) { // Activate tab
+			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			ev.preventDefault();
 			let tab = this.findTab(this.state.selectedTabId);
 			if (tab == null || tab.id == null) {
 				return;
@@ -256,17 +256,17 @@ export default class PopupApp extends React.Component<P, S> {
 			browser.tabs.update(tab.id, { active: true }).catch(logError);
 
 		} else if (key === KeyCode.W || key === KeyCode.Q) { // Close tab
+			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			ev.preventDefault();
 			browser.tabs.remove(this.state.selectedTabId).catch(logError);
 
 		} else if (key === KeyCode.C || key === KeyCode.L) { // Copy as markdown link
+			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			ev.preventDefault();
 			let selectedTab = this.findTab(this.state.selectedTabId);
 			if (selectedTab == null) {
 				throw new Error('There is no selected tab');
@@ -282,6 +282,7 @@ export default class PopupApp extends React.Component<P, S> {
 			browser.tabs.discard(this.state.selectedTabId).catch(logError);
 
 		} else if (key === KeyCode.R) {
+			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
