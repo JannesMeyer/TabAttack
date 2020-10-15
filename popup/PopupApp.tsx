@@ -58,7 +58,7 @@ export default class PopupApp extends React.Component<P, S> {
 	}
 
 	componentDidMount() {
-		addEventListener('keypress', this.handleKeyPress);
+		addEventListener('keydown', this.handleKeyPress);
 		// if (!this.props.isSidebar) {
 		//   addMessageListener(this.handleMessage);
 		// }
@@ -172,15 +172,14 @@ export default class PopupApp extends React.Component<P, S> {
 
 	handleKeyPress = (ev: KeyboardEvent) => {
 		let key = ev.keyCode || ev.which;
-		// console.log('key press', key);
 
 		if (key === KeyCode.B && ev.ctrlKey) { // Ctrl+B
 			ev.preventDefault(); // OSX built-in readline shortcut
 			this.props.onGoToLastFocused?.().catch(logError);
 			return;
 		}
-		if (key === KeyCode.Escape) { // Focus last window
-			this.props.onGoToLastFocused?.().catch(logError);
+		if (key === KeyCode.Escape) {
+			close();
 			return;
 		}
 
