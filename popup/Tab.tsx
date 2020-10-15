@@ -102,8 +102,13 @@ export default class Tab extends React.Component<P> {
 		let favicon: string;
 		if (status === 'loading') {
 			favicon = 'loading';
-		} else if (tab.favIconUrl == null) {
-			favicon = 'nofavicon';
+		} else if (tab.favIconUrl == null || tab.favIconUrl === '') {
+			// Edge
+			if (tab.url?.startsWith('edge://extensions/')) {
+				favicon = '/icons/edge/extension.svg';
+			} else {
+				favicon = 'nofavicon';
+			}
 		} else {
 			favicon = tab.favIconUrl;
 		}
@@ -112,11 +117,9 @@ export default class Tab extends React.Component<P> {
 			favicon = sub;
 		}
 
-		let text: string;
+		let text = p.title;
 		if (p.showURL) {
 			text = (p.url ?? '').replace(/^https?:\/\/(www\.)?/, '').replace(/\//, '\n/');
-		} else {
-			text = (p.title ?? '');
 		}
 		return <a
 			href={p.url}
@@ -128,7 +131,7 @@ export default class Tab extends React.Component<P> {
 			style={{ display: p.hide ? 'none' : 'block' }}
 		>
 			<img src={favicon} />
-			<div className={'Tab_Title' + (p.showURL ? ' showURL' : '')}>{text}</div>
+			<div className={'Tab_Title' + (p.showURL ? ' showURL' : '')}>{text || 'Untitled'}</div>
 		</a>;
 	}
 
