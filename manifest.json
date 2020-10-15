@@ -46,6 +46,9 @@
     "open_at_install": false
   },
 	"commands": {
+		"_execute_browser_action": {
+			"suggested_key": { "default": "Alt+W" }
+		},
 		"open_tab_list": {
 			"description": "Open Tab List",
 			"suggested_key": { "default": "Alt+Q" }
