@@ -136,11 +136,11 @@ export default class PopupApp extends React.Component<P, S> {
 		if (windows == null) {
 			return;
 		}
-		for (let wnd of windows) {
-			if (wnd.tabs == null) {
+		for (let w of windows) {
+			if (w.tabs == null) {
 				continue;
 			}
-			let tab = wnd.tabs.find(tab => tab.id === tabId);
+			let tab = w.tabs.find(tab => tab.id === tabId);
 			if (tab == null) {
 				continue;
 			}
@@ -156,13 +156,13 @@ export default class PopupApp extends React.Component<P, S> {
 			return;
 		}
 		// Find the window
-		for (let wnd of windows) {
-			if (wnd.tabs == null || wnd.id !== windowId) {
+		for (let w of windows) {
+			if (w.tabs == null || w.id !== windowId) {
 				continue;
 			}
 
 			let selected: browser.tabs.Tab | undefined;
-			for (let tab of wnd.tabs) {
+			for (let tab of w.tabs) {
 				// Update all tabs while keeping the old data structure in memory
 				if (tab.id === tabId) {
 					tab.active = true;
