@@ -1,6 +1,7 @@
 import prefs, { Prefs } from './preferences.js';
 import getString from './lib/browser/getString.js';
 import { getAceThemeList, AceTheme } from './lib/getAceThemes.js';
+import css from './lib/css.js';
 
 // Useful for testing purposes:
 // browser.storage.sync.clear();
@@ -66,6 +67,63 @@ class OptionsApp extends React.Component<P, Prefs> {
 	// };
 
 	// domainInput = React.createRef<HTMLInputElement>();
+
+	static readonly css = css`
+	:root {
+		--in-content-link-color: #0060df;
+		--in-content-link-color-hover: #003eaa;
+		--in-content-link-color-active: #002275;
+	}
+	body {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+		font-size: 12px;
+		color: #0c0c0d;
+	}
+	h3 {
+		font-size: 15px;
+		font-weight: bold;
+		margin-top: 16px;
+		margin-bottom: 10px;
+		color: inherit;
+	}
+	h3:first-child {
+		margin-top: 8px;
+	}
+	.row {
+		display: block;
+		min-height: 28px;
+	}
+	.row span {
+		display: inline-block;
+		width: 160px;
+		vertical-align: top;
+		margin-top: 4px;
+	}
+	input[type=checkbox] {
+		vertical-align: -10%;
+		margin: 0 4px 0 0;
+	}
+	a {
+		color: var(--in-content-link-color);
+		text-decoration: none;
+	}
+	a:hover {
+		color: var(--in-content-link-color-hover);
+		text-decoration: underline;
+	}
+	a:active {
+		color: var(--in-content-link-color-active);
+		text-decoration: none;
+	}
+	@media (prefers-color-scheme: dark) {
+		body {
+			background: #3b3b3b;
+			color: #a7a7a7;
+		}
+		h3 {
+			color: white;
+		}
+	}`;
 
 	render() {
 		let { props: p, state: s } = this;
