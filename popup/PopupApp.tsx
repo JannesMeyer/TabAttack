@@ -57,7 +57,7 @@ export default class PopupApp extends React.Component<P, S> {
 
 		this.state = {
 			windows: p.windows,
-			selectedTabId: (p.isSidebar || p.isActionPopup ? undefined : firstWindow.tabs.find(t => t.active)?.id),
+			selectedTabId: (p.isSidebar ? undefined : firstWindow.tabs.find(t => t.active)?.id),
 			showURL: false,
 		};
 	}
