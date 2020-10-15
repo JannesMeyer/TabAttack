@@ -11,9 +11,9 @@ export default class Preferences<T> {
 	 * returns the value itself or an object containing
 	 * all keys and values
 	 */
-	get<X extends keyof T>(...keys: X[]): Promise<Pick<T, X>> {
+	get<K extends keyof T>(...keys: K[]) {
 		let defaults = filterObject(this.defaults, keys);
-		return browser.storage.sync.get(defaults) as any;
+		return browser.storage.sync.get(defaults) as Promise<Pick<T, K>>;
 	}
 
 	async getWithUpdates<X extends keyof T>(...keys: X[]) {
@@ -25,8 +25,8 @@ export default class Preferences<T> {
 	/**
 	 * Requests all values
 	 */
-	getAll(): Promise<T> {
-		return browser.storage.sync.get(this.defaults) as any;
+	getAll() {
+		return browser.storage.sync.get(this.defaults) as Promise<T>;
 	}
 
 	/**
@@ -45,11 +45,9 @@ export default class Preferences<T> {
 }
 
 function filterObject<T, K extends keyof T>(obj: T, keys: K[]) {
-	let result: any = {};
+	let result: Partial<Pick<T, K>> = {};
 	for (let key of keys) {
-		if (key in obj) {
-			result[key] = obj[key];
-		}
+		result[key] = obj[key];
 	}
-	return result;
+	return result as Pick<T, K>;
 }

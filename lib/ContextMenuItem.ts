@@ -20,6 +20,7 @@ export default class ContextMenuItem {
 	 */
 	constructor(props: MenuProps) {
 		let createProps = {
+			// TODO: Try template literal types (TypeScript 4.1)
 			title: (props.id != null ? getString('context_menu_' + props.id as any) : undefined),
 			...props,
 		};

@@ -276,9 +276,10 @@ export default class PopupApp extends React.Component<P, S> {
 
 		} else if (key === KeyCode.D) { // Discard tab
 			ev.preventDefault();
-			// The types are lacking here
-			// TODO: Check if this can be removed
-			(browser.tabs as any).discard(this.state.selectedTabId).catch(logError);
+			if (this.state.selectedTabId == null) {
+				return;
+			}
+			browser.tabs.discard(this.state.selectedTabId).catch(logError);
 
 		} else if (key === KeyCode.R) {
 			if (this.state.selectedTabId == null) {

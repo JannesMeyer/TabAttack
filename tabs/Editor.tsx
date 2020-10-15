@@ -63,11 +63,11 @@ export default class Editor extends React.Component<P> {
 		return ev.returnValue = getString('confirm_unload');
 	};
 
-	private handleCopy = (ev: any) => {
-		if (ev.clipboardData.getData('text/plain') !== '') {
+	private handleCopy = ({ clipboardData }: ClipboardEvent) => {
+		if (clipboardData == null || clipboardData.getData('text/plain') !== '') {
 			return;
 		}
-		ev.clipboardData.setData('text/plain', this.getContent());
+		clipboardData.setData('text/plain', this.getContent());
 		this.props.showToast(getString('toast_copied_document'));
 	};
 
