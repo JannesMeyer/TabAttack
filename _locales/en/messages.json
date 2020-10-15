@@ -21,7 +21,7 @@
 	},
 
 	"icon_tooltip": {
-		"message": "Export tabs"
+		"message": "Open Tab List"
 	},
 	"confirm_unload": {
 		"message": "You have unsaved changes."
@@ -38,9 +38,6 @@
 	"action_open_links": {
 		"message": "Open Links"
 	},
-	"toast_no_document": {
-		"message": "No document found"
-	},
 	"toast_no_tabs": {
 		"message": "No tabs to export"
 	},
@@ -54,9 +51,6 @@
 	"toast_loading_tab": {
 		"message": "$num$ tabs are still loading, their [Title] might be wrong",
 		"placeholders": { "num": { "content": "$1" } }
-	},
-	"link_outside_list_error": {
-		"message": "Links outside of a list are not allowed"
 	},
 	"toast_copied_document": {
 		"message": "Copied the whole document"
@@ -113,10 +107,7 @@
 	},
 
 	"shortcut_copy_tab_as_markdown": {
-		"message": "Copy tab as [title](url)"
-	},
-	"shortcut_send_tab": {
-		"message": "Send tab to another window"
+		"message": "Copy tab as Markdown link"
 	},
 	"shortcut_pin_tab": {
 		"message": "Pin tab"
@@ -130,24 +121,7 @@
 	"shortcut_move_tab_right": {
 		"message": "Move tab right"
 	},
-	"shortcut_focus_left": {
-		"message": "Focus tab to the left"
-	},
-	"shortcut_focus_right": {
-		"message": "Focus tab to the right"
-	},
 
-	"move_tab_one": {
-		"message": "Send $num$ tab to…",
-		"placeholders": { "num": { "content": "$1" } }
-	},
-	"move_tab": {
-		"message": "Send $num$ tabs to…",
-		"placeholders": { "num": { "content": "$1" } }
-	},
-	"new_window": {
-		"message": "New window"
-	},
 	"window_with_tab_one": {
 		"message": "Window with $num$ tab",
 		"placeholders": { "num": { "content": "$1" } }

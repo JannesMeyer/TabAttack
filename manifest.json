@@ -55,20 +55,11 @@
 			"suggested_key": { "default": "Ctrl+Shift+Period" },
 			"description": "__MSG_shortcut_move_tab_right__"
 		},
-		"focus_left": {
-			"description": "__MSG_shortcut_focus_left__"
-		},
-		"focus_right": {
-			"description": "__MSG_shortcut_focus_right__"
-		},
 		"duplicate_tab": {
 			"description": "__MSG_shortcut_duplicate_tab__"
 		},
 		"pin_tab": {
 			"description": "__MSG_shortcut_pin_tab__"
-		},
-		"send_tab": {
-			"description": "__MSG_shortcut_send_tab__"
 		}
 	}
 }
