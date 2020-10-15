@@ -19,7 +19,7 @@
 		"activeTab",
 		"chrome://favicon/"
 	],
-	"content_security_policy": "img-src chrome: https: http: data:",
+	"content_security_policy": "script-src 'self'; object-src 'self'; img-src chrome: https: http: data:",
 	"icons": {
 		"48": "images/icon-48.png",
 		"96": "images/icon-96.png",
