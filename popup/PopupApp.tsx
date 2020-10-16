@@ -93,11 +93,11 @@ export default class PopupApp extends React.Component<P, S> {
 		browser.tabs.onActivated.removeListener(this.handleTabActivated);
 	}
 
-	handleFocus() {
+	private handleFocus() {
 		document.body.classList.remove('inactive');
 	}
 
-	handleBlur() {
+	private handleBlur() {
 		document.body.classList.add('inactive');
 	}
 
@@ -107,7 +107,7 @@ export default class PopupApp extends React.Component<P, S> {
 	//   }
 	// };
 
-	handleTabRemoved = (tabId: number, removeInfo: { windowId: number, isWindowClosing: boolean }) => {
+	private handleTabRemoved = (tabId: number, removeInfo: { windowId: number, isWindowClosing: boolean }) => {
 		let { windows } = this.props;
 		if (removeInfo.isWindowClosing || windows == null) {
 			return;
@@ -126,7 +126,7 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
-	handleTabCreated = (tab: browser.tabs.Tab) => {
+	private handleTabCreated = (tab: browser.tabs.Tab) => {
 		let { windows } = this.props;
 		if (windows == null) {
 			return;
@@ -139,7 +139,7 @@ export default class PopupApp extends React.Component<P, S> {
 		this.forceUpdate();
 	};
 
-	handleTabUpdated = (tabId: number, changeInfo: ChangeInfo) => {
+	private handleTabUpdated = (tabId: number, changeInfo: ChangeInfo) => {
 		let { windows } = this.props;
 		if (windows == null) {
 			return;
@@ -158,7 +158,7 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
-	handleTabActivated = ({ tabId, windowId }: { tabId: number, windowId: number }) => {
+	private handleTabActivated = ({ tabId, windowId }: { tabId: number, windowId: number }) => {
 		let { windows } = this.props;
 		if (windows == null) {
 			return;
@@ -189,11 +189,11 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
-	findTab(tabId: number): browser.tabs.Tab | undefined {
+	private findTab(tabId: number): browser.tabs.Tab | undefined {
 		return (this.props.windows || []).map(w => w.tabs).filter(isDefined).flat().find(t => t.id === tabId);
 	}
 
-	handleKeyDown = (ev: KeyboardEvent) => {
+	private handleKeyDown = (ev: KeyboardEvent) => {
 		let key = ev.key;
 
 		if ((ev.target as Element).tagName === 'INPUT') {
@@ -302,7 +302,7 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
-	moveSelection(x: number, wrapsAround = true) {
+	private moveSelection(x: number, wrapsAround = true) {
 		let { windows } = this.props;
 		if (windows == null) {
 			throw new Error('No tabs available');
@@ -329,7 +329,7 @@ export default class PopupApp extends React.Component<P, S> {
 		this.setState({ selectedTabId: nextTab.id });
 	}
 
-	activateTab(id: number | undefined) {
+	private activateTab(id: number | undefined) {
 		if (id == null) {
 			return;
 		}
@@ -337,7 +337,7 @@ export default class PopupApp extends React.Component<P, S> {
 		this.props.isActionPopup &&	close();
 	}
 
-	closeTab(id: number | undefined) {
+	private closeTab(id: number | undefined) {
 		if (id == null) {
 			return;
 		}
@@ -345,7 +345,7 @@ export default class PopupApp extends React.Component<P, S> {
 		browser.tabs.remove(id).catch(logError);
 	}
 
-	moveSelectionTo(index: number) {
+	private moveSelectionTo(index: number) {
 		let { windows } = this.props;
 		if (this.state.selectedTabId == null) {
 			return;
@@ -365,7 +365,7 @@ export default class PopupApp extends React.Component<P, S> {
 		this.setState({ selectedTabId: selected.id });
 	}
 
-	handleMouseDown = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+	private handleMouseDown = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
 		ev.preventDefault();
 		if (tab.id == null) {
 			return;
@@ -375,7 +375,7 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
-	handleClick = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+	private handleClick = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
 		ev.preventDefault();
 		if (tab.id == null) {
 			return;
@@ -384,7 +384,7 @@ export default class PopupApp extends React.Component<P, S> {
 		this.activateTab(tab.id);
 	};
 
-	handleAuxClick = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+	private handleAuxClick = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
 		if (ev.button === 1) {
 			// Middle click
 			ev.preventDefault();
@@ -392,11 +392,11 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
-	handleSearchToggle = () => {
+	private handleSearchToggle = () => {
 		this.setState(s => ({ search: s.search == null ? '' : undefined }));
 	};
 
-	handleExport = () => {
+	private handleExport = () => {
 		openTabsEditor();
 		this.props.isActionPopup && close();
 	};
