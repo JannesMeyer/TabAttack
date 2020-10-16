@@ -9,7 +9,8 @@ interface P {
 	showURL: boolean;
 	search?: string;
 	onMouseDown?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
-	onMouseUp?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
+	onClick?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
+	onAuxClick?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
 }
 
 export default class TabGroup extends React.Component<P> {
@@ -33,7 +34,8 @@ export default class TabGroup extends React.Component<P> {
 					title={tab.title}
 					url={tab.url}
 					onMouseDown={p.onMouseDown}
-					onMouseUp={p.onMouseUp}
+					onClick={p.onClick}
+					onAuxClick={p.onAuxClick}
 					showURL={p.showURL}
 					hidden={search != null && !`${tab.title} ${tab.url}`.toLocaleLowerCase().includes(search)}
 				/>)}

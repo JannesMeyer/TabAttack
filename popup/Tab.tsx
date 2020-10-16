@@ -14,7 +14,8 @@ interface P {
 	showURL: boolean;
 	hidden: boolean;
 	onMouseDown?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
-	onMouseUp?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
+	onClick?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
+	onAuxClick?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
 }
 
 export default class Tab extends React.Component<P> {
@@ -121,11 +122,9 @@ export default class Tab extends React.Component<P> {
 
 		return <a
 			href={p.url}
-			data-id={p.id}
 			onMouseDown={ev => p.onMouseDown?.(tab, ev)}
-			onMouseUp={ev => p.onMouseUp?.(tab, ev)}
-			onClick={ev => ev.preventDefault()}
-			onAuxClick={ev => ev.preventDefault()}
+			onClick={ev => p.onClick?.(tab, ev)}
+			onAuxClick={ev => p.onAuxClick?.(tab, ev)}
 			className={X('Tab', status, { discarded, active, selected, hidden })}
 		>
 			<img src={favicon} />

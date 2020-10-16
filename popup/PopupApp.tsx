@@ -372,17 +372,19 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
-	handleMouseUp = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+	handleClick = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
 		ev.preventDefault();
 		if (tab.id == null) {
 			return;
 		}
-		if (ev.button === 0) {
-			// Left click
-			this.activateTab(tab.id);
-		
-		} else if (ev.button === 1) {
+		// Left click
+		this.activateTab(tab.id);
+	};
+
+	handleAuxClick = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+		if (ev.button === 1) {
 			// Middle click
+			ev.preventDefault();
 			this.closeTab(tab.id);
 		}
 	};
@@ -458,7 +460,8 @@ export default class PopupApp extends React.Component<P, S> {
 				id={w.id}
 				focused={w.focused}
 				onMouseDown={this.handleMouseDown}
-				onMouseUp={this.handleMouseUp}
+				onClick={this.handleClick}
+				onAuxClick={this.handleAuxClick}
 				selectedTabId={s.selectedTabId}
 				tabs={w.tabs}
 				isSidebar={p.isSidebar}
