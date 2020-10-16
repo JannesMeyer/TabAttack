@@ -290,7 +290,7 @@ export default class PopupApp extends React.Component<P, S> {
 
 		} else if (key === '/') {
 			ev.preventDefault();
-			this.setState({ search: '' });
+			this.handleSearchToggle();
 
 		} else if (key === 'e') {
 			ev.preventDefault();
@@ -389,6 +389,10 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
+	handleSearchToggle = () => {
+		this.setState(s => ({ search: s.search == null ? '' : undefined }));
+	};
+
 	// handleSearchChange = (ev: React.FormEvent) => {
 	//   let searchInput = (ev.currentTarget as HTMLInputElement);
 	//   this.setState({ search: searchInput.value });
@@ -464,28 +468,29 @@ export default class PopupApp extends React.Component<P, S> {
 				onAuxClick={this.handleAuxClick}
 				selectedTabId={s.selectedTabId}
 				tabs={w.tabs}
-				isSidebar={p.isSidebar}
+				hideHeader={p.isSidebar || p.isActionPopup}
 				showURL={s.showURL}
 				search={s.search}
 			/>);
 		}
-		return <>
+		let items = [
 			<div className="WindowList">
 				{list}
-			</div>
-			{s.search != null && <input
+			</div>,
+			s.search != null && <input
 				className="SearchInput"
 				placeholder="Search tabs"
 				value={s.search}
 				onChange={x => this.setState({ search: x.target.value })}
 				autoFocus
 				ref={this.setSearchRef}
-			/>}
+			/>,
 			<div className="ButtonBar">
-				<button type="button" onClick={() => this.setState(s => ({ search: s.search == null ? '' : undefined }))}>Search</button>
+				<button type="button" onClick={this.handleSearchToggle}>Search</button>
 				<button type="button" onClick={() => openTabsEditor()}>Export</button>
 			</div>
-		</>;
+		];
+		return (p.isActionPopup ? items.reverse() : items);
 	}
 	
 	getTab(id: number | undefined) {

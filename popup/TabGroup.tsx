@@ -5,7 +5,7 @@ interface P {
 	tabs: browser.tabs.Tab[];
 	focused: boolean;
 	id: number;
-	isSidebar?: boolean;
+	hideHeader?: boolean;
 	showURL: boolean;
 	search?: string;
 	onMouseDown?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
@@ -20,7 +20,7 @@ export default class TabGroup extends React.Component<P> {
 		let search = p.search && p.search.toLocaleLowerCase();
 
 		return <div key={p.id + ''} className={'Window' + (p.focused ? ' focused' : '')}>
-			{!p.isSidebar && <h1>{p.tabs.length} Tabs</h1>}
+			{!p.hideHeader && <h1>{p.tabs.length} Tabs</h1>}
 			<div>
 				{p.tabs.map(tab => <Tab
 					key={tab.id}
