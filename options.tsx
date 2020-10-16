@@ -75,8 +75,6 @@ class OptionsApp extends React.Component<P, Prefs> {
 		--in-content-link-color-active: #002275;
 	}
 	body {
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-		font-size: 12px;
 		color: #0c0c0d;
 	}
 	h3 {

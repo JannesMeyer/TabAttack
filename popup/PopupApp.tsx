@@ -391,7 +391,6 @@ export default class PopupApp extends React.Component<P, S> {
 
 	static readonly css = css`
 	body {
-		display: block; /* Overwrite Firefox sidebar style */
 		background: #fcfcfc;
 		color: #1a1a1a;
 	}
