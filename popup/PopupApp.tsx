@@ -472,7 +472,8 @@ export default class PopupApp extends React.Component<P, S> {
 				className="SearchInput"
 				placeholder="Search tabs"
 				value={s.search}
-				onChange={x => this.setState({ search: x.target.value })}
+				onChange={ev => this.setState({ search: ev.target.value })}
+				onBlur={ev => ev.target.value === '' && this.setState({ search: undefined })}
 				autoFocus
 				ref={this.setSearchRef}
 			/>,
