@@ -12,7 +12,7 @@ interface P {
 	selected: boolean;
 	tab: browser.tabs.Tab;
 	showURL: boolean;
-	hide: boolean;
+	hidden: boolean;
 	onMouseDown?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
 	onMouseUp?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
 }
@@ -35,6 +35,9 @@ export default class Tab extends React.Component<P> {
 		padding-left: 34px;
 		border: 2px solid transparent;
 		background-clip: border-box;
+	}
+	.Tab.hidden {
+		display: none;
 	}
 	body:not(.inactive) .Tab.selected {
 		box-shadow: inset 0 0 0 1px #0a84ff;
@@ -88,7 +91,7 @@ export default class Tab extends React.Component<P> {
 	}`;
 
 	render() {
-		let { tab, status, discarded, active, selected, ...p } = this.props;
+		let { tab, status, discarded, active, hidden, selected, ...p } = this.props;
 		
 		let favicon: string;
 		if (status === 'loading') {
@@ -96,7 +99,7 @@ export default class Tab extends React.Component<P> {
 			favicon = '/icons/tab-loading.png';
 
 		} else if (tab.favIconUrl) {
-			// Extensions don't have access to this Firefox URL
+			// Extensions don't have access to this (in Firefox)
 			if (tab.favIconUrl === 'chrome://mozapps/skin/extensions/extension.svg') {
 				favicon = '/icons/extension.svg';
 
@@ -115,14 +118,14 @@ export default class Tab extends React.Component<P> {
 		if (p.showURL) {
 			text = (p.url ?? '').replace(/^https?:\/\/(www\.)?/, '').replace(/\//, '\n/');
 		}
+
 		return <a
 			href={p.url}
 			data-id={p.id}
 			onMouseDown={ev => p.onMouseDown?.(tab, ev)}
 			onMouseUp={ev => p.onMouseUp?.(tab, ev)}
 			onClick={ev => ev.preventDefault()}
-			className={X('Tab', status, { discarded, active, selected })}
-			style={{ display: p.hide ? 'none' : 'block' }}
+			className={X('Tab', status, { discarded, active, selected, hidden })}
 		>
 			<img src={favicon} />
 			<div className={'Tab_Title' + (p.showURL ? ' showURL' : '')}>{text || 'Untitled'}</div>

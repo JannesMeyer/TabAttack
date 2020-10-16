@@ -35,7 +35,7 @@ export default class TabGroup extends React.Component<P> {
 					onMouseDown={p.onMouseDown}
 					onMouseUp={p.onMouseUp}
 					showURL={p.showURL}
-					hide={search != null && !`${tab.title} ${tab.url}`.toLocaleLowerCase().includes(search)}
+					hidden={search != null && !`${tab.title} ${tab.url}`.toLocaleLowerCase().includes(search)}
 				/>)}
 				{p.tabs.length === 0 && <div style={{ margin: '8px 12px' }}>No results</div>}
 			</div>
