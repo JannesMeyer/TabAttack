@@ -52,6 +52,11 @@ export default class Tab extends React.Component<P> {
 		top: 6px;
 		left: 13px;
 	}
+	@media (resolution: 2dppx), (resolution: 3dppx), (resolution: 4dppx), (resolution: 5dppx) {
+		& img {
+			image-rendering: pixelated;
+		}
+	}
 	& .Title {
 		white-space: nowrap;
 		overflow: hidden;
@@ -97,7 +102,7 @@ export default class Tab extends React.Component<P> {
 		let favicon: string;
 		if (status === 'loading') {
 			// From Firefox (chrome://browser/skin/tabbrowser/tab-loading.png)
-			favicon = '/icons/tab-loading.png';
+			favicon = (devicePixelRatio > 1 ? '/icons/tab-loading@2x.png' : '/icons/tab-loading.png');
 
 		} else if (tab.favIconUrl) {
 			// Extensions don't have access to this (in Firefox)
