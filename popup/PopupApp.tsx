@@ -365,7 +365,7 @@ export default class PopupApp extends React.Component<P, S> {
 		this.setState({ selectedTabId: selected.id });
 	}
 
-	private handleMouseDown = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+	private handleMouseDown = (tab: browser.tabs.Tab) => {
 		if (tab.id == null) {
 			return;
 		}
