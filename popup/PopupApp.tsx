@@ -409,30 +409,21 @@ export default class PopupApp extends React.Component<P, S> {
 		color: #1a1a1a;
 	}
 	h1 {
-		font-size: 16px;
-		margin: 0;
-		margin-left: 12px;
-		margin-top: 9px;
-		margin-bottom: 4px;
-	}
-	a {
-		text-decoration: none;
-		color: inherit;
+		font-size: 133.3333%;
+		margin: 9px 0 4px 12px;
 	}
 	.WindowList {
 		flex-grow: 1;
 		overflow-y: auto;
 	}
 	.SearchInput {
-		display: block;
-		margin: 7px;
-		border: 1px solid #ddd;
-		padding: 6px;
-		width: calc(100% - 2 * 7px);
-		font: -moz-field;
-		font-size: 13px;
+		margin: 8px;
 		outline: none;
-		border-radius: 4px; /* Same as --toolbarbutton-border-radius */
+		border: 1px solid #ddd;
+		border-radius: 3px;
+		padding: 6px;
+		font-family: inherit;
+		font-size: 116.6666%;
 	}
 	.SearchInput:focus {
 		border-color: #0a84ff;

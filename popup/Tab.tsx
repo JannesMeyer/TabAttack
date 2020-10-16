@@ -21,29 +21,28 @@ interface P {
 export default class Tab extends React.Component<P> {
 
 	static readonly css = css`
-	.Tab {
-		/* Button reset */
+	& {
 		font: inherit;
-		background: none;
-		text-align: left;
 		color: inherit;
-		outline: none;
+		text-decoration: none;
 
 		position: relative;
 		display: block;
-		width: 100%;
 		padding: 6px 0;
 		padding-left: 34px;
 		border: 2px solid transparent;
-		background-clip: border-box;
 	}
-	.Tab.hidden {
+
+	&.showURL {
+		padding-top: 4px;
+	}
+	&.hidden {
 		display: none;
 	}
-	body:not(.inactive) .Tab.selected {
+	body:not(.inactive) &.selected {
 		box-shadow: inset 0 0 0 1px #0a84ff;
 	}
-	.Tab img {
+	& img {
 		box-sizing: content-box;
 		display: block;
 		width: 16px;
@@ -53,46 +52,45 @@ export default class Tab extends React.Component<P> {
 		top: 6px;
 		left: 13px;
 	}
-	.Tab_Title {
+	& .Title {
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		margin-right: 7px;
 		line-height: 1.5;
 	}
-	.Tab_Title.showURL {
+	&.showURL .Title {
 		white-space: pre;
 	}
 	/* Active tab indicator */
-	.Tab.active {
+	&.active {
 		background: #f4f4f4;
 	}
-	.Tab.active::before {
+	&.active::before {
 		content: '';
-		display: block;
-		width: 3px;
-		height: 90%;
 		position: absolute;
-		top: 5%;
+		top: 2px;
 		left: 4px;
+		bottom: 2px;
+		width: 3px;
 		background: #0a84ff;
 	}
-	.Tab:hover,
-	.Tab.active:hover {
+	&:hover,
+	&.active:hover {
 		background: #eee;
 	}
 	@media (prefers-color-scheme: dark) {
-		.Tab.active {
+		&.active {
 			background: #323234;
 		}
-		.Tab:hover,
-		.Tab.active:hover {
+		&:hover,
+		&.active:hover {
 			background: #252526;
 		}
 	}`;
 
 	render() {
-		let { tab, status, discarded, active, hidden, selected, ...p } = this.props;
+		let { tab, status, discarded, active, hidden, selected, showURL, ...p } = this.props;
 		
 		let favicon: string;
 		if (status === 'loading') {
@@ -115,9 +113,12 @@ export default class Tab extends React.Component<P> {
 			favicon = 'chrome://favicon/' + tab.url;
 		}
 
-		let text = p.title;
-		if (p.showURL) {
+		let text: string;
+		if (showURL) {
 			text = (p.url ?? '').replace(/^https?:\/\/(www\.)?/, '').replace(/\//, '\n/');
+
+		} else {
+			text = p.title || 'Untitled';
 		}
 
 		return <a
@@ -125,10 +126,10 @@ export default class Tab extends React.Component<P> {
 			onMouseDown={ev => p.onMouseDown?.(tab, ev)}
 			onClick={ev => p.onClick?.(tab, ev)}
 			onAuxClick={ev => p.onAuxClick?.(tab, ev)}
-			className={X('Tab', status, { discarded, active, selected, hidden })}
+			className={X(Tab.css, status, { discarded, active, selected, hidden, showURL })}
 		>
 			<img src={favicon} />
-			<div className={'Tab_Title' + (p.showURL ? ' showURL' : '')}>{text || 'Untitled'}</div>
+			<div className="Title">{text}</div>
 		</a>;
 	}
 
