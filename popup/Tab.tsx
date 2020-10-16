@@ -128,8 +128,14 @@ export default class Tab extends React.Component<P> {
 		if (showURL) {
 			text = decodeURI((p.url ?? '').replace(/^[^:]+:[/]+(www\.)?/, '').replace(/\//, '\n/'));
 
+		} else if (p.title) {
+			text = p.title;
+
+		} else if (status === 'loading') {
+			text = 'Loading...';
+
 		} else {
-			text = p.title || 'Untitled';
+			text = 'Untitled';
 		}
 
 		return <a
