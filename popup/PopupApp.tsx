@@ -83,7 +83,9 @@ export default class PopupApp extends React.Component<P, S> {
 	}
 
 	componentWillUnmount() {
-		removeEventListener('keypress', this.handleKeyDown);
+		removeEventListener('focus', this.handleFocus);
+		removeEventListener('blur', this.handleBlur);
+		removeEventListener('keydown', this.handleKeyDown);
 		// removeMessageListener(this.handleMessage);
 		browser.tabs.onRemoved.removeListener(this.handleTabRemoved);
 		browser.tabs.onCreated.removeListener(this.handleTabCreated);
@@ -194,12 +196,7 @@ export default class PopupApp extends React.Component<P, S> {
 	handleKeyDown = (ev: KeyboardEvent) => {
 		let key = ev.key;
 
-		if (key === 'Escape') {
-			close();
-			return;
-		}
-
-		if (ev.target === this.searchRef) {
+		if ((ev.target as Element).tagName === 'INPUT') {
 			if (key === 'ArrowDown') {
 				ev.preventDefault();
 				this.moveSelection(-1);
@@ -207,13 +204,20 @@ export default class PopupApp extends React.Component<P, S> {
 			} else if (key === 'ArrowUp') {
 				ev.preventDefault();
 				this.moveSelection(+1);
+
+			} else if (key === 'Escape') {
+				ev.preventDefault();
+				this.handleSearchToggle();
 			}
 
 			// No keyboard shortcuts while writing except the above
 			return;
 		}
 
-		if (key === 'ArrowDown' || key === 'j') { // Select next tab
+		if (key === 'Escape') {
+			close();
+
+		} else if (key === 'ArrowDown' || key === 'j') { // Select next tab
 			ev.preventDefault();
 			this.moveSelection(-1);
 			
@@ -294,8 +298,7 @@ export default class PopupApp extends React.Component<P, S> {
 
 		} else if (key === 'e') {
 			ev.preventDefault();
-			openTabsEditor();
-			close();
+			this.handleExport();
 		}
 	};
 
@@ -393,14 +396,9 @@ export default class PopupApp extends React.Component<P, S> {
 		this.setState(s => ({ search: s.search == null ? '' : undefined }));
 	};
 
-	// handleSearchChange = (ev: React.FormEvent) => {
-	//   let searchInput = (ev.currentTarget as HTMLInputElement);
-	//   this.setState({ search: searchInput.value });
-	// };
-	
-	searchRef: HTMLInputElement | null = null;
-	setSearchRef = (ref: HTMLInputElement | null) => {
-		this.searchRef = ref;
+	handleExport = () => {
+		openTabsEditor();
+		this.props.isActionPopup && close();
 	};
 
 	static readonly css = css`
@@ -465,21 +463,21 @@ export default class PopupApp extends React.Component<P, S> {
 			/>);
 		}
 		let items = [
-			<div className="WindowList">
+			<div className="WindowList" key="WindowList">
 				{list}
 			</div>,
 			s.search != null && <input
+				key="SearchInput"
 				className="SearchInput"
 				placeholder="Search tabs"
 				value={s.search}
 				onChange={ev => this.setState({ search: ev.target.value })}
 				onBlur={ev => ev.target.value === '' && this.setState({ search: undefined })}
 				autoFocus
-				ref={this.setSearchRef}
 			/>,
-			<div className="ButtonBar">
+			<div className="ButtonBar" key="ButtonBar">
 				<button type="button" onClick={this.handleSearchToggle}>Search</button>
-				<button type="button" onClick={() => openTabsEditor()}>Export</button>
+				<button type="button" onClick={this.handleExport}>Export</button>
 			</div>
 		];
 		return (p.isActionPopup ? items.reverse() : items);
