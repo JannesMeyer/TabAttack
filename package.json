@@ -5,7 +5,8 @@
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
   "repository": "JannesMeyer/TabAttack",
   "scripts": {
-    "lint": "eslint . --ext .ts,.tsx",
+		"lint": "eslint . --ext .ts,.tsx --format visualstudio",
+		"lint-stylish": "eslint . --ext .ts,.tsx",
     "pack": "rimraf TabAttack.zip && tsc && zip -vx '*.DS_Store' -r TabAttack.zip dist"
   },
   "dependencies": {

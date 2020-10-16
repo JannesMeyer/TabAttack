@@ -122,7 +122,7 @@ export default class Tab extends React.Component<P> {
 
 		let text: string;
 		if (showURL) {
-			text = decodeURI((p.url ?? '').replace(/^[^:]+:[\/]+(www\.)?/, '').replace(/\//, '\n/'));
+			text = decodeURI((p.url ?? '').replace(/^[^:]+:[/]+(www\.)?/, '').replace(/\//, '\n/'));
 
 		} else {
 			text = p.title || 'Untitled';

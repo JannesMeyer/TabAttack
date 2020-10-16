@@ -16,7 +16,7 @@
 		},
 		{
 			"type": "npm",
-			"script": "lint",
+			"script": "lint-stylish",
 			"problemMatcher": [
 				"$eslint-stylish"
 			],
