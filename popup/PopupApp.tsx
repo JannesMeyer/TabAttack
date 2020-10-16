@@ -3,7 +3,6 @@ import ready from '../lib/dom/ready.js';
 import isDefined from '../lib/isDefined.js';
 import logError from '../lib/logError.js';
 import markdownLink from '../lib/markdownLink.js';
-import KeyCode from '../lib/KeyCode.js';
 import writeClipboard from '../lib/writeClipboard.js';
 import TabGroup from './TabGroup.js';
 import UrlQuery from '../lib/dom/UrlQuery.js';
@@ -65,7 +64,7 @@ export default class PopupApp extends React.Component<P, S> {
 	componentDidMount() {
 		addEventListener('focus', this.handleFocus);
 		addEventListener('blur', this.handleBlur);
-		addEventListener('keydown', this.handleKeyPress);
+		addEventListener('keydown', this.handleKeyDown);
 		// if (!this.props.isSidebar) {
 		//   addMessageListener(this.handleMessage);
 		// }
@@ -77,7 +76,7 @@ export default class PopupApp extends React.Component<P, S> {
 	}
 
 	componentWillUnmount() {
-		removeEventListener('keypress', this.handleKeyPress);
+		removeEventListener('keypress', this.handleKeyDown);
 		// removeMessageListener(this.handleMessage);
 		browser.tabs.onRemoved.removeListener(this.handleTabRemoved);
 		browser.tabs.onCreated.removeListener(this.handleTabCreated);
@@ -185,20 +184,20 @@ export default class PopupApp extends React.Component<P, S> {
 		return (this.props.windows || []).map(w => w.tabs).filter(isDefined).flat().find(t => t.id === tabId);
 	}
 
-	handleKeyPress = (ev: KeyboardEvent) => {
-		let key = ev.keyCode || ev.which;
+	handleKeyDown = (ev: KeyboardEvent) => {
+		let key = ev.key;
 
-		if (key === KeyCode.Escape) {
+		if (key === 'Escape') {
 			close();
 			return;
 		}
 
 		if (ev.target === this.searchRef) {
-			if (key === KeyCode.Down) {
+			if (key === 'ArrowDown') {
 				ev.preventDefault();
 				this.moveSelection(-1);
 
-			} else if (key === KeyCode.Up) {
+			} else if (key === 'ArrowUp') {
 				ev.preventDefault();
 				this.moveSelection(+1);
 			}
@@ -207,27 +206,27 @@ export default class PopupApp extends React.Component<P, S> {
 			return;
 		}
 
-		if (key === KeyCode.Down || key === KeyCode.J) { // Select next tab
+		if (key === 'ArrowDown' || key === 'j') { // Select next tab
 			ev.preventDefault();
 			this.moveSelection(-1);
 			
-		} else if (key === KeyCode.Up || key === KeyCode.K) { // Select previous tab
+		} else if (key === 'ArrowUp' || key === 'k') { // Select previous tab
 			ev.preventDefault();
 			this.moveSelection(+1);
 
-		} else if (key === KeyCode.Tab) { // Select next/previous tab
+		} else if (key === 'Tab') { // Select next/previous tab
 			ev.preventDefault();
 			this.moveSelection(ev.shiftKey ? +1 : -1);  
 
-		} else if (key === KeyCode.Home) { // Select first tab
+		} else if (key === 'End') { // Select topmost tab
 			ev.preventDefault();
 			this.moveSelectionTo(0);
 
-		} else if (key === KeyCode.End) { // Select last tab
+		} else if (key === 'Home') { // Select bottommost tab
 			ev.preventDefault();
 			this.moveSelectionTo(Infinity);
 
-		} else if (key === KeyCode.PageDown) { // Select page down
+		} else if (key === 'PageDown') { // Select page down
 			ev.preventDefault();
 			// if (this.selectedTabRef == null) {
 			//   throw new Error('Selected item not found');
@@ -236,7 +235,7 @@ export default class PopupApp extends React.Component<P, S> {
 			// let moveByItems = (Math.round(innerHeight / itemHeight) - 3);
 			// this.moveSelection(moveByItems, false);
 
-		} else if (key === KeyCode.PageUp) { // Select page up
+		} else if (key === 'PageUp') { // Select page up
 			ev.preventDefault();
 			// if (this.selectedTabRef == null) {
 			//   throw new Error('Selected item not found');
@@ -245,62 +244,52 @@ export default class PopupApp extends React.Component<P, S> {
 			// let moveByItems = (Math.round(innerHeight / itemHeight) - 3);
 			// this.moveSelection(-moveByItems, false);
 
-		} else if (key === KeyCode.Enter || key === KeyCode.Space) { // Activate tab
+		} else if (key === 'Enter' || key === ' ') { // Activate tab
 			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			let tab = this.findTab(this.state.selectedTabId);
-			if (tab == null || tab.id == null) {
-				return;
-			}
-			
-			// Optimistic update
-			this.setState({ selectedTabId: tab.id });
+			browser.tabs.update(this.state.selectedTabId, { active: true }).catch(logError);
+			this.props.isActionPopup &&	close();
 
-			// Enter focuses the window, Space keeps the window
-			if (key === KeyCode.Enter) {
-				browser.windows.update(assertDefined(tab.windowId), { focused: true }).catch(logError);
-			}
-			browser.tabs.update(tab.id, { active: true }).catch(logError);
-
-		} else if (key === KeyCode.W || key === KeyCode.Q) { // Close tab
+		} else if (key === 'w') { // Close tab
 			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
+			// TODO: Move selection to an adjacent tab before removing this tab
 			browser.tabs.remove(this.state.selectedTabId).catch(logError);
 
-		} else if (key === KeyCode.C || key === KeyCode.L) { // Copy as markdown link
+		} else if (key === 'c' || key === 'l') { // Copy as markdown link
 			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
 			let selectedTab = this.findTab(this.state.selectedTabId);
 			if (selectedTab == null) {
-				throw new Error('There is no selected tab');
+				return;
 			}
 			writeClipboard(markdownLink(selectedTab.title, assertDefined(selectedTab.url)));
-			alert('Link copied');
+			// TODO: Show toast "Link copied"
 
-		} else if (key === KeyCode.D) { // Discard tab
+		} else if (key === 'd') { // Discard tab
 			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
 			browser.tabs.discard(this.state.selectedTabId).catch(logError);
 
-		} else if (key === KeyCode.R) {
+		} else if (key === 'r') {
 			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
 			browser.tabs.reload(this.state.selectedTabId).catch(logError);
 
-		} else if (key === KeyCode.X) {
+		} else if (key === 'x') {
 			this.setState({ showURL: !this.state.showURL });
 
-		} else if (key === KeyCode.Slash) {
+		} else if (key === '/') {
 			ev.preventDefault();
 			this.setState({ search: '' });
 		}
