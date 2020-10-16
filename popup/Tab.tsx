@@ -25,6 +25,7 @@ export default class Tab extends React.Component<P> {
 		font: inherit;
 		color: inherit;
 		text-decoration: none;
+		outline: none; /* Disable focus outline */
 
 		position: relative;
 		display: block;
