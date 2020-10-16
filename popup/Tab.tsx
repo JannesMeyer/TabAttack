@@ -99,6 +99,9 @@ export default class Tab extends React.Component<P> {
 			// From Firefox (chrome://browser/skin/tabbrowser/tab-loading.png)
 			favicon = '/icons/tab-loading.png';
 
+		} else if (!isFirefox) {
+			favicon = 'chrome://favicon/size/16@' + devicePixelRatio + 'x/' + tab.url;
+
 		} else if (tab.favIconUrl) {
 			// Extensions don't have access to this (in Firefox)
 			if (tab.favIconUrl === 'chrome://mozapps/skin/extensions/extension.svg') {
@@ -108,11 +111,8 @@ export default class Tab extends React.Component<P> {
 				favicon = tab.favIconUrl;
 			}
 
-		} else if (isFirefox) {
-			favicon = 'chrome://branding/content/icon32.png';
-
 		} else {
-			favicon = 'chrome://favicon/' + tab.url;
+			favicon = 'chrome://branding/content/icon32.png';
 		}
 
 		let text: string;
