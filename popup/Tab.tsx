@@ -61,6 +61,10 @@ export default class Tab extends React.Component<P> {
 	}
 	&.showURL .Title {
 		white-space: pre;
+		color: #777;
+	}
+	&.showURL .Title::first-line {
+		color: #000;
 	}
 	/* Active tab indicator */
 	&.active {
