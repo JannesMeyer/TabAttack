@@ -482,18 +482,4 @@ export default class PopupApp extends React.Component<P, S> {
 		];
 		return (p.isActionPopup ? items.reverse() : items);
 	}
-	
-	getTab(id: number | undefined) {
-		if (id == null) {
-			return;
-		}
-		for (let w of this.state.windows) {
-			for (let tab of w.tabs ?? []) {
-				if (tab.id === id) {
-					return tab;
-				}
-			}
-		}
-		return;
-	}
 }
