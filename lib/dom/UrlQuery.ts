@@ -47,6 +47,9 @@ export default class UrlQuery<K extends string> {
 	}
 
 	toString() {
+		if (this.entries.size === 0) {
+			return '';
+		}
 		return '?' + Array.from(this.entries.entries()).map(([k, v]) => k + '=' + encodeURIComponent(v)).join('&');
 	}
 

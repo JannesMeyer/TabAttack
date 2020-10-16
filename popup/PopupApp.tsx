@@ -12,9 +12,16 @@ import openTabsEditor from '../background/openTabsEditor.js';
 ready().then(root => {
 	browser.windows.getAll({ windowTypes: ['normal'], populate: true }).then(windows => {
 		let q = UrlQuery.fromString();
+		let isActionPopup = q.getBoolean('action_popup');
+		if (isActionPopup) {
+			css`body {
+				width: 300px;
+				height: 600px;
+			}`;
+		}
 		ReactDOM.render(<PopupApp
 			isSidebar={q.getBoolean('sidebar')}
-			isActionPopup={q.getBoolean('action_popup')}
+			isActionPopup={isActionPopup}
 			windows={windows}
 		/>, root);
 	});
@@ -284,6 +291,11 @@ export default class PopupApp extends React.Component<P, S> {
 		} else if (key === '/') {
 			ev.preventDefault();
 			this.setState({ search: '' });
+
+		} else if (key === 'e') {
+			ev.preventDefault();
+			openTabsEditor();
+			close();
 		}
 	};
 
@@ -404,6 +416,7 @@ export default class PopupApp extends React.Component<P, S> {
 	}
 	.WindowList {
 		flex-grow: 1;
+		overflow-y: auto;
 	}
 	.SearchInput {
 		display: block;

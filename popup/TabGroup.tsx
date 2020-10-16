@@ -1,4 +1,3 @@
-import css from '../lib/css.js';
 import Tab from './Tab.js';
 
 interface P {
@@ -14,11 +13,6 @@ interface P {
 }
 
 export default class TabGroup extends React.Component<P> {
-
-	static readonly css = css`
-	.Window:first-child h1 {
-		margin-top: 12px;  
-	}`;
 	
 	render() {
 		let { props: p } = this;
