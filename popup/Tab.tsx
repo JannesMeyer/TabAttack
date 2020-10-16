@@ -87,33 +87,28 @@ export default class Tab extends React.Component<P> {
 		}
 	}`;
 
-	static readonly faviconSubs = new Map([
-		// Extensions don't have access to this Firefox URL
-		['chrome://mozapps/skin/extensions/extension.svg', '/icons/extension.svg'],
-	]);
-
 	render() {
 		let { tab, status, discarded, active, selected, ...p } = this.props;
 		
 		let favicon: string;
 		if (status === 'loading') {
-			if (isFirefox) {
-				favicon = 'chrome://browser/skin/tabbrowser/tab-loading.png';
-			} else {
-				favicon = '/icons/tab-loading.png';
-			}
+			// From Firefox (chrome://browser/skin/tabbrowser/tab-loading.png)
+			favicon = '/icons/tab-loading.png';
+
 		} else if (tab.favIconUrl) {
-			favicon = tab.favIconUrl;
+			// Extensions don't have access to this Firefox URL
+			if (tab.favIconUrl === 'chrome://mozapps/skin/extensions/extension.svg') {
+				favicon = '/icons/extension.svg';
+
+			} else {
+				favicon = tab.favIconUrl;
+			}
 
 		} else if (isFirefox) {
 			favicon = 'chrome://branding/content/icon32.png';
 
 		} else {
 			favicon = 'chrome://favicon/' + tab.url;
-		}
-		let sub = Tab.faviconSubs.get(favicon);
-		if (sub != null) {
-			favicon = sub;
 		}
 
 		let text = p.title;
