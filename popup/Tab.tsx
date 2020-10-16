@@ -1,3 +1,4 @@
+import { isFirefox } from '../lib/browser/runtime.js';
 import css, { X } from '../lib/css.js';
 
 interface P {
@@ -86,16 +87,9 @@ export default class Tab extends React.Component<P> {
 		}
 	}`;
 
-	// TODO: Fix this for non-Firefox browsers
 	static readonly faviconSubs = new Map([
 		// Extensions don't have access to this Firefox URL
 		['chrome://mozapps/skin/extensions/extension.svg', '/icons/extension.svg'],
-
-		// Firefox-specific loading icon
-		['loading', 'chrome://browser/skin/tabbrowser/tab-loading.png'],
-
-		// Firefox-specific placeholder
-		['nofavicon', 'chrome://branding/content/icon32.png'],
 	]);
 
 	render() {
@@ -103,16 +97,19 @@ export default class Tab extends React.Component<P> {
 		
 		let favicon: string;
 		if (status === 'loading') {
-			favicon = 'loading';
-		} else if (tab.favIconUrl == null || tab.favIconUrl === '') {
-			// Edge
-			if (tab.url?.startsWith('edge://') || tab.url?.startsWith('chrome://')) {
-				favicon = 'chrome://favicon/' + tab.url;
+			if (isFirefox) {
+				favicon = 'chrome://browser/skin/tabbrowser/tab-loading.png';
 			} else {
-				favicon = 'nofavicon';
+				favicon = '/icons/tab-loading.png';
 			}
-		} else {
+		} else if (tab.favIconUrl) {
 			favicon = tab.favIconUrl;
+
+		} else if (isFirefox) {
+			favicon = 'chrome://branding/content/icon32.png';
+
+		} else {
+			favicon = 'chrome://favicon/' + tab.url;
 		}
 		let sub = Tab.faviconSubs.get(favicon);
 		if (sub != null) {
