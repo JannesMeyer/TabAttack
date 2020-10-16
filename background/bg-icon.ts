@@ -2,7 +2,6 @@ import loadFont from '../fonts/loadFont.js';
 import logError from '../lib/logError.js';
 import prefs from '../preferences.js';
 import Icon from './Icon.js';
-import * as TabService from '../lib/tabs.js';
 import assertDefined from '../lib/assertDefined.js';
 import prefersDark from '../lib/prefersDark.js';
 
@@ -41,7 +40,7 @@ async function updatePrefs() {
  * Update browser action with the current tab count
  */
 function updateIcon() {
-	return TabService.count().then(x => {
+	return browser.tabs.query({ windowType: 'normal' }).then(tabs => {
 		// Determine scale factors to render
 		let scales = [1, 2];
 		if (!scales.includes(devicePixelRatio)) {
@@ -57,7 +56,7 @@ function updateIcon() {
 		let imageData: Record<number, ImageData> = {};
 		for (let scale of scales) {
 			icon.setScale(scale);
-			imageData[icon.canvas.width] = icon.render(x).imageData;
+			imageData[icon.canvas.width] = icon.render(tabs.length).imageData;
 		}
 		
 		return browser.browserAction.setIcon({ imageData });
