@@ -43,7 +43,7 @@ export default class Tab extends React.Component<P> {
 		display: block;
 		width: 16px;
 		height: 16px;
-		border-radius: 3px;
+		border-radius: 2px;
 		position: absolute;
 		top: 6px;
 		left: 13px;
