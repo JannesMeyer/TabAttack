@@ -125,6 +125,7 @@ export default class Tab extends React.Component<P> {
 			onMouseDown={ev => p.onMouseDown?.(tab, ev)}
 			onMouseUp={ev => p.onMouseUp?.(tab, ev)}
 			onClick={ev => ev.preventDefault()}
+			onAuxClick={ev => ev.preventDefault()}
 			className={X('Tab', status, { discarded, active, selected, hidden })}
 		>
 			<img src={favicon} />
