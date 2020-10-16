@@ -246,19 +246,11 @@ export default class PopupApp extends React.Component<P, S> {
 
 		} else if (key === 'Enter' || key === ' ') { // Activate tab
 			ev.preventDefault();
-			if (this.state.selectedTabId == null) {
-				return;
-			}
-			browser.tabs.update(this.state.selectedTabId, { active: true }).catch(logError);
-			this.props.isActionPopup &&	close();
+			this.activateTab(this.state.selectedTabId);
 
 		} else if (key === 'w') { // Close tab
 			ev.preventDefault();
-			if (this.state.selectedTabId == null) {
-				return;
-			}
-			// TODO: Move selection to an adjacent tab before removing this tab
-			browser.tabs.remove(this.state.selectedTabId).catch(logError);
+			this.closeTab(this.state.selectedTabId);
 
 		} else if (key === 'c' || key === 'l') { // Copy as markdown link
 			ev.preventDefault();
@@ -322,6 +314,22 @@ export default class PopupApp extends React.Component<P, S> {
 		this.setState({ selectedTabId: nextTab.id });
 	}
 
+	activateTab(id: number | undefined) {
+		if (id == null) {
+			return;
+		}
+		browser.tabs.update(id, { active: true }).catch(logError);
+		this.props.isActionPopup &&	close();
+	}
+
+	closeTab(id: number | undefined) {
+		if (id == null) {
+			return;
+		}
+		// TODO: Move selection to an adjacent tab before removing
+		browser.tabs.remove(id).catch(logError);
+	}
+
 	moveSelectionTo(index: number) {
 		let { windows } = this.props;
 		if (this.state.selectedTabId == null) {
@@ -359,12 +367,12 @@ export default class PopupApp extends React.Component<P, S> {
 		if (ev.button === 0) {
 			// Left click
 			ev.preventDefault();
-			browser.tabs.update(tab.id, { active: true }).catch(logError);
+			this.activateTab(tab.id);
 		
 		} else if (ev.button === 1) {
 			// Middle click
 			ev.preventDefault();
-			browser.tabs.remove(tab.id).catch(logError);
+			this.closeTab(tab.id);
 		}
 	};
 
