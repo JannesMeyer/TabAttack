@@ -75,16 +75,14 @@ export default class Tab extends React.Component<P> {
 		width: 3px;
 		background: #0a84ff;
 	}
-	&:hover,
-	&.active:hover {
+	&:hover {
 		background: #eee;
 	}
 	@media (prefers-color-scheme: dark) {
 		&.active {
 			background: #323234;
 		}
-		&:hover,
-		&.active:hover {
+		&:hover {
 			background: #252526;
 		}
 	}`;
