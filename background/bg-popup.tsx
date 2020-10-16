@@ -1,5 +1,7 @@
 import onCommand from '../lib/browser/onCommand.js';
 import logError from '../lib/logError.js';
+import assertDefined from '../lib/assertDefined.js';
+import PopupParams from '../popup/PopupParams.js';
 import FocusOrder from './FocusOrder.js';
 
 let focusOrder = new FocusOrder();
@@ -26,7 +28,7 @@ function getActiveTab() {
 async function openPopup(tab: browser.tabs.Tab) {
 	if (popupId == null) {
 		// First open
-		popupId = (await showPopup()).id;
+		popupId = await showPopup();
 		
 	} else if (popupId === tab.windowId) {
 		// Popup already focused, switch back to previous window
@@ -40,12 +42,12 @@ async function openPopup(tab: browser.tabs.Tab) {
 
 		} catch (e) {
 			popupId = undefined;
-			popupId = (await showPopup()).id;
+			popupId = await showPopup();
 		}
 	}
 }
 
-let defaultPopupWindow: Parameters<typeof browser.windows.create>[0] = {
+let defaultPopupWindow: PopupParams = {
 	width: 300,
 	height: 600,
 	top: 0,
@@ -53,10 +55,14 @@ let defaultPopupWindow: Parameters<typeof browser.windows.create>[0] = {
 };
 
 async function showPopup() {
-	let { popupWindow } = await browser.storage.local.get({ popupWindow: defaultPopupWindow });
-	return browser.windows.create({
+	let popupWindow: PopupParams = (await browser.storage.local.get({ popupWindow: defaultPopupWindow })).popupWindow;
+	let w = await browser.windows.create({
 		...popupWindow,
 		type: 'popup',
 		url: browser.runtime.getURL('popup.html'),
 	});
+	let id = assertDefined(w.id);
+	// Some browsers ignore the top and left coordinates
+	setTimeout(() => browser.windows.update(id, popupWindow));
+	return id;
 }

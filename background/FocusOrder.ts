@@ -23,7 +23,7 @@ export default class FocusOrder {
 
 	/** Update the list whenever a focus change event happens */
 	private handleFocusChange = (id: number | undefined) => {
-		if (id == null || id === -1) {
+		if (id == null || id === browser.windows.WINDOW_ID_NONE) {
 			return;
 		}
 		this.order.delete(id);

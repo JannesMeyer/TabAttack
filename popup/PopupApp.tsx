@@ -8,6 +8,7 @@ import TabGroup from './TabGroup.js';
 import UrlQuery from '../lib/dom/UrlQuery.js';
 import css from '../lib/css.js';
 import openTabsEditor from '../background/openTabsEditor.js';
+import PopupParams from './PopupParams.js';
 
 ready().then(root => {
 	browser.windows.getAll({ windowTypes: ['normal'], populate: true }).then(windows => {
@@ -72,9 +73,8 @@ export default class PopupApp extends React.Component<P, S> {
 		addEventListener('focus', this.handleFocus);
 		addEventListener('blur', this.handleBlur);
 		addEventListener('keydown', this.handleKeyDown);
-		// if (!this.props.isSidebar) {
-		//   addMessageListener(this.handleMessage);
-		// }
+		// Do not clean up in componentWillUnmount!
+		addEventListener('beforeunload', () => this.handlePageHide());
 		browser.tabs.onRemoved.addListener(this.handleTabRemoved);
 		browser.tabs.onCreated.addListener(this.handleTabCreated);
 		browser.tabs.onUpdated.addListener(this.handleTabUpdated);
@@ -86,7 +86,6 @@ export default class PopupApp extends React.Component<P, S> {
 		removeEventListener('focus', this.handleFocus);
 		removeEventListener('blur', this.handleBlur);
 		removeEventListener('keydown', this.handleKeyDown);
-		// removeMessageListener(this.handleMessage);
 		browser.tabs.onRemoved.removeListener(this.handleTabRemoved);
 		browser.tabs.onCreated.removeListener(this.handleTabCreated);
 		browser.tabs.onUpdated.removeListener(this.handleTabUpdated);
@@ -97,9 +96,29 @@ export default class PopupApp extends React.Component<P, S> {
 		document.body.classList.remove('inactive');
 	}
 
-	private handleBlur() {
+	private handleBlur = () => {
 		document.body.classList.add('inactive');
-	}
+		this.handlePageHide();
+	};
+
+	/** Save window position */
+	private handlePageHide = () => {
+		if (this.props.isActionPopup || this.props.isSidebar) {
+			return;
+		}
+		// browser.windows.getCurrent() cannot be used because it is async and the browser
+		// does not wait for it when unloading the window
+		let p: PopupParams = {
+			width: outerWidth,
+			height: outerHeight,
+			top: screenY,
+			left: screenX,
+		};
+		if (p.top < 0 || p.left < 0 || p.width < 0 || p.height < 0) {
+			return;
+		}
+		browser.storage.local.set({ popupWindow: p });
+	};
 
 	// handleMessage = (m: Message) => {
 	//   if (m.type === 'selectTab') {
