@@ -251,7 +251,7 @@ function DomainBlacklist(p: { list: string[], onChange(list: string[]): void, on
 				size={12}
 				multiple
 				value={selection}
-				onChange={ev => setSelection(Array.from(ev.target.selectedOptions).map(x => x.value))}
+				onChange={ev => setSelection(Array.from(ev.target.selectedOptions, x => x.value))}
 			>
 				{p.list.map(x => <option key={x}>{x}</option>)}
 			</select>
