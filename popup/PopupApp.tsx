@@ -16,7 +16,7 @@ ready().then(root => {
 		let isActionPopup = q.getBoolean('action_popup');
 		if (isActionPopup) {
 			css`body {
-				width: 300px;
+				width: 320px;
 				height: 600px;
 			}`;
 		}
