@@ -26,47 +26,39 @@ interface P {
 	darkThemes: AceTheme[];
 }
 
-class OptionsApp extends React.Component<P, Prefs> {
+interface S {
+	prefs: Prefs;
+	showDomainBlacklist: boolean;
+}
+
+class OptionsApp extends React.Component<P, S> {
 
 	constructor(p: P) {
 		super(p);
-		this.state = { ...p.prefs };
-	}
-
-	componentDidUpdate() {
-		prefs.set(this.state);
+		this.state = {
+			prefs: p.prefs,
+			showDomainBlacklist: false,
+		};
 	}
 
 	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: K) {
 		let target = ev.target;
 		let value = ('checked' in target ? target.checked : target.value);
-		this.setState({ [field]: value } as any);
+		this.setPref(field, value);
 	}
 
-	// addDomain = (ev: React.FormEvent) => {
-	// 	ev.preventDefault();
-	// 	let input = assertDefined(this.domainInput.current);
-	// 	let list = this.state.domainBlacklist;
+	setPref<K extends keyof Prefs>(field: K, value: unknown) {
+		this.setState(s => {
+			let np = { ...s.prefs, [field]: value };
+			prefs.set(np);
+			return { prefs: np };
+		});
+	}
 
-	// 	// Check if the blacklist already contains the domain
-	// 	if (list.indexOf(input.value) !== -1) {
-	// 		// TODO: Toast instead
-	// 		return alert('Already exists');
-	// 	}
-
-	// 	// Add the domain to the beginning of the blacklist
-	// 	list.unshift(input.value);
-	// 	input.value = '';
-	// 	this.forceUpdate();
-	// };
-
-	// deleteDomain = (index: number, ev: React.MouseEvent) => {
-	// 	ev.preventDefault();
-	// 	this.state.domainBlacklist.splice(index, 1);
-	// 	this.forceUpdate();
-	// };
-
-	// domainInput = React.createRef<HTMLInputElement>();
+	toggleDomainBlacklist = (ev: React.MouseEvent) => {
+		ev.preventDefault();
+		this.setState(s => ({ showDomainBlacklist: !s.showDomainBlacklist }));
+	};
 
 	static readonly css = css`
 	:root {
@@ -125,22 +117,30 @@ class OptionsApp extends React.Component<P, Prefs> {
 
 	render() {
 		let { props: p, state: s } = this;
+		let { prefs } = s;
+		if (s.showDomainBlacklist) {
+			return <DomainBlacklist
+				list={prefs.domainBlacklist}
+				onChange={list => this.setPref('domainBlacklist', list)}
+				onBack={this.toggleDomainBlacklist}
+			/>;
+		}
 		return <>
 			<h3>{getString('options_export')}</h3>
 
 			<label className="row">
 				<span>Ignore Domains</span>
-				<a href="">{s.domainBlacklist.length} domains</a>
+				<a href="" onClick={this.toggleDomainBlacklist}>{prefs.domainBlacklist.length} domains</a>
 			</label>
 
 			<label className="row">
 				<span>Ignore Pinned Tabs</span>
-				<input type="checkbox" checked={s.ignorePinned} onChange={ev => this.handleChange(ev, 'ignorePinned')} />
+				<input type="checkbox" checked={prefs.ignorePinned} onChange={ev => this.handleChange(ev, 'ignorePinned')} />
 			</label>
 
 			<label className="row">
 				<span>Export Format</span>
-				<select value={s.format} onChange={ev => this.handleChange(ev, 'format')} style={{ width: 121 }}>
+				<select value={prefs.format} onChange={ev => this.handleChange(ev, 'format')} style={{ width: 121 }}>
 					<option value="markdown">Markdown</option>
 					<option value="json">JSON</option>
 				</select>
@@ -148,7 +148,7 @@ class OptionsApp extends React.Component<P, Prefs> {
 
 			<label className="row">
 				<span>Color Scheme</span>
-				<select value={s.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')}>
+				<select value={prefs.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')}>
 					<optgroup label="Light">
 						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
@@ -160,7 +160,7 @@ class OptionsApp extends React.Component<P, Prefs> {
 
 			<label className="row">
 				<span>Color Scheme - Dark Mode</span>
-				<select value={s.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')}>
+				<select value={prefs.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')}>
 					<optgroup label="Light">
 						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
@@ -174,30 +174,88 @@ class OptionsApp extends React.Component<P, Prefs> {
 
 			<label className="row">
 				<span>Text Color</span>
-				<input type="color" value={s.iconColor} onChange={ev => this.handleChange(ev, 'iconColor')} />
+				<input type="color" value={prefs.iconColor} onChange={ev => this.handleChange(ev, 'iconColor')} />
 			</label>
 
 			<label className="row">
 				<span>Text Color - Dark Mode</span>
-				<input type="color" value={s.iconColorDarkMode} onChange={ev => this.handleChange(ev, 'iconColorDarkMode')} />
+				<input type="color" value={prefs.iconColorDarkMode} onChange={ev => this.handleChange(ev, 'iconColorDarkMode')} />
 			</label>
 
 			<h3>Context Menu Items</h3>
 
 			<div className="row">
 				<label>
-					<input type="checkbox" checked={s.showCopyLinkAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyLinkAsMarkdown')} />
+					<input type="checkbox" checked={prefs.showCopyLinkAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyLinkAsMarkdown')} />
 					{getString('options_show_copy_link')}
 				</label>
 			</div>
 
 			<div className="row">
 				<label>
-					<input type="checkbox" checked={s.showCopyPageAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyPageAsMarkdown')} />
+					<input type="checkbox" checked={prefs.showCopyPageAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyPageAsMarkdown')} />
 					{getString('options_show_copy_page')}
 				</label>
 			</div>
 
 		</>;
 	}
+}
+
+const { useState, useMemo, useCallback } = React;
+
+const DomainBlacklistCSS = css`
+& select, & input {
+	min-width: 220px;
+	box-sizing: border-box;
+}
+& button {
+	min-width: 70px;
+	text-align: center;
+	vertical-align: bottom;
+}
+`;
+
+function DomainBlacklist(p: { list: string[], onChange(list: string[]): void, onBack(ev: React.MouseEvent): void }) {
+	let list = useMemo(() => new Set(p.list), [p.list]);
+
+	// Add item
+	let [text, setText] = useState('');
+	let addItem = useCallback((ev: React.FormEvent) => {
+		ev.preventDefault();
+		let list = p.list.slice();
+		list.unshift(text.toLocaleLowerCase());
+		setText('');
+		p.onChange(list);
+	}, [text, p.list, p.onChange]);
+
+	// Remove item(s)
+	let [selection, setSelection] = useState<string[]>([]);
+	let remove = useCallback(() => {
+		for (let value of selection) {
+			list.delete(value);
+		}
+		setSelection([]);
+		p.onChange(Array.from(list));
+	}, [selection, list, p.onChange]);
+
+	return <div className={DomainBlacklistCSS}>
+		<a href="" onClick={p.onBack}>Back</a>
+		<h3>Ignore Domains When Exporting Tabs</h3>
+		<form onSubmit={addItem}>
+			<input autoFocus value={text} onChange={ev => setText(ev.target.value)} />
+			<button disabled={list.has(text.toLocaleLowerCase()) || text.trim() === ''}>Add</button>
+		</form>
+		<p>
+			<select
+				size={12}
+				multiple
+				value={selection}
+				onChange={ev => setSelection(Array.from(ev.target.selectedOptions).map(x => x.value))}
+			>
+				{p.list.map(x => <option key={x}>{x}</option>)}
+			</select>
+			<button onClick={remove} disabled={selection.length === 0}>Remove</button>
+		</p>
+	</div>;
 }
