@@ -86,7 +86,7 @@ export default class Tab extends React.Component<P> {
 		background: #0a84ff;
 	}
 	&.discarded {
-		opacity: 0.7;
+		opacity: 0.25;
 	}
 	&:hover {
 		background: #eee;
