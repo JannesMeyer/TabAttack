@@ -46,11 +46,11 @@
   },
 	"commands": {
 		"_execute_browser_action": {
-			"suggested_key": { "default": "Alt+W" }
+			"suggested_key": { "default": "Alt+Q" }
 		},
 		"open_tab_list": {
 			"description": "Open Tab List",
-			"suggested_key": { "default": "Alt+Q" }
+			"suggested_key": { "default": "Ctrl+Shift+F" }
 		},
 		"export_current_window": {
 			"description": "Export only current window"
