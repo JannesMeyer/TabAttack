@@ -3,11 +3,7 @@ import getString from './lib/browser/getString.js';
 import { getAceThemeList, AceTheme } from './lib/getAceThemes.js';
 import css from './lib/css.js';
 
-// Useful for testing purposes:
-// browser.storage.sync.clear();
-// browser.storage.sync.get().then(console.log);
-
-// Load strings
+// Set title
 document.title = getString('options');
 
 // Load preferences
@@ -130,7 +126,7 @@ class OptionsApp extends React.Component<P, S> {
 
 			<label className="row">
 				<span>Ignore Domains</span>
-				<a href="" onClick={this.toggleDomainBlacklist}>{prefs.domainBlacklist.length} domains</a>
+				<a href="" onClick={this.toggleDomainBlacklist}>{prefs.domainBlacklist.length} domain(s)</a>
 			</label>
 
 			<label className="row">
