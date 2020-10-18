@@ -212,11 +212,17 @@ class OptionsApp extends React.Component<P, S> {
 const { useState, useMemo, useCallback } = React;
 
 const DomainBlacklistCSS = css`
+& input {
+	height: 24px;
+}
 & select, & input {
 	min-width: 220px;
 	box-sizing: border-box;
+	vertical-align: bottom;
 }
 & button {
+	margin-left: 5px;
+	height: 24px;
 	min-width: 70px;
 	text-align: center;
 	vertical-align: bottom;
