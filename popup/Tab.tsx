@@ -44,7 +44,7 @@ export default class Tab extends React.Component<P> {
 	&.discarded {
 		opacity: 0.25;
 	}
-	&.selected {
+	&.selected, &:hover {
 		opacity: 1;
 	}
 	body:not(.inactive) &.selected {
