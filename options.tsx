@@ -85,6 +85,17 @@ class OptionsApp extends React.Component<P, S> {
 		vertical-align: top;
 		margin-top: 4px;
 	}
+	optgroup {
+		background-color: #f0f0f0;
+		color: inherit;
+		font-style: normal;
+		font-weight: bold;
+	}
+	option {
+		background-color: #fff;
+		color: inherit;
+		font-style: normal;
+	}
 	input[type=checkbox] {
 		vertical-align: -10%;
 		margin: 0 4px 0 0;
