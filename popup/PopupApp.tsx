@@ -17,7 +17,7 @@ ready().then(root => {
 		if (isActionPopup) {
 			css`body {
 				width: 320px;
-				height: 600px;
+				height: 520px;
 			}`;
 		}
 		ReactDOM.render(<PopupApp
@@ -420,10 +420,6 @@ export default class PopupApp extends React.Component<P, S> {
 	};
 
 	static readonly css = css`
-	body {
-		background: #fcfcfc;
-		color: #1a1a1a;
-	}
 	h1 {
 		font-size: 133.3333%;
 		margin: 9px 0 4px 12px;
@@ -431,6 +427,8 @@ export default class PopupApp extends React.Component<P, S> {
 	.WindowList {
 		flex-grow: 1;
 		overflow-y: auto;
+		background: #fcfcfc;
+		color: #1a1a1a;
 	}
 	.SearchInput {
 		margin: 8px;
@@ -449,7 +447,7 @@ export default class PopupApp extends React.Component<P, S> {
 		opacity: 1;
 	}
 	@media (prefers-color-scheme: dark) {
-		body {
+		.WindowList {
 			background: #0c0c0d;
 			color: #9a9a9b;
 		}
