@@ -419,6 +419,10 @@ export default class PopupApp extends React.Component<P, S> {
 		this.props.isActionPopup && close();
 	};
 
+	private handleUrlToggle = () => {
+		this.setState(s => ({ showURL: !s.showURL }));
+	};
+
 	static readonly css = css`
 	h1 {
 		font-size: 133.3333%;
@@ -494,6 +498,7 @@ export default class PopupApp extends React.Component<P, S> {
 			<div className="ButtonBar" key="ButtonBar">
 				<button type="button" onClick={this.handleSearchToggle}>Search</button>
 				<button type="button" onClick={this.handleExport}>Export</button>
+				<button type="button" onClick={this.handleUrlToggle}>{s.showURL ? 'Titles' : 'URLs'}</button>
 			</div>
 		];
 		return (p.isActionPopup ? items.reverse() : items);
