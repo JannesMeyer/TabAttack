@@ -93,3 +93,16 @@ Special thanks to these projects:
 ## License
 
 [GPL-3.0-only](https://spdx.org/licenses/GPL-3.0-only.html)
+
+## Todo
+
+- Add link to keyboard shortcuts on editor/popup
+- Add per-window tab count
+- Add per-window tab list (inline popup and sidebar)
+- Fix toast messages
+- Figure out why discarding resets the TabId
+- Style indicator for: audio, muted, ...
+- Use keybinding library
+- "open links" doesn't work with file:, moz-extension:, about:, chrome:
+- Add "ignore protocols" option
+- Per-browser background color on dark mode options
