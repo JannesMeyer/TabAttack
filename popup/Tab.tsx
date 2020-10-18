@@ -32,6 +32,7 @@ export default class Tab extends React.Component<P> {
 		padding: 6px 0;
 		padding-left: 34px;
 		border: 2px solid transparent;
+		transition: opacity 0.2s;
 	}
 
 	&.showURL {
@@ -39,6 +40,12 @@ export default class Tab extends React.Component<P> {
 	}
 	&.hidden {
 		display: none;
+	}
+	&.discarded {
+		opacity: 0.25;
+	}
+	&.selected {
+		opacity: 1;
 	}
 	body:not(.inactive) &.selected {
 		box-shadow: inset 0 0 0 1px #0a84ff;
@@ -84,9 +91,6 @@ export default class Tab extends React.Component<P> {
 		bottom: 2px;
 		width: 3px;
 		background: #0a84ff;
-	}
-	&.discarded {
-		opacity: 0.25;
 	}
 	&:hover {
 		background: #eee;
