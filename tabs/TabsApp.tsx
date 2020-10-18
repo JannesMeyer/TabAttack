@@ -100,13 +100,13 @@ class TabsApp extends React.Component<unknown, S> {
 		let windows: string[][] = [];
 		for (let ul of dom.getElementsByTagName('ul')) {
 			ul.parentNode?.removeChild(ul);
-			windows.push(Array.from(ul.getElementsByTagName('a')).map(a => a.href));
+			windows.push(Array.from(ul.getElementsByTagName('a'), a => a.href));
 		}
 		
 		// Check for leftovers
 		let extras = dom.getElementsByTagName('a');
 		if (extras.length > 0) {
-			windows.push(Array.from(extras).map(a => a.href));
+			windows.push(Array.from(extras, a => a.href));
 		}
 
 		// TODO: Handle errors
