@@ -30,7 +30,5 @@ export default function showToast(message: React.ReactNode, seconds = 3) {
 }
 
 function render() {
-	ReactDOM.render(Array.from(toasts, ([id, message]) => <div key={id}>
-		<div>{message}</div>
-	</div>), root);
+	ReactDOM.render(Array.from(toasts, ([id, message]) => <div key={id}><div>{message}</div></div>), root);
 }
