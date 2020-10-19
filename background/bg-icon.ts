@@ -1,5 +1,4 @@
 import loadFont from '../fonts/loadFont.js';
-import logError from '../lib/logError.js';
 import prefs from '../preferences.js';
 import Icon from './Icon.js';
 import assertDefined from '../lib/assertDefined.js';
@@ -23,11 +22,11 @@ Promise.all([
 	browser.tabs.onCreated.addListener(updateIcon);
 	browser.tabs.onRemoved.addListener(updateIcon);
 	prefersDark.addEventListener('change', updateIcon);
-	prefs.onChange(() => updatePrefs().then(updateIcon).catch(logError));
+	prefs.onChange(() => updatePrefs().then(updateIcon));
 
 	// Initial render
 	return updateIcon();
-}).catch(logError);
+});
 
 /** Updates the values of the preferences */
 async function updatePrefs() {
@@ -39,8 +38,11 @@ async function updatePrefs() {
 /**
  * Update browser action with the current tab count
  */
-function updateIcon() {
-	return browser.tabs.query({ windowType: 'normal' }).then(tabs => {
+async function updateIcon() {
+	let windows = await browser.windows.getAll({ windowTypes: ['normal'], populate: true });
+	for (let w of windows) {
+		let tabs = assertDefined(w.tabs);
+		
 		// Determine scale factors to render
 		let scales = [1, 2];
 		if (!scales.includes(devicePixelRatio)) {
@@ -58,7 +60,11 @@ function updateIcon() {
 			icon.setScale(scale);
 			imageData[icon.canvas.width] = icon.render(tabs.length).imageData;
 		}
-		
-		return browser.browserAction.setIcon({ imageData });
-	}).catch(logError);
+		try {
+			await browser.browserAction.setIcon({ windowId: w.id, imageData });
+		} catch {
+			// `windowId` not supported
+			await Promise.all(tabs.map(t => browser.browserAction.setIcon({ tabId: t.id, imageData })));
+		}
+	}
 }
