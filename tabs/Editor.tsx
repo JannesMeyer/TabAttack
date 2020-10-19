@@ -12,7 +12,7 @@ export interface Doc {
 interface P extends Doc {
 	theme?: string;
 	fontSize?: number;
-	showToast: (message: string) => void;
+	onMessage(message: string): void;
 }
 
 /** Ace editor component */
@@ -68,7 +68,7 @@ export default class Editor extends React.Component<P> {
 			return;
 		}
 		clipboardData.setData('text/plain', this.getContent());
-		this.props.showToast(getString('toast_copied_document'));
+		this.props.onMessage(getString('toast_copied_document'));
 	};
 
 	componentDidUpdate(op: Readonly<P>) {

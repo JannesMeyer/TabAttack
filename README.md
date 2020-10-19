@@ -99,7 +99,6 @@ Special thanks to these projects:
 - Add link to keyboard shortcuts on editor/popup
 - Add per-window tab count
 - Add per-window tab list (inline popup and sidebar)
-- Fix toast messages
 - Figure out why discarding resets the TabId
 - Style indicator for: audio, muted, ...
 - Use keybinding library

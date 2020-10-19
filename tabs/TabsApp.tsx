@@ -14,14 +14,13 @@ import prefersDark from '../lib/prefersDark.js';
 import prefs from '../preferences.js';
 import ActionButton from './ActionButton.js';
 import Editor, { Doc } from './Editor.js';
-import Toast from './Toast.js';
+import showToast from './Toast.js';
 import buildDocument from './buildDocument.js';
 
 ready().then(root => ReactDOM.render(<TabsApp />, root));
 
 interface S extends Doc {
 	theme?: AceThemeModule;
-	toastMessage?: string;
 }
 
 class TabsApp extends React.Component<unknown, S> {
@@ -36,9 +35,11 @@ class TabsApp extends React.Component<unknown, S> {
 		openLinks: getString('action_open_links'),
 	};
 
-	state: Readonly<S> = {};
-
-	loadPromise = this.load().catch(logError);
+	constructor(p: unknown) {
+		super(p);
+		this.state = {};
+		this.load().catch(logError);
+	}
 
 	async load() {
 		let p = UrlQuery.fromString();
@@ -50,7 +51,6 @@ class TabsApp extends React.Component<unknown, S> {
 		this.fileLoader = new FileLoader(text => this.setState({
 			text,
 			format: 'markdown',
-			toastMessage: undefined,
 		}), this.fileInput.current, document.body);
 
 		// Load theme
@@ -74,10 +74,6 @@ class TabsApp extends React.Component<unknown, S> {
 		this.fileLoader?.dispose();
 	}
 
-	showToast = (message: string) => {
-		this.setState({ toastMessage: message });
-	};
-
 	/** Download the editor's content as a text file */
 	downloadAsTextFile = () => {
 		// TODO: fix extension and mime type
@@ -90,9 +86,11 @@ class TabsApp extends React.Component<unknown, S> {
 	loadFile = () => this.fileInput.current?.click();
 
 	/** Open all links in tabs */
-	openLinks = () => {
+	openLinks = () => this.openLinksAsync().catch((e: Error) => showToast(e.message));
+
+	async openLinksAsync() {
 		// Markdown → HTML → DOM
-		let text = assertDefined(this.editor.current?.getContent());
+		let text = assertDefined(this.editor.current).getContent();
 		let html = marked(text);
 		let dom = new DOMParser().parseFromString(html, 'text/html');
 
@@ -109,9 +107,8 @@ class TabsApp extends React.Component<unknown, S> {
 			windows.push(Array.from(extras, a => a.href));
 		}
 
-		// TODO: Handle errors
-		return Promise.all(windows.map(url => browser.windows.create({ url }))).catch(logError);
-	};
+		await Promise.all(windows.map(url => browser.windows.create({ url })));
+	}
 
 	static readonly css = css`
 	.Toolbar {
@@ -145,15 +142,13 @@ class TabsApp extends React.Component<unknown, S> {
 				<div className="ace_print-margin" />
 			</div>
 
-			<Toast duration={4}>{s.toastMessage}</Toast>
-			
 			{s.theme && <Editor
 				ref={this.editor}
 				text={s.text}
 				highlightLine={s.highlightLine}
 				theme={s.theme.theme}
 				format={s.format}
-				showToast={this.showToast}
+				onMessage={showToast}
 				fontSize={16}
 			/>}
 		</>;
