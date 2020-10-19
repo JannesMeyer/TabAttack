@@ -9,10 +9,11 @@ root.className = css`
 	bottom: 20%;
 	z-index: 1000;
 	pointer-events: none;
-	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
-& > div > div {
-	display: inline-block;
+& > div {
 	margin-top: 15px;
 	padding: 8px 11px;
 	color: #f0f0f0;
@@ -30,5 +31,5 @@ export default function showToast(message: React.ReactNode, seconds = 3) {
 }
 
 function render() {
-	ReactDOM.render(Array.from(toasts, ([id, message]) => <div key={id}><div>{message}</div></div>), root);
+	ReactDOM.render(Array.from(toasts, ([id, message]) => <div key={id}>{message}</div>), root);
 }
