@@ -48,8 +48,7 @@
 			"suggested_key": { "default": "Alt+Q" }
 		},
 		"open_tab_list": {
-			"description": "Open Tab List",
-			"suggested_key": { "default": "Ctrl+Shift+F" }
+			"description": "Open Tab List"
 		},
 		"export_current_window": {
 			"description": "Export only current window"
