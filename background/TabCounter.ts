@@ -6,7 +6,7 @@ export default class TabCounter {
 
 	readonly windows: ReadonlyMap<number, ReadonlySet<number>> = this._windows;
 	
-	readonly listeners = new Set<(windowId?: number) => void>();
+	readonly listeners = new Set<(windowId: number) => void>();
 
 	async attach() {
 		// Initial count
@@ -65,7 +65,7 @@ export default class TabCounter {
 		}
 	}
 
-	private notify(windowId?: number) {
+	private notify(windowId: number) {
 		for (let listener of this.listeners) {
 			listener(windowId);
 		}
