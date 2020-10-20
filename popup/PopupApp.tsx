@@ -502,9 +502,9 @@ export default class PopupApp extends React.Component<P, S> {
 			/>,
 			<div className="ButtonBar" key="ButtonBar">
 				<button type="button" onClick={this.handleSearchToggle}>Search</button>
+				<button type="button" onClick={this.handleUrlToggle}>{s.showURL ? 'Titles' : 'URLs'}</button>
 				<button type="button" onClick={this.handleExport}>Export</button>
 				<button type="button" onClick={this.handleImport}>Import</button>
-				<button type="button" onClick={this.handleUrlToggle}>{s.showURL ? 'Titles' : 'URLs'}</button>
 			</div>
 		];
 		return (p.isActionPopup ? items.reverse() : items);
