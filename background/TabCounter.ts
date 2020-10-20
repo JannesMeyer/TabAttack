@@ -32,10 +32,8 @@ export default class TabCounter {
 			//console.log('removed', id);
 			this.removeTab(windowId, id, isWindowClosing);
 		});
-
-		// Tab discarded, preloaded, etc
 		browser.tabs.onReplaced.addListener((addedId, removedId) => {
-			//console.log('replaced', addedId, removedId);
+			//console.log('replaced', removedId, addedId);
 			this.getWindowContainingTab(removedId).add(addedId).delete(removedId);
 		});
 	}
