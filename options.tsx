@@ -37,13 +37,12 @@ class OptionsApp extends React.Component<P, S> {
 		};
 	}
 
-	handleChange<K extends keyof Prefs>(ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: K) {
-		let target = ev.target;
-		let value = ('checked' in target ? target.checked : target.value);
+	private handleChange<K extends keyof Prefs>({ target }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: K) {
+		let value = (target.type === 'checkbox' ? ('checked' in target ? target.checked : false) : target.value);
 		this.setPref(field, value);
 	}
 
-	setPref<K extends keyof Prefs>(field: K, value: unknown) {
+	private setPref<K extends keyof Prefs>(field: K, value: unknown) {
 		this.setState(s => {
 			let np = { ...s.prefs, [field]: value };
 			prefs.set(np);
@@ -51,7 +50,7 @@ class OptionsApp extends React.Component<P, S> {
 		});
 	}
 
-	toggleDomainBlacklist = (ev: React.MouseEvent) => {
+	private toggleDomainBlacklist = (ev: React.MouseEvent) => {
 		ev.preventDefault();
 		this.setState(s => ({ showDomainBlacklist: !s.showDomainBlacklist }));
 	};
