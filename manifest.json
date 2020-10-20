@@ -48,7 +48,8 @@
 			"suggested_key": { "default": "Alt+Q" }
 		},
 		"open_tab_list": {
-			"description": "Open Tab List"
+			"description": "Open Tab List",
+			"suggested_key": { "default": "Shift+Alt+Q" }
 		},
 		"copy_tab_as_markdown": {
 			"description": "__MSG_shortcut_copy_tab_as_markdown__"
