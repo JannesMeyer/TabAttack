@@ -69,9 +69,12 @@ async function setIcon(windowId: number, tabs: Iterable<number>, imageData: Reco
 		// Firefox is currently the only browser that supports `windowId`
 		// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserAction/setIcon#Browser_compatibility
 		await browser.browserAction.setIcon({ windowId, imageData });
+		
 	} catch {
 		// Install tab update handler that sets the icon whenever a navigation occurs
-		browser.tabs.onUpdated.addListener(handleTabUpdate);
+		if (!browser.tabs.onUpdated.hasListener(handleTabUpdate)) {
+			browser.tabs.onUpdated.addListener(handleTabUpdate);
+		}
 
 		// Set icon for each tab of the window
 		await Promise.all(Array.from(tabs, tabId => browser.browserAction.setIcon({ tabId, imageData })));
