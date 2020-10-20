@@ -14,26 +14,55 @@ export default class TabCounter {
 		for (let w of windows) {
 			this._windows.set(assertDefined(w.id), new Set(w.tabs?.map(t => assertDefined(t.id))));
 		}
-		// Tab created
-		browser.tabs.onCreated.addListener(tab => {
-			let windowId = assertDefined(tab.windowId);
-			let tabId = assertDefined(tab.id);
-			let tabs = this._windows.get(windowId);
-			if (tabs == null) {
-				this._windows.set(windowId, tabs = new Set());
-			}
-			tabs.add(tabId);
+
+		// Tab events
+		browser.tabs.onCreated.addListener(({ id, windowId }) => {
+			//console.log('created', id);
+			this.addTab(assertDefined(windowId), assertDefined(id));
+		});
+		browser.tabs.onDetached.addListener((id, { oldWindowId }) => {
+			//console.log('detached', id);
+			this.removeTab(oldWindowId, id);
+		});
+		browser.tabs.onAttached.addListener((id, { newWindowId }) => {
+			//console.log('attached', id);
+			this.addTab(newWindowId, id);
+		});
+		browser.tabs.onRemoved.addListener((id, { windowId, isWindowClosing }) => {
+			//console.log('removed', id);
+			this.removeTab(windowId, id, isWindowClosing);
+		});
+
+		// Tab discarded, preloaded, etc
+		browser.tabs.onReplaced.addListener((addedId, removedId) => {
+			//console.log('replaced', addedId, removedId);
+			this.getWindowContainingTab(removedId).add(addedId).delete(removedId);
+		});
+	}
+
+	private addTab(windowId: number, tabId: number) {
+		let tabs = this._windows.get(windowId);
+		if (tabs == null) {
+			this._windows.set(windowId, tabs = new Set());
+		}
+		tabs.add(tabId);
+		this.notify(windowId);
+	}
+
+	private removeTab(windowId: number, tabId: number, isWindowClosing = false) {
+		if (isWindowClosing) {
+			this._windows.delete(windowId);
+			return;
+		}
+		let tabs = this._windows.getOrThrow(windowId);
+		if (!tabs.delete(tabId)) {
+			throw new Error(`${tabId} was not present in the window`);
+		}
+		if (tabs.size === 0) {
+			this._windows.delete(windowId);
+		} else {
 			this.notify(windowId);
-		});
-		// Tab removed
-		browser.tabs.onRemoved.addListener((tabId, { windowId, isWindowClosing }) => {
-			if (isWindowClosing) {
-				this._windows.delete(windowId);
-				return;
-			}
-			let tabs = assertDefined(this._windows.get(windowId));
-			tabs.delete(tabId) && this.notify(windowId);
-		});
+		}
 	}
 
 	private notify(windowId?: number) {
@@ -42,13 +71,15 @@ export default class TabCounter {
 		}
 	}
 
-	getWindowByTabId(tabId: number) {
-		for (var [windowId, tabs] of this.windows) {
-			if (tabs.has(tabId)) {
-				return { windowId, tabs };
+	private getWindowContainingTab(tabId: number) {
+		for (let w of this._windows.values()) {
+			if (w.has(tabId)) {
+				return w;
 			}
 		}
 		throw new Error(`Tab ${tabId} not found`);
 	}
+
+	getSiblings: (tabId: number) => ReadonlySet<number> = this.getWindowContainingTab;
 
 }

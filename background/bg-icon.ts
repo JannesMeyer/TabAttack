@@ -107,8 +107,8 @@ function handleTabUpdate(tabId: number, { status }: { status?: string }) {
 	if (status !== 'loading') {
 		return;
 	}
-	let n = tabCounter.getWindowByTabId(tabId).tabs.size;
-	let imageData = drawIcons(n, getScales());
+	let tabs = tabCounter.getSiblings(tabId);
+	let imageData = drawIcons(tabs.size, getScales());
 	browser.browserAction.setIcon({ tabId, imageData });
 }
 
