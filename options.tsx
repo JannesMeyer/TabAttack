@@ -45,6 +45,7 @@ class OptionsApp extends React.Component<P, S> {
 	private setPref<K extends keyof Prefs>(field: K, value: unknown) {
 		this.setState(s => {
 			let np = { ...s.prefs, [field]: value };
+			// TODO: debounce this call. The color picker can cause a lot of updates. storage.sync is rate-limited
 			prefs.set(np);
 			return { prefs: np };
 		});
