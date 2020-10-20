@@ -17,13 +17,25 @@ import Editor, { Doc } from './Editor.js';
 import showToast from './Toast.js';
 import buildDocument from './buildDocument.js';
 
-ready().then(root => ReactDOM.render(<TabsApp />, root));
+let p = UrlQuery.fromString();
+let params: P = {
+	isImport: p.getBoolean('import'),
+	tabId: p.getNumber('tab'),
+	windowId: p.getNumber('window'),
+};
+ready().then(root => ReactDOM.render(<TabsApp {...params}  />, root));
+
+interface P {
+	isImport: boolean | undefined;
+	tabId: number | undefined;
+	windowId: number | undefined;
+}
 
 interface S extends Doc {
 	theme?: AceThemeModule;
 }
 
-class TabsApp extends React.Component<unknown, S> {
+class TabsApp extends React.Component<P, S> {
 
 	private editor = React.createRef<Editor>();
 	private fileInput = React.createRef<HTMLInputElement>();
@@ -35,15 +47,18 @@ class TabsApp extends React.Component<unknown, S> {
 		openLinks: getString('action_open_links'),
 	};
 
-	constructor(p: unknown) {
+	constructor(p: P) {
 		super(p);
 		this.state = {};
 		this.load().catch(logError);
 	}
 
 	async load() {
-		let p = UrlQuery.fromString();
-		let doc = await buildDocument(p.getNumber('t'), p.getNumber('w'));
+		let { props: p } = this;
+		if (p.isImport) {
+			return;
+		}
+		let doc = await buildDocument(p.tabId, p.windowId);
 		this.setState(doc);
 	}
 
@@ -130,13 +145,13 @@ class TabsApp extends React.Component<unknown, S> {
 	}`;
 
 	render() {
-		let { state: s } = this;
+		let { props: p, state: s } = this;
 		return <>
 			<div className={'Toolbar ' + (s.theme?.cssClass ?? '')}>
-				<ActionButton onClick={this.downloadAsTextFile} title={TabsApp.str.save} />
-				<ActionButton onClick={this.loadFile} title={TabsApp.str.loadFile} />
-				<ActionButton onClick={closeOtherTabs} title={TabsApp.str.close} />
-				<ActionButton onClick={this.openLinks} title={TabsApp.str.openLinks} />
+				{!p.isImport && <ActionButton onClick={this.downloadAsTextFile} title={TabsApp.str.save} />}
+				{!p.isImport && <ActionButton onClick={closeOtherTabs} title={TabsApp.str.close} />}
+				{p.isImport && <ActionButton onClick={this.loadFile} title={TabsApp.str.loadFile} />}
+				{p.isImport && <ActionButton onClick={this.openLinks} title={TabsApp.str.openLinks} />}
 				<a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank">Keyboard Shortcuts</a>
 				<input type="file" ref={this.fileInput} />
 				<div className="ace_print-margin" />

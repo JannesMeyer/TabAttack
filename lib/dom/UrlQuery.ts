@@ -4,7 +4,7 @@ export default class UrlQuery<K extends string> {
 	
 	private entries = new Map<K, string>();
 
-	constructor(values?: Record<K, SV>) {
+	constructor(values?: Partial<Record<K, SV>>) {
 		values && this.setMany(values);
 	}
 
@@ -29,17 +29,24 @@ export default class UrlQuery<K extends string> {
 	}
 
 	getBoolean(k: K) {
-		return (this.entries.has(k) ? Boolean(this.entries.get(k)) : undefined);
+		return this.entries.has(k);
 	}
 
 	set(k: K, v: SV) {
 		if (v != null) {
+			if (typeof v === 'boolean') {
+				if (v) {
+					v = '';
+				} else {
+					return;
+				}
+			}
 			this.entries.set(k, v.toString());
 		}
 		return this;
 	}
 
-	setMany(values: Record<K, SV>) {
+	setMany(values: Partial<Record<K, SV>>) {
 		for (let [k, v] of Object.entries(values) as [K, SV][]) {
 			this.set(k, v);
 		}
@@ -50,7 +57,7 @@ export default class UrlQuery<K extends string> {
 		if (this.entries.size === 0) {
 			return '';
 		}
-		return '?' + Array.from(this.entries.entries(), ([k, v]) => k + '=' + encodeURIComponent(v)).join('&');
+		return '?' + Array.from(this.entries.entries(), ([k, v]) => v === '' ? k : (k + '=' + encodeURIComponent(v))).join('&');
 	}
 
 }

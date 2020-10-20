@@ -415,7 +415,12 @@ export default class PopupApp extends React.Component<P, S> {
 	};
 
 	private handleExport = () => {
-		openTabsEditor();
+		openTabsEditor({});
+		this.props.isActionPopup && close();
+	};
+
+	private handleImport = () => {
+		openTabsEditor({ import: true });
 		this.props.isActionPopup && close();
 	};
 
@@ -498,6 +503,7 @@ export default class PopupApp extends React.Component<P, S> {
 			<div className="ButtonBar" key="ButtonBar">
 				<button type="button" onClick={this.handleSearchToggle}>Search</button>
 				<button type="button" onClick={this.handleExport}>Export</button>
+				<button type="button" onClick={this.handleImport}>Import</button>
 				<button type="button" onClick={this.handleUrlToggle}>{s.showURL ? 'Titles' : 'URLs'}</button>
 			</div>
 		];

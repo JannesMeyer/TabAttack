@@ -50,9 +50,6 @@
 		"open_tab_list": {
 			"description": "Open Tab List"
 		},
-		"export_current_window": {
-			"description": "Export only current window"
-		},
 		"copy_tab_as_markdown": {
 			"description": "__MSG_shortcut_copy_tab_as_markdown__"
 		},
