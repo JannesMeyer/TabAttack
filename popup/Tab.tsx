@@ -1,24 +1,25 @@
 import { isFirefox } from '../lib/browser/runtime.js';
 import css, { X } from '../lib/css.js';
+import { TTab } from './TabMirror.js';
 
 interface P {
-	id: number | undefined;
+	id: number;
 	active: boolean;
 	favIconUrl: string | undefined;
-	url: string | undefined;
-	title: string | undefined;
-	status: string | undefined;
+	url: string;
+	title: string;
+	status: string;
 	discarded: boolean;
 	selected: boolean;
-	tab: browser.tabs.Tab;
+	tab: TTab;
 	showURL: boolean;
 	hidden: boolean;
-	onMouseDown?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
-	onClick?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
-	onAuxClick?(tab: browser.tabs.Tab, event: React.MouseEvent): void;
+	onMouseDown(tab: TTab, event: React.MouseEvent): void;
+	onClick(tab: TTab, event: React.MouseEvent): void;
+	onAuxClick(tab: TTab, event: React.MouseEvent): void;
 }
 
-export default class Tab extends React.Component<P> {
+export default class Tab extends React.PureComponent<P> {
 
 	static readonly css = css`
 	& {
@@ -34,7 +35,6 @@ export default class Tab extends React.Component<P> {
 		border: 2px solid transparent;
 		transition: opacity 0.2s;
 	}
-
 	&.showURL {
 		padding-top: 4px;
 	}
@@ -144,9 +144,9 @@ export default class Tab extends React.Component<P> {
 
 		return <a
 			href={p.url}
-			onMouseDown={ev => p.onMouseDown?.(tab, ev)}
-			onClick={ev => p.onClick?.(tab, ev)}
-			onAuxClick={ev => p.onAuxClick?.(tab, ev)}
+			onMouseDown={ev => p.onMouseDown(tab, ev)}
+			onClick={ev => p.onClick(tab, ev)}
+			onAuxClick={ev => p.onAuxClick(tab, ev)}
 			className={X(Tab.css, status, { discarded, active, selected, hidden, showURL })}
 		>
 			<img src={favicon} />

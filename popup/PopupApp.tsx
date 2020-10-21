@@ -1,95 +1,69 @@
+import '../lib/Array.extensions.js';
 import assertDefined from '../lib/assertDefined.js';
 import ready from '../lib/dom/ready.js';
-import isDefined from '../lib/isDefined.js';
-import logError from '../lib/logError.js';
 import markdownLink from '../lib/markdownLink.js';
 import writeClipboard from '../lib/writeClipboard.js';
-import TabGroup from './TabGroup.js';
 import UrlQuery from '../lib/dom/UrlQuery.js';
-import css from '../lib/css.js';
+import css, { X } from '../lib/css.js';
 import openTabsEditor from '../background/openTabsEditor.js';
 import PopupParams from './PopupParams.js';
+import TabMirror from './TabMirror.js';
+import showToast from '../tabs/Toast.js';
+import Tab from './Tab.js';
 
-ready().then(root => {
-	browser.windows.getAll({ windowTypes: ['normal'], populate: true }).then(windows => {
-		let q = UrlQuery.fromString();
-		let isActionPopup = q.getBoolean('action_popup');
-		if (isActionPopup) {
-			css`body {
-				width: 320px;
-				height: 520px;
-			}`;
-		}
-		ReactDOM.render(<PopupApp
-			isSidebar={q.getBoolean('sidebar')}
-			isActionPopup={isActionPopup}
-			windows={windows}
-		/>, root);
-	});
-});
+let q = UrlQuery.fromString();
+let params: P = {
+	isSidebar: q.getBoolean('sidebar'),
+	isActionPopup: q.getBoolean('action_popup'),
+	tm: new TabMirror(),
+};
+if (params.isActionPopup) {
+	css`body {
+		width: 320px;
+		height: 520px;
+	}`;
+}
 
-type ChangeInfo = Parameters<Parameters<typeof browser.tabs.onUpdated.addListener>[0]>[1];
+ready().then(el => ReactDOM.render(<PopupApp {...params} />, el));
 
 interface P {
-	windows: browser.windows.Window[];
-	isSidebar?: boolean;
-	isActionPopup?: boolean;
+	isSidebar: boolean;
+	isActionPopup: boolean;
+	tm: TabMirror;
 }
 
 interface S {
-	windows: browser.windows.Window[];
 	selectedTabId?: number;
 	showURL: boolean;
 	search?: string;
 	focus?: boolean;
 }
 
-export default class PopupApp extends React.Component<P, S> {
+class PopupApp extends React.Component<P, S> {
 
 	constructor(p: P) {
 		super(p);
-
-		// Get the active tab of the first window
-		let firstWindow = p.windows[0];
-		if (firstWindow == null || firstWindow.tabs == null) {
-			throw new Error('Window does not have tabs');
-		}
-
-		// Reverse tabs
-		for (let wnd of p.windows) {
-			if (wnd.tabs) {
-				wnd.tabs.reverse();
-			}
-		}
-
 		this.state = {
-			windows: p.windows,
-			selectedTabId: (p.isSidebar ? undefined : firstWindow.tabs.find(t => t.active)?.id),
+			// selectedTabId: (p.isSidebar ? undefined : p.tm.getFirst()),
 			showURL: false,
 		};
 	}
 
 	componentDidMount() {
+		this.props.tm.listeners.add(() => this.forceUpdate());
 		addEventListener('focus', this.handleFocus);
 		addEventListener('blur', this.handleBlur);
 		addEventListener('keydown', this.handleKeyDown);
-		// Do not clean up in componentWillUnmount!
-		addEventListener('beforeunload', () => this.handlePageHide());
-		browser.tabs.onRemoved.addListener(this.handleTabRemoved);
-		browser.tabs.onCreated.addListener(this.handleTabCreated);
-		browser.tabs.onUpdated.addListener(this.handleTabUpdated);
-		browser.tabs.onActivated.addListener(this.handleTabActivated);
-		browser.tabs.onMoved.addListener(console.log);
+
+		// Clean this up in componentWillUnmount?
+		addEventListener('beforeunload', this.handlePageHide);
 	}
 
 	componentWillUnmount() {
+		this.props.tm.listeners.clear();
 		removeEventListener('focus', this.handleFocus);
 		removeEventListener('blur', this.handleBlur);
 		removeEventListener('keydown', this.handleKeyDown);
-		browser.tabs.onRemoved.removeListener(this.handleTabRemoved);
-		browser.tabs.onCreated.removeListener(this.handleTabCreated);
-		browser.tabs.onUpdated.removeListener(this.handleTabUpdated);
-		browser.tabs.onActivated.removeListener(this.handleTabActivated);
 	}
 
 	private handleFocus() {
@@ -126,103 +100,17 @@ export default class PopupApp extends React.Component<P, S> {
 	//   }
 	// };
 
-	private handleTabRemoved = (tabId: number, removeInfo: { windowId: number, isWindowClosing: boolean }) => {
-		let { windows } = this.props;
-		if (removeInfo.isWindowClosing || windows == null) {
-			return;
-		}
-		for (let wnd of windows) {
-			if (wnd.tabs == null) {
-				continue;
-			}
-			let index = wnd.tabs.findIndex(tab => tab.id === tabId);
-			if (index === -1) {
-				continue;
-			}
-			wnd.tabs.splice(index, 1);
-			this.forceUpdate();
-			return;
-		}
-	};
-
-	private handleTabCreated = (tab: browser.tabs.Tab) => {
-		let { windows } = this.props;
-		if (windows == null) {
-			return;
-		}
-		let wnd = windows.find(w => w.id === tab.windowId);
-		if (wnd == null || wnd.tabs == null) {
-			return;
-		}
-		wnd.tabs.unshift(tab);
-		this.forceUpdate();
-	};
-
-	private handleTabUpdated = (tabId: number, changeInfo: ChangeInfo) => {
-		let { windows } = this.props;
-		if (windows == null) {
-			return;
-		}
-		for (let w of windows) {
-			if (w.tabs == null) {
-				continue;
-			}
-			let tab = w.tabs.find(tab => tab.id === tabId);
-			if (tab == null) {
-				continue;
-			}
-			Object.assign(tab, changeInfo);
-			this.forceUpdate();
-			return;
-		}
-	};
-
-	private handleTabActivated = ({ tabId, windowId }: { tabId: number, windowId: number }) => {
-		let { windows } = this.props;
-		if (windows == null) {
-			return;
-		}
-		// Find the window
-		for (let w of windows) {
-			if (w.tabs == null || w.id !== windowId) {
-				continue;
-			}
-
-			let selected: browser.tabs.Tab | undefined;
-			for (let tab of w.tabs) {
-				// Update all tabs while keeping the old data structure in memory
-				if (tab.id === tabId) {
-					tab.active = true;
-					selected = tab;
-				} else {
-					tab.active = false;
-				}
-			}
-			// Update the keyboard selection
-			if (selected?.id != null && this.state.selectedTabId != null) {
-				this.setState({ selectedTabId: selected.id });
-			} else {
-				this.forceUpdate();
-			}
-			return;
-		}
-	};
-
-	private findTab(tabId: number): browser.tabs.Tab | undefined {
-		return (this.props.windows || []).map(w => w.tabs).filter(isDefined).flat().find(t => t.id === tabId);
-	}
-
 	private handleKeyDown = (ev: KeyboardEvent) => {
 		let key = ev.key;
 
 		if ((ev.target as Element).tagName === 'INPUT') {
 			if (key === 'ArrowDown') {
 				ev.preventDefault();
-				this.moveSelection(-1);
+				// this.moveSelection(-1);
 
 			} else if (key === 'ArrowUp') {
 				ev.preventDefault();
-				this.moveSelection(+1);
+				// this.moveSelection(+1);
 
 			} else if (key === 'Escape') {
 				ev.preventDefault();
@@ -238,23 +126,23 @@ export default class PopupApp extends React.Component<P, S> {
 
 		} else if (key === 'ArrowDown' || key === 'j') { // Select next tab
 			ev.preventDefault();
-			this.moveSelection(-1);
+			// this.moveSelection(-1);
 			
 		} else if (key === 'ArrowUp' || key === 'k') { // Select previous tab
 			ev.preventDefault();
-			this.moveSelection(+1);
+			// this.moveSelection(+1);
 
 		} else if (key === 'Tab') { // Select next/previous tab
 			ev.preventDefault();
-			this.moveSelection(ev.shiftKey ? +1 : -1);  
+			// this.moveSelection(ev.shiftKey ? +1 : -1);  
 
 		} else if (key === 'End') { // Select topmost tab
 			ev.preventDefault();
-			this.moveSelectionTo(0);
+			// this.moveSelectionTo(0);
 
 		} else if (key === 'Home') { // Select bottommost tab
 			ev.preventDefault();
-			this.moveSelectionTo(Infinity);
+			// this.moveSelectionTo(Infinity);
 
 		} else if (key === 'PageDown') { // Select page down
 			ev.preventDefault();
@@ -287,7 +175,7 @@ export default class PopupApp extends React.Component<P, S> {
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			let selectedTab = this.findTab(this.state.selectedTabId);
+			let selectedTab = this.props.tm.findTab(this.state.selectedTabId);
 			if (selectedTab == null) {
 				return;
 			}
@@ -321,32 +209,32 @@ export default class PopupApp extends React.Component<P, S> {
 		}
 	};
 
-	private moveSelection(x: number, wrapsAround = true) {
-		let { windows } = this.props;
-		if (windows == null) {
-			throw new Error('No tabs available');
-		}
-		let selected = this.state.selectedTabId;
-		let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
-		tabs.reverse();
-		let selectedIndex = tabs.findIndex(t => t.id === selected);
-		if (selectedIndex < 0) {
-			throw new Error('Selected tab not found');
-		}
-		let nextIndex = (selectedIndex + x);
-		if (wrapsAround) {
-			nextIndex = (nextIndex + tabs.length) % tabs.length;
-		} else if (nextIndex < 0) {
-			nextIndex = 0;
-		} else if (nextIndex > tabs.length - 1) {
-			nextIndex = tabs.length - 1;
-		}
-		let nextTab = tabs[nextIndex];
-		if (nextTab == null || nextTab.id == null) {
-			throw new Error('Next tab not found');
-		}
-		this.setState({ selectedTabId: nextTab.id });
-	}
+	// private moveSelection(x: number, wrapsAround = true) {
+	// 	let { windows } = this.props;
+	// 	if (windows == null) {
+	// 		throw new Error('No tabs available');
+	// 	}
+	// 	let selected = this.state.selectedTabId;
+	// 	let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
+	// 	tabs.reverse();
+	// 	let selectedIndex = tabs.findIndex(t => t.id === selected);
+	// 	if (selectedIndex < 0) {
+	// 		throw new Error('Selected tab not found');
+	// 	}
+	// 	let nextIndex = (selectedIndex + x);
+	// 	if (wrapsAround) {
+	// 		nextIndex = (nextIndex + tabs.length) % tabs.length;
+	// 	} else if (nextIndex < 0) {
+	// 		nextIndex = 0;
+	// 	} else if (nextIndex > tabs.length - 1) {
+	// 		nextIndex = tabs.length - 1;
+	// 	}
+	// 	let nextTab = tabs[nextIndex];
+	// 	if (nextTab == null || nextTab.id == null) {
+	// 		throw new Error('Next tab not found');
+	// 	}
+	// 	this.setState({ selectedTabId: nextTab.id });
+	// }
 
 	private activateTab(id: number | undefined) {
 		if (id == null) {
@@ -360,29 +248,28 @@ export default class PopupApp extends React.Component<P, S> {
 		if (id == null) {
 			return;
 		}
-		// TODO: Move selection to an adjacent tab before removing
 		browser.tabs.remove(id).catch(logError);
 	}
 
-	private moveSelectionTo(index: number) {
-		let { windows } = this.props;
-		if (this.state.selectedTabId == null) {
-			return;
-		}
-		if (windows == null) {
-			throw new Error('No tabs available');
-		}
-		let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
-		tabs.reverse();
-		if (index === Infinity) {
-			index = (tabs.length - 1);
-		}
-		let selected = tabs[index];
-		if (selected == null || selected.id == null) {
-			throw new Error('Index out of bounds');
-		}
-		this.setState({ selectedTabId: selected.id });
-	}
+	// private moveSelectionTo(index: number) {
+	// 	let { windows } = this.props;
+	// 	if (this.state.selectedTabId == null) {
+	// 		return;
+	// 	}
+	// 	if (windows == null) {
+	// 		throw new Error('No tabs available');
+	// 	}
+	// 	let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
+	// 	tabs.reverse();
+	// 	if (index === Infinity) {
+	// 		index = (tabs.length - 1);
+	// 	}
+	// 	let selected = tabs[index];
+	// 	if (selected == null || selected.id == null) {
+	// 		throw new Error('Index out of bounds');
+	// 	}
+	// 	this.setState({ selectedTabId: selected.id });
+	// }
 
 	private handleMouseDown = (tab: browser.tabs.Tab) => {
 		if (tab.id == null) {
@@ -464,32 +351,32 @@ export default class PopupApp extends React.Component<P, S> {
 
 	render() {
 		let { props: p, state: s } = this;
-		let list = [];
-		for (let i = 0; i < s.windows.length; ++i) {
-			let w = s.windows[i];
-			if (w == null || w.tabs == null || w.id == null) {
-				continue;
-			}
-			if (w.incognito) {
-				continue;
-			}
-			list.push(<TabGroup
-				key={w.id}
-				id={w.id}
-				focused={w.focused}
-				onMouseDown={this.handleMouseDown}
-				onClick={this.handleClick}
-				onAuxClick={this.handleAuxClick}
-				selectedTabId={s.selectedTabId}
-				tabs={w.tabs}
-				hideHeader={p.isSidebar || p.isActionPopup}
-				showURL={s.showURL}
-				search={s.search}
-			/>);
-		}
+		let search = s.search?.toLocaleLowerCase();
 		let items = [
 			<div className="WindowList" key="WindowList">
-				{list}
+				{Array.from(p.tm.getWindows(), w => <div key={w.id} className={X('Window', { focused: w.focused })}>
+					{!p.isSidebar && !p.isActionPopup && <h1>{w.tabs.size} Tabs</h1>}
+					<div>
+						{Array.from(w.tabs.values(), tab => <Tab
+							key={tab.id}
+							id={tab.id}
+							tab={tab}
+							selected={tab.id === s.selectedTabId}
+							active={tab.id === w.activeTabId}
+							favIconUrl={tab.favIconUrl}
+							discarded={tab.discarded}
+							status={tab.status}
+							title={tab.title}
+							url={tab.url}
+							onMouseDown={this.handleMouseDown}
+							onClick={this.handleClick}
+							onAuxClick={this.handleAuxClick}
+							showURL={s.showURL}
+							hidden={search != null && !`${tab.title} ${tab.url}`.toLocaleLowerCase().includes(search)}
+						/>)}
+						{w.tabs.size === 0 && <div style={{ margin: '8px 12px' }}>No results</div>}
+					</div>
+				</div>)}
 			</div>,
 			s.search != null && <input
 				key="SearchInput"
@@ -509,4 +396,9 @@ export default class PopupApp extends React.Component<P, S> {
 		];
 		return (p.isActionPopup ? items.reverse() : items);
 	}
+}
+
+function logError(error: Error) {
+	console.error(error);
+	showToast(error.message);
 }
