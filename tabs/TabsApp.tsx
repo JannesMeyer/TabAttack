@@ -145,7 +145,7 @@ class TabsApp extends React.Component<P, S> {
 	}`;
 
 	render() {
-		let { props: p, state: s } = this;
+		let { state: s } = this;
 		return <>
 			<div className={'Toolbar ' + (s.theme?.cssClass ?? '')}>
 				<ActionButton onClick={this.downloadAsTextFile} title={TabsApp.str.save} />

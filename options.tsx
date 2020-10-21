@@ -2,9 +2,12 @@ import prefs, { Prefs } from './preferences.js';
 import getString from './lib/browser/getString.js';
 import { getAceThemeList, AceTheme } from './lib/getAceThemes.js';
 import css from './lib/css.js';
+import debounce from './lib/debounce.js';
 
 // Set title
 document.title = getString('options');
+
+const savePrefs = debounce(prefs.set.bind(prefs), 200);
 
 // Load preferences
 Promise.all([prefs.getAll(), getAceThemeList()]).then(([p, tl]) => {
@@ -44,10 +47,9 @@ class OptionsApp extends React.Component<P, S> {
 
 	private setPref<K extends keyof Prefs>(field: K, value: unknown) {
 		this.setState(s => {
-			let np = { ...s.prefs, [field]: value };
-			// TODO: debounce this call. The color picker can cause a lot of updates. storage.sync is rate-limited
-			prefs.set(np);
-			return { prefs: np };
+			let prefs = { ...s.prefs, [field]: value };
+			savePrefs(prefs);
+			return { prefs };
 		});
 	}
 
