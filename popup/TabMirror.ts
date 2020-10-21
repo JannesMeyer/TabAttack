@@ -110,6 +110,7 @@ export default class TabMirror {
 		if (w == null) {
 			return; // Other windowType
 		}
+		// w.tabs.set(tabId, convertTab(fullTab));
 		let tab = w.tabs.getOrThrow(tabId);
 		Object.assign(tab, info);
 		tab.lastAccessed = fullTab.lastAccessed;
