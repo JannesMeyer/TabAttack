@@ -92,7 +92,7 @@ Special thanks to these projects:
 
 ## License
 
-[GPL-3.0-only](https://spdx.org/licenses/GPL-3.0-only.html)
+[Affero GPL v3](https://spdx.org/licenses/AGPL-3.0-only.html)
 
 ## Todo
 
