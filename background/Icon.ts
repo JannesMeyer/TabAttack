@@ -1,11 +1,18 @@
 import assertDefined from '../lib/assertDefined.js';
+import prefersDark from '../lib/prefersDark.js';
 
 export default class Icon {
 
 	readonly canvas: HTMLCanvasElement;
 	private size = 16;
 	private ctx: CanvasRenderingContext2D;
-	public textColor = '#000';
+
+	/** Text color (normal mode) */
+	public textColor = '#f0f';
+
+	/** Text color (dark mode) */
+	public textColorDark = '#f0f';
+
 	public bgColor?: string;
 
 	constructor(private scale: number) {
@@ -42,9 +49,14 @@ export default class Icon {
 
 		// Draw the text
 		ctx.font = `${scale * 11}px Roboto` + (text.length > 2 ? ' Condensed' : '');
-		ctx.fillStyle = this.textColor;
 		ctx.textAlign = 'center';
 		//ctx.textBaseline = 'middle';
+
+		// Read prefersDark because of Chrome bug:
+		// https://bugs.chromium.org/p/chromium/issues/detail?id=968651
+		// https://bugs.chromium.org/p/chromium/issues/detail?id=893175
+		ctx.fillStyle = assertDefined(prefersDark.matches ? this.textColorDark : this.textColor);
+
 		ctx.fillText(text, canvas.width / 2, 12 * scale);
 
 		return this;

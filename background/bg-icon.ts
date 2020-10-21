@@ -12,12 +12,6 @@ const icon = new Icon(devicePixelRatio);
 /** Observes changes in the number of tabs per window */
 const tabCounter = new TabCounter();
 
-/** Icon text color (normal mode) */
-let iconColor: string | undefined;
-
-/** Icon text color (dark mode) */
-let iconColorDarkMode: string | undefined;
-
 // Load fonts
 Promise.all([
 	updatePrefs(),
@@ -36,10 +30,11 @@ Promise.all([
 /** Updates the values of the preferences */
 async function updatePrefs() {
 	let p = await prefs.get('iconColor', 'iconColorDarkMode');
-	iconColor = p.iconColor;
-	iconColorDarkMode = p.iconColorDarkMode;
+	icon.textColor = p.iconColor;
+	icon.textColorDark = p.iconColorDarkMode;
 }
 
+// TODO: incognito windows should always use dark text color (in Chromium)
 /**
  * Update browser action with the current tab count
  */
@@ -83,14 +78,6 @@ async function setIcon(windowId: number, tabs: Iterable<number>, imageData: Reco
 
 function drawIcons(n: number, scales: number[]) {
 	let icons: Record<number, ImageData> = {};
-
-	// Update color because of Chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=968651
-	// https://bugs.chromium.org/p/chromium/issues/detail?id=893175
-	// TODO: once the drawing is cached we need to move this detection out of here
-	if (isChromium) {
-		// TODO: incognito windows should always use dark mode (in Chromium)
-		icon.textColor = assertDefined(prefersDark.matches ? iconColorDarkMode : iconColor);
-	}
 
 	for (let scale of scales) {
 		icon.setScale(scale);
