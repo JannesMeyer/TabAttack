@@ -106,12 +106,11 @@ export default class TabMirror {
 	 * Informs us whenever a tab property updates
 	 */
 	private handleTabUpdate: OnTabUpdated = (tabId, info, fullTab) => {
-		console.log('updated', tabId, info);
-		let windowId = this.tabToWindowId.get(tabId);
-		if (windowId == null) {
+		let w = this.windows.get(fullTab.windowId);
+		if (w == null) {
 			return; // Other windowType
 		}
-		let tab = this.windows.getOrThrow(windowId).tabs.getOrThrow(tabId);
+		let tab = w.tabs.getOrThrow(tabId);
 		Object.assign(tab, info);
 		tab.lastAccessed = fullTab.lastAccessed;
 		this.notify();
