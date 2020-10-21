@@ -50,6 +50,9 @@ export default class TabMirror {
 	constructor() {
 		this.loadAll().then(() => {
 			// Tab event handlers
+			browser.windows.onCreated.addListener(w => {
+				console.log('window created', w);
+			});
 			browser.tabs.onCreated.addListener(this.handleTabCreated);
 			browser.tabs.onRemoved.addListener(this.handleTabRemoved);
 			browser.tabs.onActivated.addListener(this.handleTabActivated);
@@ -64,8 +67,9 @@ export default class TabMirror {
 
 	dispose() {
 		browser.tabs.onCreated.removeListener(this.handleTabCreated);
-		browser.tabs.onUpdated.removeListener(this.handleTabUpdate);
+		browser.tabs.onRemoved.removeListener(this.handleTabRemoved);
 		browser.tabs.onActivated.removeListener(this.handleTabActivated);
+		browser.tabs.onUpdated.removeListener(this.handleTabUpdate);
 	}
 
 	private async loadAll() {
@@ -82,9 +86,16 @@ export default class TabMirror {
 		this.notify();
 	};
 
-	private handleTabRemoved: OnTabRemoved = (tabId, { windowId }) => {
-		assert(this.windows.getOrThrow(windowId).tabs.delete(tabId));
+	private handleTabRemoved: OnTabRemoved = (tabId, { windowId, isWindowClosing }) => {
+		let w = this.windows.get(windowId);
+		if (w == null) {
+			return; // Other windowType
+		}
+		assert(w.tabs.delete(tabId));
 		assert(this.tabToWindowId.delete(tabId));
+		if (isWindowClosing) {
+			assert(this.windows.delete(windowId));
+		}
 		this.notify();
 	};
 
