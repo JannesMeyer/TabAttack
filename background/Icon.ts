@@ -52,6 +52,7 @@ export default class Icon {
 		ctx.textAlign = 'center';
 		//ctx.textBaseline = 'middle';
 
+		// TODO: prefersDark needs to be moved to allow caching
 		// Read prefersDark because of Chrome bug:
 		// https://bugs.chromium.org/p/chromium/issues/detail?id=968651
 		// https://bugs.chromium.org/p/chromium/issues/detail?id=893175

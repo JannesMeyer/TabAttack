@@ -1,10 +1,8 @@
 import loadFont from '../fonts/loadFont.js';
 import prefs from '../preferences.js';
 import Icon from './Icon.js';
-import assertDefined from '../lib/assertDefined.js';
 import prefersDark from '../lib/prefersDark.js';
 import TabCounter from './TabCounter.js';
-import { isChromium } from '../lib/browser/runtime.js';
 
 /** Icon renderer */
 const icon = new Icon(devicePixelRatio);
