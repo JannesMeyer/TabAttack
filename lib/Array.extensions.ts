@@ -48,7 +48,7 @@ interface ReadonlyMap<K, V> {
 Map.prototype.getOrThrow = function getOrThrow<K, V>(this: ReadonlyMap<K, V>, key: K): V {
 	let value = this.get(key);
 	if (value == null) {
-			throw new Error(`Key ${key} could not be found in the Map`);
+		throw new Error(`Key ${key} could not be found in the Map`);
 	}
 	return value;
 };

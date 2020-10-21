@@ -152,7 +152,7 @@ class TabsApp extends React.Component<P, S> {
 				<ActionButton onClick={this.loadFile} title={TabsApp.str.loadFile} />
 				<ActionButton onClick={closeOtherTabs} title={TabsApp.str.close} />
 				<ActionButton onClick={this.openLinks} title={TabsApp.str.openLinks} />
-				<a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank">Keyboard Shortcuts</a>
+				<a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank" rel="noreferrer">Keyboard Shortcuts</a>
 				<input type="file" ref={this.fileInput} />
 				<div className="ace_print-margin" />
 			</div>

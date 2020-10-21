@@ -25,7 +25,7 @@ root.className = css`
 const toasts = new Map<number, React.ReactNode>();
 
 export default function showToast(message: React.ReactNode, seconds = 3) {
-	var id = setTimeout(() => toasts.delete(id) && render(), seconds * 1000);
+	let id = setTimeout(() => toasts.delete(id) && render(), seconds * 1000);
 	toasts.set(id, message);
 	render();
 }
