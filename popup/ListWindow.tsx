@@ -11,6 +11,9 @@ interface P extends Pick<ListTabProps, 'onMouseDown' | 'onClick' | 'onAuxClick'>
 
 export default function ListWindow(p: P) {
 	let w = p.window;
+	if (w.type !== 'normal') {
+		return null;
+	}
 	let tabs = React.useMemo(() => {
 		return Array.from(TabStore.getTabs().values()).filter(t => t.windowId === w.id);
 	}, [w.tabListVersion]);

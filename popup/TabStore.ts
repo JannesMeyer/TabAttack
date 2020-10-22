@@ -19,12 +19,12 @@ class TabStore {
 
 	static convertWindow(wndw: bw.Window) {
 		let { id, type, state, focused, tabs } = requireValues(wndw, 'id', 'type', 'state');
-		assert(type === 'normal');
 		assert(id !== bw.WINDOW_ID_NONE);
 		
 		// TODO: last focused
 		return {
 			id,
+			type,
 			state,
 			focused,
 			tabListVersion: 0,
@@ -66,23 +66,20 @@ class TabStore {
 	}
 
 	private async loadAll() {
-		let windows = (await bw.getAll({ windowTypes: ['normal'], populate: true }));
+		let windows = await bw.getAll({ populate: true });
 		this.windows = windows.map(TabStore.convertWindow).toMap(w => w.id);
 		this.tabs = windows.flatMap(w => Array.from(w.tabs!.values(), TabStore.convertTab)).toMap(t => t.id);
 		this.notify();
 	}
 
 	private handleWindowCreated = (w: bw.Window) => {
-		if (w.type !== 'normal') {
-			return;
-		}
 		let converted = TabStore.convertWindow(w);
 		this.windows.set(converted.id, converted);
 		this.notify();
 	};
 
 	private handleWindowRemoved = (windowId: number) => {
-		this.windows.delete(windowId);
+		assert(this.windows.delete(windowId));
 		this.notify();
 	};
 
@@ -91,21 +88,16 @@ class TabStore {
 		this.tabs.set(x.id, x);
 
 		// Update tab list
-		let w = this.windows.get(tab.windowId);
-		w && w.tabListVersion++;
+		this.windows.getOrThrow(tab.windowId).tabListVersion++;
 		
 		this.notify();
 	};
 
 	private handleTabRemoved: OnTabRemoved = (tabId, { windowId, isWindowClosing }) => {
-		let w = this.windows.get(windowId);
-		if (w == null) {
-			return; // Other windowType
-		}
-		
-		// Remove from tabs
 		assert(this.tabs.delete(tabId));
-		w.tabListVersion++;
+
+		// Update tab list
+		this.windows.getOrThrow(windowId).tabListVersion++;
 
 		!isWindowClosing && this.notify();
 	};
@@ -114,10 +106,7 @@ class TabStore {
 	 * When the active tab in a window changes
 	 */
 	private handleTabActivated: OnTabActivated = ({ tabId, windowId }) => {
-		let w = this.windows.get(windowId);
-		if (w == null) {
-			return; // Other windowType
-		}
+		let w = this.windows.getOrThrow(windowId);
 		// TODO: manually update lastAccessed
 		// TODO: update selectedTabId
 		w.activeTabId = tabId;
@@ -129,10 +118,7 @@ class TabStore {
 	 */
 	private handleTabUpdate: OnTabUpdated = (tabId, info, fullTab) => {
 		// w.tabs.set(tabId, convertTab(fullTab));
-		let tab = this.tabs.get(tabId);
-		if (tab == null) {
-			return; // Other windowType
-		}
+		let tab = this.tabs.getOrThrow(tabId);
 		Object.assign(tab, info);
 		tab.lastAccessed = fullTab.lastAccessed;
 		this.notify();
