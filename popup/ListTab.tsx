@@ -72,6 +72,9 @@ export default class ListTab extends React.PureComponent<P> {
 	&.showURL .Title::first-line {
 		color: #000;
 	}
+	&:hover {
+		background: #eee;
+	}
 	/* Active tab indicator */
 	&.active {
 		background: #f4f4f4;
@@ -84,9 +87,6 @@ export default class ListTab extends React.PureComponent<P> {
 		bottom: 2px;
 		width: 3px;
 		background: #0a84ff;
-	}
-	&:hover {
-		background: #eee;
 	}
 	@media (prefers-color-scheme: dark) {
 		&.active {
