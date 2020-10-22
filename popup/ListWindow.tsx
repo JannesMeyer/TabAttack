@@ -14,7 +14,10 @@ export default function ListWindow(p: P) {
 	if (w.type !== 'normal') {
 		return null;
 	}
-	let tabs = React.useMemo(() => TabStore.getTabsForWindow(w.id).reverse(), [w, w.tabListVersion]);
+	let tabs = React.useMemo(() => {
+		// TODO: sort by index
+		return TabStore.getTabsForWindow(w.id).reverse();
+	}, [w, w.tabListVersion]);
 	if (tabs.length === 0) {
 		return null;
 	}

@@ -15,6 +15,8 @@ class TabStore {
 
 	listeners = new Set<() => void>();
 
+	private lastFocused = bw.WINDOW_ID_NONE;
+
 	private windows = new Map<number, TWindow>();
 
 	static convertWindow(wndw: bw.Window) {
@@ -39,22 +41,33 @@ class TabStore {
 		// TODO: remove "active" property
 	}
 
-	constructor() {
-		this.loadAll().then(() => {
-			// Event handlers
-			bw.onCreated.addListener(this.handleWindowCreated);
-			bw.onRemoved.addListener(this.handleWindowRemoved);
-			bw.onFocusChanged.addListener(this.handleWindowFocusChanged);
-			bt.onCreated.addListener(this.handleTabCreated);
-			bt.onRemoved.addListener(this.handleTabRemoved);
-			bt.onActivated.addListener(this.handleTabActivated);
-			try {
-				// Firefox is the only browser that currently supports filters
-				bt.onUpdated.addListener(this.handleTabUpdate, { properties: ['title', 'status', 'favIconUrl', 'discarded'] });
-			} catch {
-				bt.onUpdated.addListener(this.handleTabUpdate);
-			}
-		}).catch(logError);
+	async init(openerWindowId?: number) {
+		let windows = await bw.getAll({ populate: true });
+		this.windows = windows.map(TabStore.convertWindow).toMap(w => w.id);
+		this.tabs = windows.flatMap(w => w.tabs?.map(TabStore.convertTab) ?? []).toMap(t => t.id);
+
+		// Make sure the opener is at the top
+		console.log('opener', openerWindowId, this.windows);
+		let opener = this.windows.get(openerWindowId);
+		if (opener) {
+			opener.focusOrder = Date.now();
+		}
+
+		this.notify();
+
+		// Event handlers
+		bw.onCreated.addListener(this.handleWindowCreated);
+		bw.onRemoved.addListener(this.handleWindowRemoved);
+		bw.onFocusChanged.addListener(this.handleWindowFocusChanged);
+		bt.onCreated.addListener(this.handleTabCreated);
+		bt.onRemoved.addListener(this.handleTabRemoved);
+		bt.onActivated.addListener(this.handleTabActivated);
+		try {
+			// Firefox is the only browser that currently supports filters
+			bt.onUpdated.addListener(this.handleTabUpdate, { properties: ['title', 'status', 'favIconUrl', 'discarded'] });
+		} catch {
+			bt.onUpdated.addListener(this.handleTabUpdate);
+		}
 	}
 
 	dispose() {
@@ -65,18 +78,6 @@ class TabStore {
 		bt.onRemoved.removeListener(this.handleTabRemoved);
 		bt.onActivated.removeListener(this.handleTabActivated);
 		bt.onUpdated.removeListener(this.handleTabUpdate);
-	}
-
-	private async loadAll() {
-		let windows = await bw.getAll({ populate: true });
-		this.windows = windows.map(TabStore.convertWindow).toMap(w => w.id);
-		this.tabs = windows.flatMap(w => w.tabs?.map(TabStore.convertTab) ?? []).toMap(t => t.id);
-
-		// TODO: Make sure the focused window has the highest focusOrder
-		let maxFO = Math.max(...this.windows.map(w => w.focusOrder));
-		console.log('maxFO', maxFO);
-
-		this.notify();
 	}
 
 	private handleWindowCreated = (w: bw.Window) => {
@@ -91,11 +92,20 @@ class TabStore {
 	};
 
 	private handleWindowFocusChanged = (windowId: number) => {
+		if (windowId === bw.WINDOW_ID_NONE) {
+			return;
+		}
 		let w = this.windows.getOrThrow(windowId);
+		if (w.type !== 'normal') {
+			return;
+		}
 		w.focusOrder = Date.now();
 
-		// Notify if changing to a normal window
-		(w.type === 'normal') && this.notify();
+		// Notify if different
+		if (this.lastFocused !== windowId) {
+			this.lastFocused = windowId;
+			this.notify();
+		}
 	};
 
 	private handleTabCreated = (tab: bt.Tab) => {

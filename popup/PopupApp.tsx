@@ -23,11 +23,20 @@ if (params.isActionPopup) {
 	}`;
 }
 
-ready().then(el => ReactDOM.render(<PopupApp {...params} />, el));
+Promise.all([
+	ready(),
+	q.getNumber('opener') ?? browser.windows.getCurrent().then(w => w.id),
+]).then(([el, openerWindowId]) => {
+	ReactDOM.render(<PopupApp
+		{...params}
+		openerWindowId={openerWindowId}
+	/>, el);
+});
 
 interface P {
 	isSidebar: boolean;
 	isActionPopup: boolean;
+	openerWindowId?: number;
 }
 
 interface S {
@@ -42,6 +51,7 @@ class PopupApp extends React.Component<P, S> {
 
 	constructor(p: P) {
 		super(p);
+		TabStore.init(p.openerWindowId);
 		this.state = {
 			// selectedTabId: (p.isSidebar ? undefined : p.tm.getFirst()),
 			showURL: false,
