@@ -349,7 +349,7 @@ class PopupApp extends React.Component<P, S> {
 		let items = [
 			<div className="WindowList" key="WindowList">
 				{Array.from(p.tm.getWindows().values(), w => <div key={w.id} className={X('Window', { focused: w.focused })}>
-					{!p.isSidebar && !p.isActionPopup && <h1>{w.tabs.size} Tabs</h1>}
+					{!p.isSidebar && !p.isActionPopup && <h1>{w.tabs.length} Tabs</h1>}
 					<div>
 						{Array.from(w.tabs, id => p.tm.getTabs().getOrThrow(id)).map(tab => <Tab
 							key={tab.id}
@@ -367,7 +367,7 @@ class PopupApp extends React.Component<P, S> {
 							showURL={s.showURL}
 							hidden={search != null && !`${tab.title} ${tab.url}`.toLocaleLowerCase().includes(search)}
 						/>)}
-						{w.tabs.size === 0 && <div style={{ margin: '8px 12px' }}>No results</div>}
+						{w.tabs.length === 0 && <div style={{ margin: '8px 12px' }}>No results</div>}
 					</div>
 				</div>)}
 			</div>,

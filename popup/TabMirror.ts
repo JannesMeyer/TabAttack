@@ -25,7 +25,7 @@ function convertWindow(wndw: browser.windows.Window) {
 		id,
 		state,
 		focused,
-		tabs: new Set(tabs.map(t => assertDefined(t.id))),
+		tabs: tabs.map(t => assertDefined(t.id)),
 		activeTabId: assertDefined(tabs.filter(t => t.active).single().id),
 	};
 }
@@ -84,7 +84,8 @@ export default class TabMirror {
 
 	private handleTabCreated: OnTabCreated = x => {
 		let tab = convertTab(x);
-		this.windows.getOrThrow(tab.windowId).tabs.add(tab.id);
+		// TODO: respect tab.index
+		this.windows.getOrThrow(tab.windowId).tabs.push(tab.id);
 		this.tabs.set(tab.id, tab);
 		this.notify();
 	};
@@ -94,11 +95,20 @@ export default class TabMirror {
 		if (w == null) {
 			return; // Other windowType
 		}
-		assert(w.tabs.delete(tabId));
-		assert(this.tabs.delete(tabId));
+		// Remove entire window?
 		if (isWindowClosing) {
-			assert(this.windows.delete(windowId));
+			this.windows.delete(windowId);
+
+		} else {
+			// Remove tab from window
+			let index = w.tabs.indexOf(tabId);
+			assert(index !== -1);
+			w.tabs.splice(index, 1);
 		}
+
+		// Remove from tabs
+		assert(this.tabs.delete(tabId));
+
 		this.notify();
 	};
 
