@@ -22,7 +22,7 @@ export default function ListWindow(p: P) {
 		return null;
 	}
 	return <>
-		{p.hideHeader && <h1>{tabs.length} Tabs</h1>}
+		{!p.hideHeader && <h1>{tabs.length} Tabs</h1>}
 		{tabs.map(tab => <ListTab
 			key={tab.id}
 			id={tab.id}

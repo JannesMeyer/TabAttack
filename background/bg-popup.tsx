@@ -5,6 +5,7 @@ import PopupParams from '../popup/PopupParams.js';
 import FocusOrder from './FocusOrder.js';
 import getActiveTab from '../lib/browser/getActiveTab.js';
 import UrlQuery from '../lib/dom/UrlQuery.js';
+import PopupType from '../popup/PopupType.js';
 
 let focusOrder = new FocusOrder();
 
@@ -57,7 +58,7 @@ async function showPopup(opener: browser.tabs.Tab) {
 	let w = await browser.windows.create({
 		...popupWindow,
 		type: 'popup',
-		url: browser.runtime.getURL('popup.html') + new UrlQuery({ opener: opener.windowId }),
+		url: browser.runtime.getURL('popup.html') + new UrlQuery({ t: PopupType.Popup, opener: opener.windowId }),
 	});
 	let id = assertDefined(w.id);
 	// Some browsers ignore the top and left coordinates

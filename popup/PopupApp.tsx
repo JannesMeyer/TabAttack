@@ -10,13 +10,15 @@ import PopupParams from './PopupParams.js';
 import TabStore from './TabStore.js';
 import showToast from '../tabs/Toast.js';
 import ListWindow from './ListWindow.js';
+import PopupType from './PopupType.js';
 
 let q = UrlQuery.fromString();
-let params: P = {
-	isSidebar: q.getBoolean('sidebar'),
-	isActionPopup: q.getBoolean('action_popup'),
-};
-if (params.isActionPopup) {
+let t = q.getNumber('t');
+let type = PopupType.Default;
+if (t === PopupType.Popup || t === PopupType.BrowserAction || t === PopupType.Sidebar) {
+	type = t;
+}
+if (type === PopupType.BrowserAction) {
 	css`body {
 		width: 320px;
 		height: 520px;
@@ -27,15 +29,11 @@ Promise.all([
 	ready(),
 	q.getNumber('opener') ?? browser.windows.getCurrent().then(w => w.id),
 ]).then(([el, openerWindowId]) => {
-	ReactDOM.render(<PopupApp
-		{...params}
-		openerWindowId={openerWindowId}
-	/>, el);
+	ReactDOM.render(<PopupApp	type={type}	openerWindowId={openerWindowId}	/>, el);
 });
 
 interface P {
-	isSidebar: boolean;
-	isActionPopup: boolean;
+	type: PopupType;
 	openerWindowId?: number;
 }
 
@@ -44,18 +42,23 @@ interface S {
 	showURL: boolean;
 	search?: string;
 	focus?: boolean;
-	singleWindow?: number;
 }
 
 class PopupApp extends React.Component<P, S> {
 
 	constructor(p: P) {
 		super(p);
-		TabStore.init(p.openerWindowId);
+		let { oneWindow } = this;
+		TabStore.init(!oneWindow, (oneWindow ? undefined : p.openerWindowId)).then(() => this.forceUpdate());
 		this.state = {
 			// selectedTabId: (p.isSidebar ? undefined : p.tm.getFirst()),
 			showURL: false,
 		};
+	}
+
+	get oneWindow() {
+		let { type } = this.props;
+		return (type === PopupType.BrowserAction || type === PopupType.Sidebar);
 	}
 
 	componentDidMount() {
@@ -86,7 +89,7 @@ class PopupApp extends React.Component<P, S> {
 
 	/** Save window position */
 	private handlePageHide = () => {
-		if (this.props.isActionPopup || this.props.isSidebar) {
+		if (this.props.type !== PopupType.Popup) {
 			return;
 		}
 		// browser.windows.getCurrent() cannot be used because it is async and the browser
@@ -245,12 +248,18 @@ class PopupApp extends React.Component<P, S> {
 	// 	this.setState({ selectedTabId: nextTab.id });
 	// }
 
+	private endBrowserAction() {
+		if (this.props.type === PopupType.BrowserAction) {
+			close();
+		}
+	}
+
 	private activateTab(id: number | undefined) {
 		if (id == null) {
 			return;
 		}
 		browser.tabs.update(id, { active: true }).catch(logError);
-		this.props.isActionPopup &&	close();
+		this.endBrowserAction();
 	}
 
 	private closeTab(id: number | undefined) {
@@ -306,12 +315,12 @@ class PopupApp extends React.Component<P, S> {
 
 	private handleExport = () => {
 		openTabsEditor({});
-		this.props.isActionPopup && close();
+		this.endBrowserAction();
 	};
 
 	private handleImport = () => {
 		openTabsEditor({ import: true });
-		this.props.isActionPopup && close();
+		this.endBrowserAction();
 	};
 
 	private handleUrlToggle = () => {
@@ -356,15 +365,21 @@ class PopupApp extends React.Component<P, S> {
 	}`;
 
 	render() {
-		let { props: p, state: s } = this;
+		let { props: p, state: s, oneWindow } = this;
 		let search = s.search?.toLocaleLowerCase();
+		let windows = Array.from(TabStore.getWindows().values());
+		if (!oneWindow) {
+			windows.sort((a, b) => b.focusOrder - a.focusOrder);
+		} else {
+			windows = windows.filter(w => w.id === p.openerWindowId);
+		}
 		let items = [
 			<div className="WindowList" key="WindowList">
-				{TabStore.getWindowsByLastAccess().map(w => <ListWindow
+				{windows.map(w => <ListWindow
 					key={w.id}
 					window={w}
 					search={search}
-					hideHeader={!p.isSidebar && !p.isActionPopup}
+					hideHeader={oneWindow}
 					showURL={s.showURL}
 					selectedTabId={s.selectedTabId}
 					onMouseDown={this.handleMouseDown}
@@ -388,7 +403,7 @@ class PopupApp extends React.Component<P, S> {
 				<button type="button" onClick={this.handleImport}>Import</button>
 			</div>
 		];
-		return (p.isActionPopup ? items.reverse() : items);
+		return (p.type === PopupType.BrowserAction ? items.reverse() : items);
 	}
 }
 

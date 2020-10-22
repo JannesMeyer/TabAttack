@@ -1,5 +1,4 @@
 import assert from '../lib/assert.js';
-import logError from '../lib/logError.js';
 import requireValues from '../lib/requireValues.js';
 import bt = browser.tabs;
 import bw = browser.windows;
@@ -8,7 +7,7 @@ type OnTabRemoved = Parameters<typeof bt.onRemoved.addListener>[0];
 type OnTabUpdated = Parameters<typeof bt.onUpdated.addListener>[0];
 type OnTabActivated = Parameters<typeof bt.onActivated.addListener>[0];
 
-export type TWindow = ReturnType<typeof TabStore.convertWindow>;
+export interface TWindow extends ReturnType<typeof TabStore.convertWindow> {}
 export interface TTab extends ReturnType<typeof TabStore.convertTab> {}
 
 class TabStore {
@@ -41,24 +40,20 @@ class TabStore {
 		// TODO: remove "active" property
 	}
 
-	async init(openerWindowId?: number) {
+	async init(observeFocus: boolean, focusedWindowId?: number) {
 		let windows = await bw.getAll({ populate: true });
 		this.windows = windows.map(TabStore.convertWindow).toMap(w => w.id);
 		this.tabs = windows.flatMap(w => w.tabs?.map(TabStore.convertTab) ?? []).toMap(t => t.id);
 
-		// Make sure the opener is at the top
-		console.log('opener', openerWindowId, this.windows);
-		let opener = this.windows.get(openerWindowId);
-		if (opener) {
-			opener.focusOrder = Date.now();
+		let fw = this.windows.get(focusedWindowId);
+		if (fw) {
+			fw.focusOrder = Date.now();
 		}
-
-		this.notify();
 
 		// Event handlers
 		bw.onCreated.addListener(this.handleWindowCreated);
 		bw.onRemoved.addListener(this.handleWindowRemoved);
-		bw.onFocusChanged.addListener(this.handleWindowFocusChanged);
+		observeFocus && bw.onFocusChanged.addListener(this.handleWindowFocusChanged);
 		bt.onCreated.addListener(this.handleTabCreated);
 		bt.onRemoved.addListener(this.handleTabRemoved);
 		bt.onActivated.addListener(this.handleTabActivated);
@@ -160,10 +155,6 @@ class TabStore {
 
 	getTabs(): ReadonlyMap<number, Readonly<TTab>> {
 		return this.tabs;
-	}
-
-	getWindowsByLastAccess() {
-		return Array.from(this.windows.values()).sort((a, b) => b.focusOrder - a.focusOrder);
 	}
 
 	getTabsForWindow(windowId: number) {
