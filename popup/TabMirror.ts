@@ -1,6 +1,8 @@
 import assert from '../lib/assert.js';
 import assertDefined from '../lib/assertDefined.js';
 import logError from '../lib/logError.js';
+import bt = browser.tabs;
+import bw = browser.windows;
 
 type RequireValues<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
@@ -15,10 +17,10 @@ function requireValues<T, K extends keyof T>(obj: T, ...keys: K[]) {
 
 export type TWindow = ReturnType<typeof convertWindow>;
 
-function convertWindow(wndw: browser.windows.Window) {
+function convertWindow(wndw: bw.Window) {
 	let { id, type, state, focused, tabs } = requireValues(wndw, 'id', 'type', 'state', 'tabs');
 	assert(type === 'normal');
-	assert(id !== browser.windows.WINDOW_ID_NONE);
+	assert(id !== bw.WINDOW_ID_NONE);
 	
 	// TODO: last focused
 	return {
@@ -32,15 +34,15 @@ function convertWindow(wndw: browser.windows.Window) {
 
 export interface TTab extends ReturnType<typeof convertTab> {}
 
-function convertTab(tab: browser.tabs.Tab) {
+function convertTab(tab: bt.Tab) {
 	return requireValues(tab, 'id', 'url', 'discarded', 'status', 'title', 'windowId');
 	// TODO: remove "active" property
 }
 
-type OnTabCreated = Parameters<typeof browser.tabs.onCreated.addListener>[0];
-type OnTabRemoved = Parameters<typeof browser.tabs.onRemoved.addListener>[0];
-type OnTabUpdated = Parameters<typeof browser.tabs.onUpdated.addListener>[0];
-type OnTabActivated = Parameters<typeof browser.tabs.onActivated.addListener>[0];
+type OnTabCreated = Parameters<typeof bt.onCreated.addListener>[0];
+type OnTabRemoved = Parameters<typeof bt.onRemoved.addListener>[0];
+type OnTabUpdated = Parameters<typeof bt.onUpdated.addListener>[0];
+type OnTabActivated = Parameters<typeof bt.onActivated.addListener>[0];
 
 export default class TabMirror {
 
@@ -53,30 +55,30 @@ export default class TabMirror {
 	constructor() {
 		this.loadAll().then(() => {
 			// Tab event handlers
-			browser.windows.onCreated.addListener(w => {
+			bw.onCreated.addListener(w => {
 				console.log('window created', w);
 			});
-			browser.tabs.onCreated.addListener(this.handleTabCreated);
-			browser.tabs.onRemoved.addListener(this.handleTabRemoved);
-			browser.tabs.onActivated.addListener(this.handleTabActivated);
+			bt.onCreated.addListener(this.handleTabCreated);
+			bt.onRemoved.addListener(this.handleTabRemoved);
+			bt.onActivated.addListener(this.handleTabActivated);
 			try {
 				// Firefox is the only browser that currently supports filters
-				browser.tabs.onUpdated.addListener(this.handleTabUpdate, { properties: ['title', 'status', 'favIconUrl', 'discarded'] });
+				bt.onUpdated.addListener(this.handleTabUpdate, { properties: ['title', 'status', 'favIconUrl', 'discarded'] });
 			} catch {
-				browser.tabs.onUpdated.addListener(this.handleTabUpdate);
+				bt.onUpdated.addListener(this.handleTabUpdate);
 			}
 		}).catch(logError);
 	}
 
 	dispose() {
-		browser.tabs.onCreated.removeListener(this.handleTabCreated);
-		browser.tabs.onRemoved.removeListener(this.handleTabRemoved);
-		browser.tabs.onActivated.removeListener(this.handleTabActivated);
-		browser.tabs.onUpdated.removeListener(this.handleTabUpdate);
+		bt.onCreated.removeListener(this.handleTabCreated);
+		bt.onRemoved.removeListener(this.handleTabRemoved);
+		bt.onActivated.removeListener(this.handleTabActivated);
+		bt.onUpdated.removeListener(this.handleTabUpdate);
 	}
 
 	private async loadAll() {
-		let windows = (await browser.windows.getAll({ windowTypes: ['normal'], populate: true }));
+		let windows = (await bw.getAll({ windowTypes: ['normal'], populate: true }));
 		this.windows = windows.map(convertWindow).toMap(w => w.id);
 		this.tabs = windows.flatMap(w => Array.from(w.tabs!.values(), convertTab)).toMap(t => t.id);
 		this.notify();
