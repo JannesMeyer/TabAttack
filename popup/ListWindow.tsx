@@ -15,7 +15,7 @@ export default function ListWindow(p: P) {
 		return null;
 	}
 	let tabs = React.useMemo(() => {
-		return Array.from(TabStore.getTabs().values()).filter(t => t.windowId === w.id);
+		return Array.from(TabStore.getTabs().values()).filter(t => t.windowId === w.id).reverse();
 	}, [w.tabListVersion]);
 	if (tabs.length === 0) {
 		return null;
