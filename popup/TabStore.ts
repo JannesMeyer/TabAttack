@@ -137,6 +137,10 @@ class TabStore {
 	getTabs(): ReadonlyMap<number, Readonly<TTab>> {
 		return this.tabs;
 	}
+
+	getTabsForWindow(windowId: number) {
+		return Array.from(this.tabs.values()).filter(t => t.windowId === windowId);
+	}
 }
 
 export default new TabStore;
