@@ -35,6 +35,7 @@ interface S {
 	showURL: boolean;
 	search?: string;
 	focus?: boolean;
+	singleWindow?: number;
 }
 
 class PopupApp extends React.Component<P, S> {
@@ -275,15 +276,15 @@ class PopupApp extends React.Component<P, S> {
 		}
 	};
 
+	/** Left click activates the tab */
 	private handleClick = (tabId: number, ev: React.MouseEvent) => {
 		ev.preventDefault();
-		// Left click
 		this.activateTab(tabId);
 	};
 
+	/** Middle click closes the tab */
 	private handleAuxClick = (tabId: number, ev: React.MouseEvent) => {
 		if (ev.button === 1) {
-			// Middle click
 			ev.preventDefault();
 			this.closeTab(tabId);
 		}
@@ -308,15 +309,18 @@ class PopupApp extends React.Component<P, S> {
 	};
 
 	static readonly css = css`
-	h1 {
-		font-size: 133.3333%;
-		margin: 9px 0 4px 12px;
-	}
 	.WindowList {
 		flex-grow: 1;
 		overflow-y: auto;
 		background: #fcfcfc;
 		color: #1a1a1a;
+	}
+	.WindowList h1 {
+		font-size: 133.3333%;
+		margin: 20px 0 4px 12px;
+	}
+	.WindowList h1:first-child {
+		margin-top: 10px;
 	}
 	.SearchInput {
 		margin: 8px;
@@ -346,8 +350,8 @@ class PopupApp extends React.Component<P, S> {
 		let search = s.search?.toLocaleLowerCase();
 		let items = [
 			<div className="WindowList" key="WindowList">
-				{Array.from(TabStore.getWindows(), ([id, w]) => <ListWindow
-					key={id}
+				{TabStore.getWindowsByLastAccess().map(w => <ListWindow
+					key={w.id}
 					window={w}
 					search={search}
 					hideHeader={!p.isSidebar && !p.isActionPopup}

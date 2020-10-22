@@ -18,15 +18,15 @@ class TabStore {
 	private windows = new Map<number, TWindow>();
 
 	static convertWindow(wndw: bw.Window) {
-		let { id, type, state, focused, tabs } = requireValues(wndw, 'id', 'type', 'state');
+		let { id, type, state, focused, tabs, incognito } = requireValues(wndw, 'id', 'type', 'state');
 		assert(id !== bw.WINDOW_ID_NONE);
-		
-		// TODO: last focused
 		return {
 			id,
 			type,
 			state,
 			focused,
+			incognito,
+			focusOrder: id,
 			tabListVersion: 0,
 			activeTabId: tabs?.filter(t => t.active).single().id,
 		};
@@ -44,6 +44,7 @@ class TabStore {
 			// Event handlers
 			bw.onCreated.addListener(this.handleWindowCreated);
 			bw.onRemoved.addListener(this.handleWindowRemoved);
+			bw.onFocusChanged.addListener(this.handleWindowFocusChanged);
 			bt.onCreated.addListener(this.handleTabCreated);
 			bt.onRemoved.addListener(this.handleTabRemoved);
 			bt.onActivated.addListener(this.handleTabActivated);
@@ -59,6 +60,7 @@ class TabStore {
 	dispose() {
 		bw.onCreated.removeListener(this.handleWindowCreated);
 		bw.onRemoved.removeListener(this.handleWindowRemoved);
+		bw.onFocusChanged.removeListener(this.handleWindowFocusChanged);
 		bt.onCreated.removeListener(this.handleTabCreated);
 		bt.onRemoved.removeListener(this.handleTabRemoved);
 		bt.onActivated.removeListener(this.handleTabActivated);
@@ -68,7 +70,12 @@ class TabStore {
 	private async loadAll() {
 		let windows = await bw.getAll({ populate: true });
 		this.windows = windows.map(TabStore.convertWindow).toMap(w => w.id);
-		this.tabs = windows.flatMap(w => Array.from(w.tabs!.values(), TabStore.convertTab)).toMap(t => t.id);
+		this.tabs = windows.flatMap(w => w.tabs?.map(TabStore.convertTab) ?? []).toMap(t => t.id);
+
+		// TODO: Make sure the focused window has the highest focusOrder
+		let maxFO = Math.max(...this.windows.map(w => w.focusOrder));
+		console.log('maxFO', maxFO);
+
 		this.notify();
 	}
 
@@ -81,6 +88,14 @@ class TabStore {
 	private handleWindowRemoved = (windowId: number) => {
 		assert(this.windows.delete(windowId));
 		this.notify();
+	};
+
+	private handleWindowFocusChanged = (windowId: number) => {
+		let w = this.windows.getOrThrow(windowId);
+		w.focusOrder = Date.now();
+
+		// Notify if changing to a normal window
+		(w.type === 'normal') && this.notify();
 	};
 
 	private handleTabCreated = (tab: bt.Tab) => {
@@ -107,7 +122,6 @@ class TabStore {
 	 */
 	private handleTabActivated: OnTabActivated = ({ tabId, windowId }) => {
 		let w = this.windows.getOrThrow(windowId);
-		// TODO: manually update lastAccessed
 		// TODO: update selectedTabId
 		w.activeTabId = tabId;
 		this.notify();
@@ -136,6 +150,10 @@ class TabStore {
 
 	getTabs(): ReadonlyMap<number, Readonly<TTab>> {
 		return this.tabs;
+	}
+
+	getWindowsByLastAccess() {
+		return Array.from(this.windows.values()).sort((a, b) => b.focusOrder - a.focusOrder);
 	}
 
 	getTabsForWindow(windowId: number) {

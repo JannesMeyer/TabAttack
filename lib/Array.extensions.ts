@@ -44,22 +44,16 @@ Array.prototype.toMap = toMap;
 
 interface Map<K, V> {
 	get(key: K | undefined): V | undefined;
-
-	/**
-	 * Returns the value of the specified key in the map.
-	 * If it doesn't exist throws an error.
-	 */
 	getOrThrow(key: K | undefined): V;
+	map<T>(fn: (value: V, key: K) => T): T[];
+	filter(fn: (value: V, key: K) => unknown): V[];
 }
 
 interface ReadonlyMap<K, V> {
 	get(key: K | undefined): V | undefined;
-
-	/**
-	 * Returns the value of the specified key in the map.
-	 * If it doesn't exist throws an error.
-	 */
 	getOrThrow(key: K | undefined): V;
+	map<T>(fn: (value: V, key: K) => T): T[];
+	filter(fn: (value: V, key: K) => unknown): V[];
 }
 
 Map.prototype.getOrThrow = function getOrThrow<K, V>(this: ReadonlyMap<K, V>, key: K): V {
@@ -69,3 +63,19 @@ Map.prototype.getOrThrow = function getOrThrow<K, V>(this: ReadonlyMap<K, V>, ke
 	}
 	return value;
 };
+
+Map.prototype.map = function map<K, V, T>(this: ReadonlyMap<K, V>, fn: (value: V, key: K) => T): T[] {
+	let mapped: T[] = [];
+	for (let [k, v] of this) {
+		mapped.push(fn(v, k));
+	}
+	return mapped;
+};
+
+Map.prototype.filter = function filter<K, V>(this: ReadonlyMap<K, V>, fn: (value: V, key: K) => unknown): V[] {
+	let values: V[] = [];
+	for (let [k, v] of this) {
+		fn(v, k) && values.push(v);
+	}
+	return values;
+}
