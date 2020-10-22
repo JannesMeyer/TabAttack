@@ -1,4 +1,5 @@
 import assert from '../lib/assert.js';
+import assertDefined from '../lib/assertDefined.js';
 import logError from '../lib/logError.js';
 
 type RequireValues<T, K extends keyof T> = T & Required<Pick<T, K>>;
@@ -18,18 +19,18 @@ function convertWindow(wndw: browser.windows.Window) {
 	let { id, type, state, focused, tabs } = requireValues(wndw, 'id', 'type', 'state', 'tabs');
 	assert(type === 'normal');
 	assert(id !== browser.windows.WINDOW_ID_NONE);
-	let ttabs: TTab[] = tabs.map(convertTab);
+	
 	// TODO: last focused
 	return {
 		id,
 		state,
 		focused,
-		tabs: ttabs.toMap(t => t.id),
-		activeTabId: ttabs.filter(t => t.active).single().id,
+		tabs: new Set(tabs.map(t => assertDefined(t.id))),
+		activeTabId: assertDefined(tabs.filter(t => t.active).single().id),
 	};
 }
 
-export type TTab = ReturnType<typeof convertTab>;
+export interface TTab extends ReturnType<typeof convertTab> {}
 
 function convertTab(tab: browser.tabs.Tab) {
 	return requireValues(tab, 'id', 'url', 'discarded', 'status', 'title', 'windowId');
@@ -44,8 +45,10 @@ type OnTabActivated = Parameters<typeof browser.tabs.onActivated.addListener>[0]
 export default class TabMirror {
 
 	listeners = new Set<() => void>();
+
 	private windows = new Map<number, TWindow>();
-	private tabToWindowId = new Map<number, number>();
+	
+	private tabs = new Map<number, TTab>();
 
 	constructor() {
 		this.loadAll().then(() => {
@@ -73,16 +76,16 @@ export default class TabMirror {
 	}
 
 	private async loadAll() {
-		let windows = (await browser.windows.getAll({ windowTypes: ['normal'], populate: true })).map(convertWindow);
-		this.windows = windows.toMap(w => w.id);
-		this.tabToWindowId = windows.flatMap(w => Array.from(w.tabs.values())).toMap(t => t.id, t => t.windowId);
+		let windows = (await browser.windows.getAll({ windowTypes: ['normal'], populate: true }));
+		this.windows = windows.map(convertWindow).toMap(w => w.id);
+		this.tabs = windows.flatMap(w => Array.from(w.tabs!.values(), convertTab)).toMap(t => t.id);
 		this.notify();
 	}
 
 	private handleTabCreated: OnTabCreated = x => {
 		let tab = convertTab(x);
-		this.windows.getOrThrow(tab.windowId).tabs.set(tab.id, tab);
-		this.tabToWindowId.set(tab.id, tab.windowId);
+		this.windows.getOrThrow(tab.windowId).tabs.add(tab.id);
+		this.tabs.set(tab.id, tab);
 		this.notify();
 	};
 
@@ -92,7 +95,7 @@ export default class TabMirror {
 			return; // Other windowType
 		}
 		assert(w.tabs.delete(tabId));
-		assert(this.tabToWindowId.delete(tabId));
+		assert(this.tabs.delete(tabId));
 		if (isWindowClosing) {
 			assert(this.windows.delete(windowId));
 		}
@@ -117,12 +120,11 @@ export default class TabMirror {
 	 * Informs us whenever a tab property updates
 	 */
 	private handleTabUpdate: OnTabUpdated = (tabId, info, fullTab) => {
-		let w = this.windows.get(fullTab.windowId);
-		if (w == null) {
+		// w.tabs.set(tabId, convertTab(fullTab));
+		let tab = this.tabs.get(tabId);
+		if (tab == null) {
 			return; // Other windowType
 		}
-		// w.tabs.set(tabId, convertTab(fullTab));
-		let tab = w.tabs.getOrThrow(tabId);
 		Object.assign(tab, info);
 		tab.lastAccessed = fullTab.lastAccessed;
 		this.notify();
@@ -134,12 +136,11 @@ export default class TabMirror {
 		}
 	}
 
-	getWindows() {
-		return this.windows.values();
+	getWindows(): ReadonlyMap<number, Readonly<TWindow>> {
+		return this.windows;
 	}
-	
-	findTab(tabId: number) {
-		let windowId = this.tabToWindowId.getOrThrow(tabId);
-		return this.windows.getOrThrow(windowId).tabs.getOrThrow(tabId);
+
+	getTabs(): ReadonlyMap<number, Readonly<TTab>> {
+		return this.tabs;
 	}
 }

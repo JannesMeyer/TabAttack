@@ -175,7 +175,7 @@ class PopupApp extends React.Component<P, S> {
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			let selectedTab = this.props.tm.findTab(this.state.selectedTabId);
+			let selectedTab = this.props.tm.getTabs().get(this.state.selectedTabId);
 			if (selectedTab == null) {
 				return;
 			}
@@ -271,29 +271,23 @@ class PopupApp extends React.Component<P, S> {
 	// 	this.setState({ selectedTabId: selected.id });
 	// }
 
-	private handleMouseDown = (tab: browser.tabs.Tab) => {
-		if (tab.id == null) {
-			return;
-		}
+	private handleMouseDown = (tabId: number) => {
 		if (this.state.selectedTabId != null) {
-			this.setState({ selectedTabId: tab.id });
+			this.setState({ selectedTabId: tabId });
 		}
 	};
 
-	private handleClick = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+	private handleClick = (tabId: number, ev: React.MouseEvent) => {
 		ev.preventDefault();
-		if (tab.id == null) {
-			return;
-		}
 		// Left click
-		this.activateTab(tab.id);
+		this.activateTab(tabId);
 	};
 
-	private handleAuxClick = (tab: browser.tabs.Tab, ev: React.MouseEvent) => {
+	private handleAuxClick = (tabId: number, ev: React.MouseEvent) => {
 		if (ev.button === 1) {
 			// Middle click
 			ev.preventDefault();
-			this.closeTab(tab.id);
+			this.closeTab(tabId);
 		}
 	};
 
@@ -354,13 +348,12 @@ class PopupApp extends React.Component<P, S> {
 		let search = s.search?.toLocaleLowerCase();
 		let items = [
 			<div className="WindowList" key="WindowList">
-				{Array.from(p.tm.getWindows(), w => <div key={w.id} className={X('Window', { focused: w.focused })}>
+				{Array.from(p.tm.getWindows().values(), w => <div key={w.id} className={X('Window', { focused: w.focused })}>
 					{!p.isSidebar && !p.isActionPopup && <h1>{w.tabs.size} Tabs</h1>}
 					<div>
-						{Array.from(w.tabs.values(), tab => <Tab
+						{Array.from(w.tabs, id => p.tm.getTabs().getOrThrow(id)).map(tab => <Tab
 							key={tab.id}
 							id={tab.id}
-							tab={tab}
 							selected={tab.id === s.selectedTabId}
 							active={tab.id === w.activeTabId}
 							favIconUrl={tab.favIconUrl}

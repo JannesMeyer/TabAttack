@@ -2,21 +2,13 @@ import { isFirefox } from '../lib/browser/runtime.js';
 import css, { X } from '../lib/css.js';
 import { TTab } from './TabMirror.js';
 
-interface P {
-	id: number;
-	active: boolean;
-	favIconUrl: string | undefined;
-	url: string;
-	title: string;
-	status: string;
-	discarded: boolean;
+interface P extends Pick<TTab, 'id' | 'status' | 'url' | 'title' | 'favIconUrl' | 'active' | 'discarded'> {
 	selected: boolean;
-	tab: TTab;
 	showURL: boolean;
 	hidden: boolean;
-	onMouseDown(tab: TTab, event: React.MouseEvent): void;
-	onClick(tab: TTab, event: React.MouseEvent): void;
-	onAuxClick(tab: TTab, event: React.MouseEvent): void;
+	onMouseDown(tabId: number, event: React.MouseEvent): void;
+	onClick(tabId: number, event: React.MouseEvent): void;
+	onAuxClick(tabId: number, event: React.MouseEvent): void;
 }
 
 export default class Tab extends React.PureComponent<P> {
@@ -105,24 +97,24 @@ export default class Tab extends React.PureComponent<P> {
 	}`;
 
 	render() {
-		let { tab, status, discarded, active, hidden, selected, showURL, ...p } = this.props;
+		let { discarded, active, hidden, selected, showURL, ...p } = this.props;
 		
 		let favicon: string;
-		if (status === 'loading') {
+		if (p.status === 'loading') {
 			// From Firefox (chrome://browser/skin/tabbrowser/tab-loading.png)
 			favicon = (devicePixelRatio > 1 ? '/icons/tab-loading@2x.png' : '/icons/tab-loading.png');
 
-		} else if (tab.favIconUrl) {
+		} else if (p.favIconUrl) {
 			// Extensions don't have access to this (in Firefox)
-			if (tab.favIconUrl === 'chrome://mozapps/skin/extensions/extension.svg') {
+			if (p.favIconUrl === 'chrome://mozapps/skin/extensions/extension.svg') {
 				favicon = '/icons/extension.svg';
 
 			} else {
-				favicon = tab.favIconUrl;
+				favicon = p.favIconUrl;
 			}
 
 		} else if (!isFirefox) {
-			favicon = 'chrome://favicon/size/16@' + devicePixelRatio + 'x/' + tab.url;
+			favicon = 'chrome://favicon/size/16@' + devicePixelRatio + 'x/' + p.url;
 			
 		} else {
 			favicon = 'chrome://branding/content/icon32.png';
@@ -135,7 +127,7 @@ export default class Tab extends React.PureComponent<P> {
 		} else if (p.title) {
 			text = p.title;
 
-		} else if (status === 'loading') {
+		} else if (p.status === 'loading') {
 			text = 'Loading...';
 
 		} else {
@@ -144,10 +136,10 @@ export default class Tab extends React.PureComponent<P> {
 
 		return <a
 			href={p.url}
-			onMouseDown={ev => p.onMouseDown(tab, ev)}
-			onClick={ev => p.onClick(tab, ev)}
-			onAuxClick={ev => p.onAuxClick(tab, ev)}
-			className={X(Tab.css, status, { discarded, active, selected, hidden, showURL })}
+			onMouseDown={ev => p.onMouseDown(p.id, ev)}
+			onClick={ev => p.onClick(p.id, ev)}
+			onAuxClick={ev => p.onAuxClick(p.id, ev)}
+			className={X(Tab.css, p.status, { discarded, active, selected, hidden, showURL })}
 		>
 			<img src={favicon} />
 			<div className="Title">{text}</div>
