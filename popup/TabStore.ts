@@ -1,63 +1,49 @@
 import assert from '../lib/assert.js';
-import assertDefined from '../lib/assertDefined.js';
 import logError from '../lib/logError.js';
+import requireValues from '../lib/requireValues.js';
 import bt = browser.tabs;
 import bw = browser.windows;
 
-type RequireValues<T, K extends keyof T> = T & Required<Pick<T, K>>;
-
-function requireValues<T, K extends keyof T>(obj: T, ...keys: K[]) {
-	for (let k of keys) {
-		if (obj[k] == null) {
-			throw new Error(`Value for field ${k} is required`);
-		}
-	}
-	return obj as RequireValues<T, K>;
-}
-
-export type TWindow = ReturnType<typeof convertWindow>;
-
-function convertWindow(wndw: bw.Window) {
-	let { id, type, state, focused, tabs } = requireValues(wndw, 'id', 'type', 'state', 'tabs');
-	assert(type === 'normal');
-	assert(id !== bw.WINDOW_ID_NONE);
-	
-	// TODO: last focused
-	return {
-		id,
-		state,
-		focused,
-		tabs: tabs.map(t => assertDefined(t.id)),
-		activeTabId: assertDefined(tabs.filter(t => t.active).single().id),
-	};
-}
-
-export interface TTab extends ReturnType<typeof convertTab> {}
-
-function convertTab(tab: bt.Tab) {
-	return requireValues(tab, 'id', 'url', 'discarded', 'status', 'title', 'windowId');
-	// TODO: remove "active" property
-}
-
-type OnTabCreated = Parameters<typeof bt.onCreated.addListener>[0];
 type OnTabRemoved = Parameters<typeof bt.onRemoved.addListener>[0];
 type OnTabUpdated = Parameters<typeof bt.onUpdated.addListener>[0];
 type OnTabActivated = Parameters<typeof bt.onActivated.addListener>[0];
 
-export default class TabMirror {
+export type TWindow = ReturnType<typeof TabStore.convertWindow>;
+export interface TTab extends ReturnType<typeof TabStore.convertTab> {}
+
+class TabStore {
 
 	listeners = new Set<() => void>();
 
 	private windows = new Map<number, TWindow>();
+
+	static convertWindow(wndw: bw.Window) {
+		let { id, type, state, focused, tabs } = requireValues(wndw, 'id', 'type', 'state');
+		assert(type === 'normal');
+		assert(id !== bw.WINDOW_ID_NONE);
+		
+		// TODO: last focused
+		return {
+			id,
+			state,
+			focused,
+			tabListVersion: 0,
+			activeTabId: tabs?.filter(t => t.active).single().id,
+		};
+	}
 	
 	private tabs = new Map<number, TTab>();
 
+	static convertTab(tab: bt.Tab) {
+		return requireValues(tab, 'id', 'url', 'discarded', 'status', 'title', 'windowId');
+		// TODO: remove "active" property
+	}
+
 	constructor() {
 		this.loadAll().then(() => {
-			// Tab event handlers
-			bw.onCreated.addListener(w => {
-				console.log('window created', w);
-			});
+			// Event handlers
+			bw.onCreated.addListener(this.handleWindowCreated);
+			bw.onRemoved.addListener(this.handleWindowRemoved);
 			bt.onCreated.addListener(this.handleTabCreated);
 			bt.onRemoved.addListener(this.handleTabRemoved);
 			bt.onActivated.addListener(this.handleTabActivated);
@@ -71,6 +57,8 @@ export default class TabMirror {
 	}
 
 	dispose() {
+		bw.onCreated.removeListener(this.handleWindowCreated);
+		bw.onRemoved.removeListener(this.handleWindowRemoved);
 		bt.onCreated.removeListener(this.handleTabCreated);
 		bt.onRemoved.removeListener(this.handleTabRemoved);
 		bt.onActivated.removeListener(this.handleTabActivated);
@@ -79,16 +67,33 @@ export default class TabMirror {
 
 	private async loadAll() {
 		let windows = (await bw.getAll({ windowTypes: ['normal'], populate: true }));
-		this.windows = windows.map(convertWindow).toMap(w => w.id);
-		this.tabs = windows.flatMap(w => Array.from(w.tabs!.values(), convertTab)).toMap(t => t.id);
+		this.windows = windows.map(TabStore.convertWindow).toMap(w => w.id);
+		this.tabs = windows.flatMap(w => Array.from(w.tabs!.values(), TabStore.convertTab)).toMap(t => t.id);
 		this.notify();
 	}
 
-	private handleTabCreated: OnTabCreated = x => {
-		let tab = convertTab(x);
-		// TODO: respect tab.index
-		this.windows.getOrThrow(tab.windowId).tabs.push(tab.id);
-		this.tabs.set(tab.id, tab);
+	private handleWindowCreated = (w: bw.Window) => {
+		if (w.type !== 'normal') {
+			return;
+		}
+		let converted = TabStore.convertWindow(w);
+		this.windows.set(converted.id, converted);
+		this.notify();
+	};
+
+	private handleWindowRemoved = (windowId: number) => {
+		this.windows.delete(windowId);
+		this.notify();
+	};
+
+	private handleTabCreated = (tab: bt.Tab) => {
+		let x = TabStore.convertTab(tab);
+		this.tabs.set(x.id, x);
+
+		// Update tab list
+		let w = this.windows.get(tab.windowId);
+		w && w.tabListVersion++;
+		
 		this.notify();
 	};
 
@@ -97,21 +102,12 @@ export default class TabMirror {
 		if (w == null) {
 			return; // Other windowType
 		}
-		// Remove entire window?
-		if (isWindowClosing) {
-			this.windows.delete(windowId);
-
-		} else {
-			// Remove tab from window
-			let index = w.tabs.indexOf(tabId);
-			assert(index !== -1);
-			w.tabs.splice(index, 1);
-		}
-
+		
 		// Remove from tabs
 		assert(this.tabs.delete(tabId));
+		w.tabListVersion++;
 
-		this.notify();
+		!isWindowClosing && this.notify();
 	};
 
 	/**
@@ -156,3 +152,5 @@ export default class TabMirror {
 		return this.tabs;
 	}
 }
+
+export default new TabStore;

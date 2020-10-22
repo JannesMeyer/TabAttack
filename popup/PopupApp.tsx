@@ -4,18 +4,17 @@ import ready from '../lib/dom/ready.js';
 import markdownLink from '../lib/markdownLink.js';
 import writeClipboard from '../lib/writeClipboard.js';
 import UrlQuery from '../lib/dom/UrlQuery.js';
-import css, { X } from '../lib/css.js';
+import css from '../lib/css.js';
 import openTabsEditor from '../background/openTabsEditor.js';
 import PopupParams from './PopupParams.js';
-import TabMirror from './TabMirror.js';
+import TabStore from './TabStore.js';
 import showToast from '../tabs/Toast.js';
-import Tab from './Tab.js';
+import ListWindow from './ListWindow.js';
 
 let q = UrlQuery.fromString();
 let params: P = {
 	isSidebar: q.getBoolean('sidebar'),
 	isActionPopup: q.getBoolean('action_popup'),
-	tm: new TabMirror(),
 };
 if (params.isActionPopup) {
 	css`body {
@@ -29,7 +28,6 @@ ready().then(el => ReactDOM.render(<PopupApp {...params} />, el));
 interface P {
 	isSidebar: boolean;
 	isActionPopup: boolean;
-	tm: TabMirror;
 }
 
 interface S {
@@ -50,7 +48,7 @@ class PopupApp extends React.Component<P, S> {
 	}
 
 	componentDidMount() {
-		this.props.tm.listeners.add(() => this.forceUpdate());
+		TabStore.listeners.add(() => this.forceUpdate());
 		addEventListener('focus', this.handleFocus);
 		addEventListener('blur', this.handleBlur);
 		addEventListener('keydown', this.handleKeyDown);
@@ -60,7 +58,7 @@ class PopupApp extends React.Component<P, S> {
 	}
 
 	componentWillUnmount() {
-		this.props.tm.listeners.clear();
+		TabStore.listeners.clear();
 		removeEventListener('focus', this.handleFocus);
 		removeEventListener('blur', this.handleBlur);
 		removeEventListener('keydown', this.handleKeyDown);
@@ -175,7 +173,7 @@ class PopupApp extends React.Component<P, S> {
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			let selectedTab = this.props.tm.getTabs().get(this.state.selectedTabId);
+			let selectedTab = TabStore.getTabs().get(this.state.selectedTabId);
 			if (selectedTab == null) {
 				return;
 			}
@@ -348,28 +346,17 @@ class PopupApp extends React.Component<P, S> {
 		let search = s.search?.toLocaleLowerCase();
 		let items = [
 			<div className="WindowList" key="WindowList">
-				{Array.from(p.tm.getWindows().values(), w => <div key={w.id} className={X('Window', { focused: w.focused })}>
-					{!p.isSidebar && !p.isActionPopup && <h1>{w.tabs.length} Tabs</h1>}
-					<div>
-						{Array.from(w.tabs, id => p.tm.getTabs().getOrThrow(id)).map(tab => <Tab
-							key={tab.id}
-							id={tab.id}
-							selected={tab.id === s.selectedTabId}
-							active={tab.id === w.activeTabId}
-							favIconUrl={tab.favIconUrl}
-							discarded={tab.discarded}
-							status={tab.status}
-							title={tab.title}
-							url={tab.url}
-							onMouseDown={this.handleMouseDown}
-							onClick={this.handleClick}
-							onAuxClick={this.handleAuxClick}
-							showURL={s.showURL}
-							hidden={search != null && !`${tab.title} ${tab.url}`.toLocaleLowerCase().includes(search)}
-						/>)}
-						{w.tabs.length === 0 && <div style={{ margin: '8px 12px' }}>No results</div>}
-					</div>
-				</div>)}
+				{Array.from(TabStore.getWindows(), ([id, w]) => <ListWindow
+					key={id}
+					window={w}
+					search={search}
+					hideHeader={!p.isSidebar && !p.isActionPopup}
+					showURL={s.showURL}
+					selectedTabId={s.selectedTabId}
+					onMouseDown={this.handleMouseDown}
+					onClick={this.handleClick}
+					onAuxClick={this.handleAuxClick}
+				/>)}
 			</div>,
 			s.search != null && <input
 				key="SearchInput"

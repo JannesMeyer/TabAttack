@@ -1,6 +1,6 @@
 import { isFirefox } from '../lib/browser/runtime.js';
 import css, { X } from '../lib/css.js';
-import { TTab } from './TabMirror.js';
+import { TTab } from './TabStore.js';
 
 interface P extends Pick<TTab, 'id' | 'status' | 'url' | 'title' | 'favIconUrl' | 'active' | 'discarded'> {
 	selected: boolean;
@@ -10,8 +10,9 @@ interface P extends Pick<TTab, 'id' | 'status' | 'url' | 'title' | 'favIconUrl' 
 	onClick(tabId: number, event: React.MouseEvent): void;
 	onAuxClick(tabId: number, event: React.MouseEvent): void;
 }
+export { P as ListTabProps };
 
-export default class Tab extends React.PureComponent<P> {
+export default class ListTab extends React.PureComponent<P> {
 
 	static readonly css = css`
 	& {
@@ -139,7 +140,7 @@ export default class Tab extends React.PureComponent<P> {
 			onMouseDown={ev => p.onMouseDown(p.id, ev)}
 			onClick={ev => p.onClick(p.id, ev)}
 			onAuxClick={ev => p.onAuxClick(p.id, ev)}
-			className={X(Tab.css, p.status, { discarded, active, selected, hidden, showURL })}
+			className={X(ListTab.css, p.status, { discarded, active, selected, hidden, showURL })}
 		>
 			<img src={favicon} />
 			<div className="Title">{text}</div>
