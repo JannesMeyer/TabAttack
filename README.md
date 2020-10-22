@@ -97,10 +97,9 @@ Special thanks to these projects:
 ## Todo
 
 - Add link to keyboard shortcuts on editor/popup
-- Add per-window tab list (inline popup and sidebar)
 - Figure out why discarding resets the TabId
 - Style indicator for: audio, muted, ...
 - Use keybinding library
 - "open links" doesn't work with file:, moz-extension:, about:, chrome:
 - Add "ignore protocols" option
-- Per-browser background color on dark mode options
+- "1 Tab" instead of "1 Tabs" in tab list
