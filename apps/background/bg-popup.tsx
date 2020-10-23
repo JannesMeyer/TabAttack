@@ -1,10 +1,10 @@
-import onCommand from '../lib/browser/onCommand.js';
-import logError from '../lib/logError.js';
-import assertDefined from '../lib/assertDefined.js';
+import onCommand from '../../lib/browser/onCommand.js';
+import logError from '../../lib/logError.js';
+import assertDefined from '../../lib/assertDefined.js';
 import PopupParams from '../popup/PopupParams.js';
 import FocusOrder from './FocusOrder.js';
-import getActiveTab from '../lib/browser/getActiveTab.js';
-import UrlQuery from '../lib/dom/UrlQuery.js';
+import getActiveTab from '../../lib/browser/getActiveTab.js';
+import UrlQuery from '../../lib/dom/UrlQuery.js';
 import PopupType from '../popup/PopupType.js';
 
 let focusOrder = new FocusOrder();

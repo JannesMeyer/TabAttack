@@ -1,5 +1,5 @@
-import assertDefined from '../lib/assertDefined.js';
-import prefersDark from '../lib/prefersDark.js';
+import assertDefined from '../../lib/assertDefined.js';
+import prefersDark from '../../lib/prefersDark.js';
 
 export default class Icon {
 

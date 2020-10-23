@@ -1,4 +1,4 @@
-import css from '../lib/css.js';
+import css from '../../lib/css.js';
 
 const root = document.body.appendChild(document.createElement('div'));
 root.className = css`

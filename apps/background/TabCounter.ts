@@ -1,4 +1,4 @@
-import assertDefined from '../lib/assertDefined.js';
+import assertDefined from '../../lib/assertDefined.js';
 
 // TODO: Need more information per window and per tab (incognito window, tab title, tab url)
 export default class TabCounter {

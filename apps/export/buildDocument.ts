@@ -1,6 +1,6 @@
-import assertDefined from '../lib/assertDefined.js';
-import getString from '../lib/browser/getString.js';
-import markdownLink from '../lib/markdownLink.js';
+import assertDefined from '../../lib/assertDefined.js';
+import getString from '../../lib/browser/getString.js';
+import markdownLink from '../../lib/markdownLink.js';
 import prefs from '../preferences.js';
 import { Doc } from './Editor.js';
 

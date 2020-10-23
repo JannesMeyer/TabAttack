@@ -1,5 +1,5 @@
-import isDefined from '../lib/isDefined.js';
-import logError from '../lib/logError.js';
+import isDefined from '../../lib/isDefined.js';
+import logError from '../../lib/logError.js';
 
 /** Maintains a list of the order in which the windows were last focused */
 export default class FocusOrder {

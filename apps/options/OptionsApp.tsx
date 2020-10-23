@@ -1,8 +1,8 @@
-import prefs, { Prefs } from './preferences.js';
-import getString from './lib/browser/getString.js';
-import { getAceThemeList, AceTheme } from './lib/getAceThemes.js';
-import css from './lib/css.js';
-import debounce from './lib/debounce.js';
+import prefs, { Prefs } from '../preferences.js';
+import getString from '../../lib/browser/getString.js';
+import { getAceThemeList, AceTheme } from '../../lib/getAceThemes.js';
+import css from '../../lib/css.js';
+import debounce from '../../lib/debounce.js';
 
 // Set title
 document.title = getString('options');

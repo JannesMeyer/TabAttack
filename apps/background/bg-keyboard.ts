@@ -1,7 +1,7 @@
-import onCommand from '../lib/browser/onCommand.js';
-import isDefined from '../lib/isDefined.js';
-import logError from '../lib/logError.js';
-import assertDefined from '../lib/assertDefined.js';
+import onCommand from '../../lib/browser/onCommand.js';
+import isDefined from '../../lib/isDefined.js';
+import logError from '../../lib/logError.js';
+import assertDefined from '../../lib/assertDefined.js';
 
 /** Global shortcut: Move highlighted tabs left */
 onCommand('move_tab_left', () => moveHighlighted(-1));

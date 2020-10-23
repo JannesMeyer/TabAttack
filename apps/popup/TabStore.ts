@@ -1,5 +1,5 @@
-import assert from '../lib/assert.js';
-import requireValues from '../lib/requireValues.js';
+import assert from '../../lib/assert.js';
+import requireValues from '../../lib/requireValues.js';
 import bt = browser.tabs;
 import bw = browser.windows;
 

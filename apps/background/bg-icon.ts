@@ -1,7 +1,7 @@
-import loadFont from '../fonts/loadFont.js';
+import loadFont from '../../lib/dom/loadFont.js';
 import prefs from '../preferences.js';
 import Icon from './Icon.js';
-import prefersDark from '../lib/prefersDark.js';
+import prefersDark from '../../lib/prefersDark.js';
 import TabCounter from './TabCounter.js';
 
 /** Icon renderer */

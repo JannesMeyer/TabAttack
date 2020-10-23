@@ -1,7 +1,7 @@
-import getString from '../lib/browser/getString.js';
+import getString from '../../lib/browser/getString.js';
 import { Ace } from 'ace-builds';
-import css from '../lib/css.js';
-import assertDefined from '../lib/assertDefined.js';
+import css from '../../lib/css.js';
+import assertDefined from '../../lib/assertDefined.js';
 
 export interface Doc {
 	text?: string;

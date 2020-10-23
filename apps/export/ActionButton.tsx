@@ -1,4 +1,4 @@
-import css, { X } from '../lib/css.js';
+import css, { X } from '../../lib/css.js';
 // import { ListenerBucket } from 'keypress-tool';
 
 interface P {

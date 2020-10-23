@@ -1,14 +1,14 @@
-import '../lib/Array.extensions.js';
-import assertDefined from '../lib/assertDefined.js';
-import ready from '../lib/dom/ready.js';
-import markdownLink from '../lib/markdownLink.js';
-import writeClipboard from '../lib/writeClipboard.js';
-import UrlQuery from '../lib/dom/UrlQuery.js';
-import css from '../lib/css.js';
+import '../../lib/Array.extensions.js';
+import assertDefined from '../../lib/assertDefined.js';
+import ready from '../../lib/dom/ready.js';
+import markdownLink from '../../lib/markdownLink.js';
+import writeClipboard from '../../lib/writeClipboard.js';
+import UrlQuery from '../../lib/dom/UrlQuery.js';
+import css from '../../lib/css.js';
 import openTabsEditor from '../background/openTabsEditor.js';
 import PopupParams from './PopupParams.js';
 import TabStore from './TabStore.js';
-import showToast from '../tabs/Toast.js';
+import showToast from '../export/Toast.js';
 import ListWindow from './ListWindow.js';
 import PopupType from './PopupType.js';
 
