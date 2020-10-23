@@ -19,7 +19,6 @@ function goToLastFocused() {
 
 /** Window ID of the TabAttack popup window */
 let popupId: number | undefined;
-browser.browserAction.onClicked.addListener(tab => openPopup(tab).catch(logError));
 
 onCommand('open_tab_list', () => getActiveTab().then(openPopup).catch(logError));
 
