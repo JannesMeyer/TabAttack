@@ -1,4 +1,4 @@
-import Preferences from '../lib/Preferences.js';
+import Preferences from '../lib/browser/Preferences.js';
 
 const prefs = new Preferences({
 	format: 'markdown',
