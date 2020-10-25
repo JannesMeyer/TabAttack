@@ -1,6 +1,8 @@
 import Preferences from '../lib/browser/Preferences.js';
+import PopupType from './popup/PopupType.js';
 
 export default new Preferences({
+	browserAction: PopupType.BrowserAction,
 	format: 'markdown',
 	domainBlacklist: [
 		'mail.google.com',

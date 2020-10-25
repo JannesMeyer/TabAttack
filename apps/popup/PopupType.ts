@@ -3,5 +3,6 @@ const enum PopupType {
 	Popup,
 	BrowserAction,
 	Sidebar,
+	DirectExport,
 }
 export default PopupType;
