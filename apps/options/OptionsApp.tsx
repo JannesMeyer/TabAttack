@@ -142,16 +142,6 @@ class OptionsApp extends React.Component<P, S> {
 			<h3>{getString('options_export')}</h3>
 
 			<label className="row">
-				<span>Click Action</span>
-				<select value={prefs.browserAction} onChange={ev => this.handleChange(ev, 'browserAction')}>
-					<option value={PopupType.DirectExport}>Export Tabs</option>
-					<option value={PopupType.ActionPopup}>Tab List (Inline Popup)</option>
-					<option value={PopupType.ExternalPopup}>Tab List (Window)</option>
-					{isFirefox && <option value={PopupType.Sidebar}>Tab List (Sidebar)</option>}
-				</select>
-			</label>
-
-			<label className="row">
 				<span>Ignore Domains</span>
 				<a href="" onClick={this.toggleDomainBlacklist}>{prefs.domainBlacklist.length} domain(s)</a>
 			</label>
@@ -171,7 +161,7 @@ class OptionsApp extends React.Component<P, S> {
 
 			<label className="row">
 				<span>Color Scheme</span>
-				<select value={prefs.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')}>
+				<select value={prefs.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')} style={{ width: 203 }}>
 					<optgroup label="Light">
 						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
@@ -183,7 +173,7 @@ class OptionsApp extends React.Component<P, S> {
 
 			<label className="row">
 				<span>Color Scheme - Dark Mode</span>
-				<select value={prefs.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')}>
+				<select value={prefs.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')} style={{ width: 203 }}>
 					<optgroup label="Light">
 						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
@@ -195,6 +185,16 @@ class OptionsApp extends React.Component<P, S> {
 
 			<h3>Icon</h3>
 
+			<label className="row">
+				<span>Click Action</span>
+				<select value={prefs.browserAction} onChange={ev => this.handleChange(ev, 'browserAction')} style={{ width: 203 }}>
+				<option value={PopupType.ExternalPopup}>Open Tab Switcher (Window)</option>
+					<option value={PopupType.ActionPopup}>Open Tab Switcher (Popup)</option>
+					{isFirefox && <option value={PopupType.Sidebar}>Open Tab Switcher (Sidebar)</option>}
+					<option value={PopupType.DirectExport}>Export Tabs</option>
+				</select>
+			</label>
+			
 			<label className="row">
 				<span>Text Color</span>
 				<input type="color" value={prefs.iconColor} onChange={ev => this.handleChange(ev, 'iconColor')} />
