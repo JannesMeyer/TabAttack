@@ -36,22 +36,20 @@ export default class Preferences<T> {
 		promise.then(result => Object.assign(obj, result));
 
 		// Listen for changes
-		let fn: undefined | ((p: Pick<T, K>) => void);
+		let fn: (() => void) | undefined;
 		bs.onChanged.addListener((changes, area) => {
 			if (this.areaName !== area) {
 				return;
 			}
-			let changedKeys = new Set<K>();
+			let hasChanges = false;
 			for (let key of keys) {
 				let change = changes[key];
 				if (change) {
 					obj[key] = change.newValue;
-					changedKeys.add(key);
+					hasChanges = true;
 				}
 			}
-			if (fn && changedKeys.size > 0) {
-				fn(obj);
-			}
+			hasChanges && fn?.();
 		});
 
 		return { obj, promise, onUpdate: (onChange: typeof fn) => fn = onChange };
