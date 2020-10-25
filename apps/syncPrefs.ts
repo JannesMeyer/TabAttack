@@ -1,6 +1,6 @@
 import Preferences from '../lib/browser/Preferences.js';
 
-const prefs = new Preferences({
+export default new Preferences({
 	format: 'markdown',
 	domainBlacklist: [
 		'mail.google.com',
@@ -15,6 +15,4 @@ const prefs = new Preferences({
 	editorThemeDarkMode: 'chaos',
 	showCopyLinkAsMarkdown: true,
 	showCopyPageAsMarkdown: false,
-});
-export type Prefs = typeof prefs.defaults;
-export default prefs;
+}, 'sync');

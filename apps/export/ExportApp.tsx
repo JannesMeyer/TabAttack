@@ -11,7 +11,7 @@ import { saveTextFile } from '../../lib/files/saveTextFile.js';
 import { AceThemeModule, getAceThemeModule } from '../../lib/getAceThemes.js';
 import logError from '../../lib/logError.js';
 import prefersDark from '../../lib/prefersDark.js';
-import prefs from '../preferences.js';
+import syncPrefs from '../syncPrefs.js';
 import ActionButton from './ActionButton.js';
 import Editor, { Doc } from './Editor.js';
 import showToast from './Toast.js';
@@ -46,7 +46,7 @@ class TabsApp extends React.Component<P, S> {
 		loadFile:  getString('action_load_file'),
 		openLinks: getString('action_open_links'),
 	};
-	private pref = prefs.getWithUpdates('editorTheme', 'editorThemeDarkMode');
+	private pref = syncPrefs.getWithUpdates('editorTheme', 'editorThemeDarkMode');
 
 	constructor(p: P) {
 		super(p);

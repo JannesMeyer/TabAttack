@@ -1,16 +1,18 @@
-import prefs, { Prefs } from '../preferences.js';
+import syncPrefs from '../syncPrefs.js';
 import getString from '../../lib/browser/getString.js';
 import { getAceThemeList, AceTheme } from '../../lib/getAceThemes.js';
 import css from '../../lib/css.js';
 import debounce from '../../lib/debounce.js';
 
+type SyncPrefs = typeof syncPrefs.defaults;
+
 // Set title
 document.title = getString('options');
 
-const savePrefs = debounce(prefs.set.bind(prefs), 200);
+const savePrefs = debounce(syncPrefs.set.bind(syncPrefs), 200);
 
 // Load preferences
-Promise.all([prefs.getAll(), getAceThemeList()]).then(([p, tl]) => {
+Promise.all([syncPrefs.getAll(), getAceThemeList()]).then(([p, tl]) => {
 	let themes = tl.themes.slice().sort((a, b) => a.name.localeCompare(b.name));
 	ReactDOM.render(<OptionsApp
 		prefs={p}
@@ -20,13 +22,13 @@ Promise.all([prefs.getAll(), getAceThemeList()]).then(([p, tl]) => {
 });
 
 interface P {
-	prefs: Prefs;
+	prefs: SyncPrefs;
 	lightThemes: AceTheme[];
 	darkThemes: AceTheme[];
 }
 
 interface S {
-	prefs: Prefs;
+	prefs: SyncPrefs;
 	showDomainBlacklist: boolean;
 }
 
@@ -40,12 +42,12 @@ class OptionsApp extends React.Component<P, S> {
 		};
 	}
 
-	private handleChange<K extends keyof Prefs>({ target }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: K) {
+	private handleChange<K extends keyof SyncPrefs>({ target }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: K) {
 		let value = (target.type === 'checkbox' ? ('checked' in target ? target.checked : false) : target.value);
 		this.setPref(field, value);
 	}
 
-	private setPref<K extends keyof Prefs>(field: K, value: unknown) {
+	private setPref<K extends keyof SyncPrefs>(field: K, value: unknown) {
 		this.setState(s => {
 			let prefs = { ...s.prefs, [field]: value };
 			savePrefs(prefs);

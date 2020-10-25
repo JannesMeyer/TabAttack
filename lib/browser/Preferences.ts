@@ -5,15 +5,7 @@ export default class Preferences<T> {
 	private area: bs.StorageArea;
 
 	constructor(readonly defaults: T, private areaName: 'local' | 'sync' = 'sync') {
-		if (areaName === 'local') {
-			this.area = bs.local;
-
-		} else if (areaName === 'sync') {
-			this.area = bs.sync;
-
-		} else {
-			throw new Error(`Unsupported storage area ${areaName}`);
-		}
+		this.area = bs[areaName];
 	}
 
 	/**
@@ -65,8 +57,8 @@ export default class Preferences<T> {
 	/**
 	 * Sets multiple values
 	 */
-	async set<K extends keyof T>(items: Pick<T, K>) {
-		await this.area.set(items);
+	set<K extends keyof T>(items: Pick<T, K>) {
+		return this.area.set(items);
 	}
 }
 

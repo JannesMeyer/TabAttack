@@ -1,5 +1,5 @@
 import loadFont from '../../lib/dom/loadFont.js';
-import prefs from '../preferences.js';
+import syncPrefs from '../syncPrefs.js';
 import Icon from './Icon.js';
 import prefersDark from '../../lib/prefersDark.js';
 import TabCounter from './TabCounter.js';
@@ -10,18 +10,18 @@ const icon = new Icon(devicePixelRatio);
 /** Observes changes in the number of tabs per window */
 const tabCounter = new TabCounter();
 
-const pref = prefs.getWithUpdates('iconColor', 'iconColorDarkMode');
+const sPrefs = syncPrefs.getWithUpdates('iconColor', 'iconColorDarkMode');
 
 // Load fonts
 Promise.all([
-	pref.promise,
+	sPrefs.promise,
 	tabCounter.attach(),
 	loadFont('Roboto', '/fonts/Roboto-Bold.woff2'),
 	loadFont('Roboto Condensed', '/fonts/Roboto-Condensed-Bold.woff2'),
 ]).then(() => {
 	tabCounter.listeners.add(updateIcon);
 	prefersDark.addEventListener('change', () => updateIcon());
-	pref.onUpdate(() => updateIcon());
+	sPrefs.onUpdate(() => updateIcon());
 
 	// Initial render
 	return updateIcon();
@@ -34,8 +34,8 @@ Promise.all([
 async function updateIcon(windowId?: number) {
 	let scales = getScales();
 
-	icon.textColor = pref.obj.iconColor;
-	icon.textColorDark = pref.obj.iconColorDarkMode;
+	icon.textColor = sPrefs.obj.iconColor;
+	icon.textColorDark = sPrefs.obj.iconColorDarkMode;
 
 	// Single window
 	if (windowId != null) {

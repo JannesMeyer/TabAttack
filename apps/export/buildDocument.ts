@@ -1,7 +1,7 @@
 import assertDefined from '../../lib/assertDefined.js';
 import getString from '../../lib/browser/getString.js';
 import markdownLink from '../../lib/markdownLink.js';
-import prefs from '../preferences.js';
+import syncPrefs from '../syncPrefs.js';
 import { Doc } from './Editor.js';
 
 const protocolBlacklist = new Set([
@@ -19,7 +19,7 @@ const protocolBlacklist = new Set([
  * Filter some tabs and windows out, then build the document
  */
 export default async function buildDocument(sourceTabId?: number, windowId?: number) {
-	let p = await prefs.get('format', 'ignorePinned', 'domainBlacklist');
+	let p = await syncPrefs.get('format', 'ignorePinned', 'domainBlacklist');
 	let windows = await browser.windows.getAll({ populate: true });
 
 	// Pull a window to the top

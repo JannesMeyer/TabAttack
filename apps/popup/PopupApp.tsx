@@ -6,7 +6,7 @@ import writeClipboard from '../../lib/writeClipboard.js';
 import UrlQuery from '../../lib/dom/UrlQuery.js';
 import css from '../../lib/css.js';
 import openTabsEditor from '../background/openTabsEditor.js';
-import PopupParams from './PopupParams.js';
+import localPrefs from '../localPrefs.js';
 import TabStore from './TabStore.js';
 import showToast from '../export/Toast.js';
 import ListWindow from './ListWindow.js';
@@ -94,16 +94,14 @@ class PopupApp extends React.Component<P, S> {
 		}
 		// browser.windows.getCurrent() cannot be used because it is async and the browser
 		// does not wait for it when unloading the window
-		let p: PopupParams = {
-			width: outerWidth,
-			height: outerHeight,
-			top: screenY,
-			left: screenX,
-		};
-		if (p.top < 0 || p.left < 0 || p.width < 0 || p.height < 0) {
+		let width = outerWidth;
+		let height = outerHeight;
+		let top = screenY;
+		let left = screenX;
+		if (top < 0 || left < 0 || width < 0 || height < 0) {
 			return;
 		}
-		browser.storage.local.set({ popupWindow: p });
+		localPrefs.set({ popupWindow: { width, height, top, left } });
 	};
 
 	// handleMessage = (m: Message) => {

@@ -1,7 +1,7 @@
 import onCommand from '../../lib/browser/onCommand.js';
 import logError from '../../lib/logError.js';
 import assertDefined from '../../lib/assertDefined.js';
-import PopupParams from '../popup/PopupParams.js';
+import localPrefs from '../localPrefs.js';
 import FocusOrder from './FocusOrder.js';
 import getActiveTab from '../../lib/browser/getActiveTab.js';
 import UrlQuery from '../../lib/dom/UrlQuery.js';
@@ -45,15 +45,8 @@ async function openPopup(tab: browser.tabs.Tab) {
 	}
 }
 
-let defaultPopupWindow: PopupParams = {
-	width: 300,
-	height: 600,
-	top: 0,
-	left: 0,
-};
-
 async function showPopup(opener: browser.tabs.Tab) {
-	let popupWindow: PopupParams = (await browser.storage.local.get({ popupWindow: defaultPopupWindow })).popupWindow;
+	let { popupWindow } = await localPrefs.get('popupWindow');
 	let w = await browser.windows.create({
 		...popupWindow,
 		type: 'popup',

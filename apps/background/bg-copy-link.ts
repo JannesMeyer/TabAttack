@@ -7,7 +7,7 @@ import ContextMenuItem from '../../lib/ContextMenuItem.js';
 import logError from '../../lib/logError.js';
 import markdownLink from '../../lib/markdownLink.js';
 import writeClipboard from '../../lib/writeClipboard.js';
-import prefs from '../preferences.js';
+import syncPrefs from '../syncPrefs.js';
 
 /** Global shortcut: Copy active tab as a Markdown link */
 onCommand('copy_tab_as_markdown', function() {
@@ -47,7 +47,7 @@ const copyLinkCmi = new ContextMenuItem({
 		});
 	},
 });
-prefs.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown: x }) => {
+syncPrefs.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown: x }) => {
 	copyLinkCmi.setVisible(x).catch(logError);
 });
 onMessage('show copyLinkItem', () => copyLinkCmi.setVisible(true).catch(logError));
@@ -61,7 +61,7 @@ const copyPageCmi = new ContextMenuItem({
 		copyLink(tab.title, assertDefined(tab.url));
 	},
 });
-prefs.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown: x }) => {
+syncPrefs.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown: x }) => {
 	copyPageCmi.setVisible(x).catch(logError);
 });
 onMessage('show copyPageItem', () => copyPageCmi.setVisible(true).catch(logError));
