@@ -13,12 +13,12 @@ import ListWindow from './ListWindow.js';
 import PopupType from './PopupType.js';
 
 let q = UrlQuery.fromString();
-let t = q.getNumber('t');
+let t = q.getString('t');
 let type = PopupType.Default;
-if (t === PopupType.Popup || t === PopupType.BrowserAction || t === PopupType.Sidebar) {
+if (t === PopupType.ExternalPopup || t === PopupType.ActionPopup || t === PopupType.Sidebar) {
 	type = t;
 }
-if (type === PopupType.BrowserAction) {
+if (type === PopupType.ActionPopup) {
 	css`body {
 		width: 320px;
 		height: 520px;
@@ -58,7 +58,7 @@ class PopupApp extends React.Component<P, S> {
 
 	get oneWindow() {
 		let { type } = this.props;
-		return (type === PopupType.BrowserAction || type === PopupType.Sidebar);
+		return (type === PopupType.ActionPopup || type === PopupType.Sidebar);
 	}
 
 	componentDidMount() {
@@ -89,7 +89,7 @@ class PopupApp extends React.Component<P, S> {
 
 	/** Save window position */
 	private handlePageHide = () => {
-		if (this.props.type !== PopupType.Popup) {
+		if (this.props.type !== PopupType.ExternalPopup) {
 			return;
 		}
 		// browser.windows.getCurrent() cannot be used because it is async and the browser
@@ -246,10 +246,8 @@ class PopupApp extends React.Component<P, S> {
 	// 	this.setState({ selectedTabId: nextTab.id });
 	// }
 
-	private endBrowserAction() {
-		if (this.props.type === PopupType.BrowserAction) {
-			close();
-		}
+	private endActionPopup() {
+		(this.props.type === PopupType.ActionPopup) && close();
 	}
 
 	private activateTab(id: number | undefined) {
@@ -257,7 +255,7 @@ class PopupApp extends React.Component<P, S> {
 			return;
 		}
 		browser.tabs.update(id, { active: true }).catch(logError);
-		this.endBrowserAction();
+		this.endActionPopup();
 	}
 
 	private closeTab(id: number | undefined) {
@@ -313,12 +311,12 @@ class PopupApp extends React.Component<P, S> {
 
 	private handleExport = () => {
 		openTabsEditor({});
-		this.endBrowserAction();
+		this.endActionPopup();
 	};
 
 	private handleImport = () => {
 		openTabsEditor({ import: true });
-		this.endBrowserAction();
+		this.endActionPopup();
 	};
 
 	private handleUrlToggle = () => {
@@ -401,7 +399,7 @@ class PopupApp extends React.Component<P, S> {
 				<button type="button" onClick={this.handleImport}>Import</button>
 			</div>
 		];
-		return (p.type === PopupType.BrowserAction ? items.reverse() : items);
+		return (p.type === PopupType.ActionPopup ? items.reverse() : items);
 	}
 }
 

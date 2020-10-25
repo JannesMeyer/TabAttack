@@ -50,7 +50,7 @@ async function showPopup(opener: browser.tabs.Tab) {
 	let w = await browser.windows.create({
 		...popupWindow,
 		type: 'popup',
-		url: browser.runtime.getURL('popup.html') + new UrlQuery({ t: PopupType.Popup, opener: opener.windowId }),
+		url: browser.runtime.getURL('popup.html') + new UrlQuery({ t: PopupType.ExternalPopup, opener: opener.windowId }),
 	});
 	let id = assertDefined(w.id);
 	// Some browsers ignore the top and left coordinates

@@ -3,6 +3,8 @@ import getString from '../../lib/browser/getString.js';
 import { getAceThemeList, AceTheme } from '../../lib/getAceThemes.js';
 import css from '../../lib/css.js';
 import debounce from '../../lib/debounce.js';
+import PopupType from '../popup/PopupType.js';
+import { isFirefox } from '../../lib/browser/runtime.js';
 
 type SyncPrefs = typeof syncPrefs.defaults;
 
@@ -138,6 +140,16 @@ class OptionsApp extends React.Component<P, S> {
 		}
 		return <>
 			<h3>{getString('options_export')}</h3>
+
+			<label className="row">
+				<span>Click Action</span>
+				<select value={prefs.browserAction} onChange={ev => this.handleChange(ev, 'browserAction')}>
+					<option value={PopupType.DirectExport}>Export Tabs</option>
+					<option value={PopupType.ActionPopup}>Tab List (Inline Popup)</option>
+					<option value={PopupType.ExternalPopup}>Tab List (Window)</option>
+					{isFirefox && <option value={PopupType.Sidebar}>Tab List (Sidebar)</option>}
+				</select>
+			</label>
 
 			<label className="row">
 				<span>Ignore Domains</span>
