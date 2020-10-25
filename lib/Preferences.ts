@@ -1,10 +1,20 @@
-import onMessage from './browser/onMessage.js';
-import sendMessage from './browser/sendMessage.js';
-import logError from './logError.js';
+import bs = browser.storage;
 
 export default class Preferences<T> {
 
-	constructor(readonly defaults: T) {}
+	private area: bs.StorageArea;
+
+	constructor(readonly defaults: T, private areaName: 'local' | 'sync' = 'sync') {
+		if (areaName === 'local') {
+			this.area = bs.local;
+
+		} else if (areaName === 'sync') {
+			this.area = bs.sync;
+
+		} else {
+			throw new Error(`Unsupported storage area ${areaName}`);
+		}
+	}
 
 	/**
 	 * Requests one ore more preference values and
@@ -13,34 +23,52 @@ export default class Preferences<T> {
 	 */
 	get<K extends keyof T>(...keys: K[]) {
 		let defaults = filterObject(this.defaults, keys);
-		return browser.storage.sync.get(defaults) as Promise<Pick<T, K>>;
+		return this.area.get(defaults) as Promise<Pick<T, K>>;
 	}
 
-	async getWithUpdates<X extends keyof T>(...keys: X[]) {
-		let x = await this.get(...keys);
-		this.onChange(() => this.get(...keys).then(res => Object.assign(x, res)).catch(logError));
-		return x;
+	// TODO: Allow removal of change handler
+	getWithUpdates<K extends keyof T>(...keys: K[]) {
+		// Create default object
+		let obj = filterObject(this.defaults, keys);
+
+		// Get values
+		let promise = this.area.get(obj) as Promise<Pick<T, K>>;
+		promise.then(result => Object.assign(obj, result));
+
+		// Listen for changes
+		let fn: undefined | ((p: Pick<T, K>) => void);
+		bs.onChanged.addListener((changes, area) => {
+			if (this.areaName !== area) {
+				return;
+			}
+			let changedKeys = new Set<K>();
+			for (let key of keys) {
+				let change = changes[key];
+				if (change) {
+					obj[key] = change.newValue;
+					changedKeys.add(key);
+				}
+			}
+			if (fn && changedKeys.size > 0) {
+				fn(obj);
+			}
+		});
+
+		return { obj, promise, onUpdate: (onChange: typeof fn) => fn = onChange };
 	}
 
 	/**
 	 * Requests all values
 	 */
 	getAll() {
-		return browser.storage.sync.get(this.defaults) as Promise<T>;
+		return this.area.get(this.defaults) as Promise<T>;
 	}
 
 	/**
 	 * Sets multiple values
 	 */
-	async set<X extends keyof T>(items: Pick<T, X>, notify = true) {
-		await browser.storage.sync.set(items);
-		notify && sendMessage('prefs changed');
-	}
-
-	/** Allows to listen for preference changes */
-	onChange(callback: () => void, leadingCall = false) {
-		onMessage('prefs changed', callback);
-		leadingCall && callback();
+	async set<K extends keyof T>(items: Pick<T, K>) {
+		await this.area.set(items);
 	}
 }
 

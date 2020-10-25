@@ -46,6 +46,7 @@ class TabsApp extends React.Component<P, S> {
 		loadFile:  getString('action_load_file'),
 		openLinks: getString('action_open_links'),
 	};
+	private pref = prefs.getWithUpdates('editorTheme', 'editorThemeDarkMode');
 
 	constructor(p: P) {
 		super(p);
@@ -69,7 +70,8 @@ class TabsApp extends React.Component<P, S> {
 		}), this.fileInput.current, document.body);
 
 		// Load theme
-		prefs.onChange(() => this.updateTheme().catch(logError), true);
+		this.pref.promise.then(() => this.updateTheme().catch(logError));
+		this.pref.onUpdate(() => this.updateTheme().catch(logError));
 		prefersDark.addEventListener('change', () => this.updateTheme().catch(logError));
 
 		// import KeyPress from 'keypress-tool';
@@ -80,7 +82,7 @@ class TabsApp extends React.Component<P, S> {
 	}
 
 	async updateTheme() {
-		let { editorTheme, editorThemeDarkMode } = await prefs.get('editorTheme', 'editorThemeDarkMode');
+		let { editorTheme, editorThemeDarkMode } = this.pref.obj;
 		let name = (prefersDark.matches ? editorThemeDarkMode : editorTheme);
 		this.setState({ theme: await getAceThemeModule(name) });
 	}

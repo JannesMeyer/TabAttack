@@ -10,27 +10,22 @@ const icon = new Icon(devicePixelRatio);
 /** Observes changes in the number of tabs per window */
 const tabCounter = new TabCounter();
 
+const pref = prefs.getWithUpdates('iconColor', 'iconColorDarkMode');
+
 // Load fonts
 Promise.all([
-	updatePrefs(),
+	pref.promise,
 	tabCounter.attach(),
 	loadFont('Roboto', '/fonts/Roboto-Bold.woff2'),
 	loadFont('Roboto Condensed', '/fonts/Roboto-Condensed-Bold.woff2'),
 ]).then(() => {
 	tabCounter.listeners.add(updateIcon);
 	prefersDark.addEventListener('change', () => updateIcon());
-	prefs.onChange(() => updatePrefs().then(() => updateIcon()));
+	pref.onUpdate(() => updateIcon());
 
 	// Initial render
 	return updateIcon();
 });
-
-/** Updates the values of the preferences */
-async function updatePrefs() {
-	let p = await prefs.get('iconColor', 'iconColorDarkMode');
-	icon.textColor = p.iconColor;
-	icon.textColorDark = p.iconColorDarkMode;
-}
 
 // TODO: incognito windows should always use dark text color (in Chromium)
 /**
@@ -38,6 +33,9 @@ async function updatePrefs() {
  */
 async function updateIcon(windowId?: number) {
 	let scales = getScales();
+
+	icon.textColor = pref.obj.iconColor;
+	icon.textColorDark = pref.obj.iconColorDarkMode;
 
 	// Single window
 	if (windowId != null) {
