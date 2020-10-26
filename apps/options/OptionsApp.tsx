@@ -196,12 +196,12 @@ class OptionsApp extends React.Component<P, S> {
 			</label>
 			
 			<label className="row">
-				<span>Text Color</span>
+				<span>Color</span>
 				<input type="color" value={prefs.iconColor} onChange={ev => this.handleChange(ev, 'iconColor')} />
 			</label>
 
 			<label className="row">
-				<span>Text Color - Dark Mode</span>
+				<span>Color - Dark Mode</span>
 				<input type="color" value={prefs.iconColorDarkMode} onChange={ev => this.handleChange(ev, 'iconColorDarkMode')} />
 			</label>
 

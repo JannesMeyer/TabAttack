@@ -33,7 +33,7 @@ Promise.all([
 	ready(),
 	q.getNumber('opener') ?? browser.windows.getCurrent().then(w => w.id),
 ]).then(([el, openerWindowId]) => {
-	ReactDOM.render(<PopupApp	type={type}	openerWindowId={openerWindowId}	/>, el);
+	ReactDOM.render(<PopupApp type={type} openerWindowId={openerWindowId} />, el);
 });
 
 interface P {
@@ -52,8 +52,6 @@ class PopupApp extends React.Component<P, S> {
 
 	constructor(p: P) {
 		super(p);
-		let { oneWindow } = this;
-		TabStore.init(!oneWindow, (oneWindow ? undefined : p.openerWindowId));
 		this.state = {
 			// selectedTabId: (p.isSidebar ? undefined : p.tm.getFirst()),
 			showURL: false,
@@ -67,10 +65,10 @@ class PopupApp extends React.Component<P, S> {
 
 	componentDidMount() {
 		TabStore.listeners.add(() => this.forceUpdate());
+		TabStore.init(!this.oneWindow, this.props.openerWindowId);
 		addEventListener('focus', this.handleFocus);
 		addEventListener('blur', this.handleBlur);
 		addEventListener('keydown', this.handleKeyDown);
-
 		// Clean this up in componentWillUnmount?
 		addEventListener('beforeunload', this.handlePageHide);
 		if (this.props.type === PopupType.ExternalPopup) {
@@ -83,6 +81,7 @@ class PopupApp extends React.Component<P, S> {
 		removeEventListener('focus', this.handleFocus);
 		removeEventListener('blur', this.handleBlur);
 		removeEventListener('keydown', this.handleKeyDown);
+		removeEventListener('beforeunload', this.handlePageHide);
 		onMessage('focusPreviousWindow');
 	}
 
