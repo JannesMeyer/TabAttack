@@ -38,7 +38,7 @@
   "sidebar_action": {
 		"default_icon": "images/tab.svg",
 		"default_title": "Tabs",
-    "default_panel": "popup.html?t=3",
+    "default_panel": "popup.html?t=Sidebar",
     "browser_style": false,
     "open_at_install": false
   },
