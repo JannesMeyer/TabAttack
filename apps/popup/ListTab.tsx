@@ -90,6 +90,9 @@ export default class ListTab extends React.PureComponent<P> {
 		width: 3px;
 		background: #0a84ff;
 	}
+	&.pinned {
+		background-color: #ece8e0;	
+	}
 	@media (prefers-color-scheme: dark) {
 		&.active {
 			background: #323234;
@@ -143,7 +146,7 @@ export default class ListTab extends React.PureComponent<P> {
 			onMouseDown={ev => p.onMouseDown(p.id, ev)}
 			onClick={ev => p.onClick(p.id, ev)}
 			onAuxClick={ev => p.onAuxClick(p.id, ev)}
-			className={X(ListTab.css, p.status, { discarded, active, selected, hidden, showURL })}
+			className={X(ListTab.css, p.status, { discarded, active, selected, hidden, showURL, pinned })}
 		>
 			<img className="favicon" src={favicon} />
 			<div className="title">{text}</div>
