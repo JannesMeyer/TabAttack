@@ -6,6 +6,9 @@ import bw = browser.windows;
 type OnTabRemoved = Parameters<typeof bt.onRemoved.addListener>[0];
 type OnTabUpdated = Parameters<typeof bt.onUpdated.addListener>[0];
 type OnTabActivated = Parameters<typeof bt.onActivated.addListener>[0];
+type OnTabDetached = Parameters<typeof bt.onDetached.addListener>[0];
+type OnTabAttached = Parameters<typeof bt.onAttached.addListener>[0];
+type OnTabMoved = Parameters<typeof bt.onMoved.addListener>[0];
 
 export interface TWindow extends ReturnType<typeof TabStore.convertWindow> {}
 export interface TTab extends ReturnType<typeof TabStore.convertTab> {}
@@ -50,6 +53,9 @@ class TabStore {
 		bw.onRemoved.addListener(this.handleWindowRemoved);
 		observeFocus && bw.onFocusChanged.addListener(this.handleWindowFocusChanged);
 		bt.onCreated.addListener(this.handleTabCreated);
+		bt.onDetached.addListener(this.handleTabDetached);
+		bt.onAttached.addListener(this.handleTabAttached);
+		bt.onMoved.addListener(this.handleTabMoved);
 		bt.onRemoved.addListener(this.handleTabRemoved);
 		bt.onActivated.addListener(this.handleTabActivated);
 		try {
@@ -68,6 +74,9 @@ class TabStore {
 		bw.onRemoved.removeListener(this.handleWindowRemoved);
 		bw.onFocusChanged.removeListener(this.handleWindowFocusChanged);
 		bt.onCreated.removeListener(this.handleTabCreated);
+		bt.onDetached.removeListener(this.handleTabDetached);
+		bt.onAttached.removeListener(this.handleTabAttached);
+		bt.onMoved.removeListener(this.handleTabMoved);
 		bt.onRemoved.removeListener(this.handleTabRemoved);
 		bt.onActivated.removeListener(this.handleTabActivated);
 		bt.onUpdated.removeListener(this.handleTabUpdate);
@@ -118,6 +127,34 @@ class TabStore {
 		this.windows.getOrThrow(windowId).tabListVersion++;
 
 		!isWindowClosing && this.notify();
+	};
+
+	private handleTabDetached: OnTabDetached = (id, { oldWindowId }) => {
+		let tab = this.tabs.getOrThrow(id);
+		tab.windowId = bw.WINDOW_ID_NONE;
+
+		// Update tab list
+		this.windows.getOrThrow(oldWindowId).tabListVersion++;
+		this.notify();
+	};
+	
+	private handleTabAttached: OnTabAttached = (id, { newWindowId, newPosition }) => {
+		let tab = this.tabs.getOrThrow(id);
+		tab.windowId = newWindowId;
+		tab.index = newPosition;
+
+		// Update tab list
+		this.windows.getOrThrow(newWindowId).tabListVersion++;
+		this.notify();
+	};
+
+	private handleTabMoved: OnTabMoved = (tabId, { toIndex, windowId }) => {
+		let tab = this.tabs.getOrThrow(tabId);
+		tab.index = toIndex;
+
+		// Update list
+		this.windows.getOrThrow(windowId).tabListVersion++;
+		this.notify();
 	};
 
 	/**
