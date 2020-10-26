@@ -188,9 +188,9 @@ class OptionsApp extends React.Component<P, S> {
 			<label className="row">
 				<span>Click Action</span>
 				<select value={prefs.browserAction} onChange={ev => this.handleChange(ev, 'browserAction')} style={{ width: 203 }}>
-					<option value={PopupType.ActionPopup}>Open Tab Switcher (Popup)</option>
-					{isFirefox && <option value={PopupType.Sidebar}>Open Tab Switcher (Sidebar)</option>}
-					<option value={PopupType.ExternalPopup}>Open Tab Switcher (Window)</option>
+					<option value={PopupType.ActionPopup}>Tab Switcher (Popup)</option>
+					{isFirefox && <option value={PopupType.Sidebar}>Tab Switcher (Sidebar)</option>}
+					<option value={PopupType.ExternalPopup}>Tab Switcher (Window)</option>
 					<option value={PopupType.DirectExport}>Export Tabs</option>
 				</select>
 			</label>

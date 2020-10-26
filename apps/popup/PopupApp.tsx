@@ -13,11 +13,14 @@ import ListWindow from './ListWindow.js';
 import PopupType from './PopupType.js';
 
 let q = UrlQuery.fromString();
-let t = q.getString('t');
-let type = PopupType.Default;
-if (t === PopupType.ExternalPopup || t === PopupType.ActionPopup || t === PopupType.Sidebar) {
-	type = t;
-}
+let type = (() => {
+	let t = q.getString('t');
+	if (t === PopupType.ExternalPopup || t === PopupType.ActionPopup || t === PopupType.Sidebar) {
+		return t;
+	}
+	return PopupType.Default;
+})();
+
 if (type === PopupType.ActionPopup) {
 	css`body {
 		width: 320px;
