@@ -71,6 +71,9 @@ export default class ListTab extends React.PureComponent<P> {
 	&.showURL .title::first-line {
 		color: #000;
 	}
+	& .sound {
+		cursor: default;
+	}
 	&:hover {
 		background: #eee;
 	}
@@ -144,7 +147,17 @@ export default class ListTab extends React.PureComponent<P> {
 		>
 			<img className="favicon" src={favicon} />
 			<div className="title">{text}</div>
-			{(audible || muted) && <img src={muted ? '/icons/tab-audio-muted.svg' : '/icons/tab-audio-playing.svg'}/>}
+			{(audible || muted) && <img
+				className="sound"
+				src={muted ? '/icons/tab-audio-muted.svg' : '/icons/tab-audio-playing.svg'}
+				onClick={this.handleMute}
+			/>}
 		</a>;
 	}
+
+	handleMute = (ev: React.MouseEvent) => {
+		ev.preventDefault();
+		ev.stopPropagation();
+		browser.tabs.update(this.props.id, { muted: !this.props.mutedInfo?.muted });
+	};
 }
