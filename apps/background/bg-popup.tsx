@@ -6,6 +6,44 @@ import FocusOrder from './FocusOrder.js';
 import getActiveTab from '../../lib/browser/getActiveTab.js';
 import UrlQuery from '../../lib/dom/UrlQuery.js';
 import PopupType from '../popup/PopupType.js';
+import syncPrefs from '../syncPrefs.js';
+import openTabsEditor from './openTabsEditor.js';
+
+let pp = syncPrefs.getWithUpdates('browserAction');
+pp.promise.then(() => {
+	if (pp.obj.browserAction === PopupType.ActionPopup) {
+		// Enable
+		browser.browserAction.setPopup({ popup: 'popup.html?t=' + PopupType.ActionPopup });		
+	}
+});
+pp.onUpdate(({ browserAction }) => {
+	if (browserAction == null) {
+		return;
+	}
+	let { oldValue, newValue } = browserAction;
+	if (newValue === PopupType.ActionPopup && oldValue !== PopupType.ActionPopup) {
+		// Enable
+		browser.browserAction.setPopup({ popup: 'popup.html?t=' + PopupType.ActionPopup });
+	}
+	if (newValue !== PopupType.ActionPopup && oldValue === PopupType.ActionPopup) {
+		// Disable
+		browser.browserAction.setPopup({ popup: null });
+	}
+});
+
+browser.browserAction.onClicked.addListener((tab, info) => {
+	let { browserAction } = pp.obj;
+	if (browserAction === PopupType.ExternalPopup || info?.button === 1) {
+		openExternalPopup(tab).catch(logError);
+
+	} else if (browserAction === PopupType.Sidebar) {
+		browser.sidebarAction.toggle();
+
+	} else if (browserAction === PopupType.DirectExport) {
+		openTabsEditor({ tab: tab.id, window: tab.windowId });
+	}
+});
+
 
 let focusOrder = new FocusOrder();
 
@@ -20,10 +58,10 @@ function goToLastFocused() {
 /** Window ID of the TabAttack popup window */
 let popupId: number | undefined;
 
-onCommand('open_tab_list', () => getActiveTab().then(openPopup).catch(logError));
+onCommand('open_tab_list', () => getActiveTab().then(openExternalPopup).catch(logError));
 
 /** Opens popup or switches back to previous window */
-async function openPopup(tab: browser.tabs.Tab) {
+async function openExternalPopup(tab: browser.tabs.Tab) {
 	if (popupId == null) {
 		// First open
 		popupId = await showPopup(tab);

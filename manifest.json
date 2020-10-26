@@ -33,8 +33,7 @@
 	},
 	"browser_action": {
 		"default_icon": "images/transparent.png",
-		"default_title": "__MSG_icon_tooltip__",
-		"default_popup": "popup.html?t=2"
+		"default_title": "__MSG_icon_tooltip__"
 	},
   "sidebar_action": {
 		"default_icon": "images/tab.svg",

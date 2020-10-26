@@ -1,5 +1,10 @@
 import bs = browser.storage;
 
+interface StorageChange<T> {
+	oldValue?: T;
+	newValue?: T;
+}
+
 export default class Preferences<T> {
 
 	private area: bs.StorageArea;
@@ -28,20 +33,20 @@ export default class Preferences<T> {
 		promise.then(result => Object.assign(obj, result));
 
 		// Listen for changes
-		let fn: (() => void) | undefined;
+		type Changes = { [X in K]?: StorageChange<T[X]> };
+		let fn: ((changes: Changes) => void) | undefined;
 		bs.onChanged.addListener((changes, area) => {
 			if (this.areaName !== area) {
 				return;
 			}
-			let hasChanges = false;
-			for (let key of keys) {
-				let change = changes[key];
-				if (change) {
-					obj[key] = change.newValue;
-					hasChanges = true;
+			for (let [k, change] of Object.entries(changes) as [K, bs.StorageChange][]) {
+				if (!keys.includes(k)) {
+					delete changes[k];
+					continue;
 				}
+				obj[k] = change.newValue;
 			}
-			hasChanges && fn?.();
+			fn?.(changes as Changes);
 		});
 
 		return { obj, promise, onUpdate: (onChange: typeof fn) => fn = onChange };
