@@ -40,7 +40,7 @@ export default class Preferences<T> {
 				return;
 			}
 			for (let [k, change] of Object.entries(changes) as [K, bs.StorageChange][]) {
-				if (!keys.includes(k)) {
+				if (!obj.hasOwnProperty(k)) {
 					delete changes[k];
 					continue;
 				}
