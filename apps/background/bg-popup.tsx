@@ -2,12 +2,12 @@ import onCommand from '../../lib/browser/onCommand.js';
 import logError from '../../lib/logError.js';
 import assertDefined from '../../lib/assertDefined.js';
 import localPrefs from '../localPrefs.js';
-import FocusOrder from './FocusOrder.js';
 import getActiveTab from '../../lib/browser/getActiveTab.js';
 import UrlQuery from '../../lib/dom/UrlQuery.js';
 import PopupType from '../popup/PopupType.js';
 import syncPrefs from '../syncPrefs.js';
 import openTabsEditor from './openTabsEditor.js';
+import sendMessage from '../../lib/browser/sendMessage.js';
 
 let pp = syncPrefs.getWithUpdates('browserAction');
 pp.promise.then(() => {
@@ -45,16 +45,6 @@ browser.browserAction.onClicked.addListener((tab, info) => {
 });
 
 
-let focusOrder = new FocusOrder();
-
-function goToLastFocused() {
-	let id = focusOrder.getLast(popupId);
-	if (id == null) {
-		return;
-	}
-	browser.windows.update(id, { focused: true });
-}
-
 /** Window ID of the TabAttack popup window */
 let popupId: number | undefined;
 
@@ -68,7 +58,7 @@ async function openExternalPopup(tab: browser.tabs.Tab) {
 		
 	} else if (popupId === tab.windowId) {
 		// Popup already focused, switch back to previous window
-		goToLastFocused();
+		await sendMessage('focusPreviousWindow');
 
 	} else {
 		// Existing

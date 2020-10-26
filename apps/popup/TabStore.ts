@@ -45,11 +45,6 @@ class TabStore {
 		this.windows = windows.map(TabStore.convertWindow).toMap(w => w.id);
 		this.tabs = windows.flatMap(w => w.tabs?.map(TabStore.convertTab) ?? []).toMap(t => t.id);
 
-		let fw = this.windows.get(focusedWindowId);
-		if (fw) {
-			fw.focusOrder = Date.now();
-		}
-
 		// Event handlers
 		bw.onCreated.addListener(this.handleWindowCreated);
 		bw.onRemoved.addListener(this.handleWindowRemoved);
@@ -63,6 +58,9 @@ class TabStore {
 		} catch {
 			bt.onUpdated.addListener(this.handleTabUpdate);
 		}
+
+		// Set last focused window
+		this.handleWindowFocusChanged(focusedWindowId);
 	}
 
 	dispose() {
@@ -86,19 +84,19 @@ class TabStore {
 		this.notify();
 	};
 
-	private handleWindowFocusChanged = (windowId: number) => {
+	private handleWindowFocusChanged = (windowId: number | undefined) => {
 		if (windowId === bw.WINDOW_ID_NONE) {
 			return;
 		}
-		let w = this.windows.getOrThrow(windowId);
-		if (w.type !== 'normal') {
+		let w = this.windows.get(windowId);
+		if (w == null || w.type !== 'normal') {
 			return;
 		}
 		w.focusOrder = Date.now();
 
 		// Notify if different
-		if (this.lastFocused !== windowId) {
-			this.lastFocused = windowId;
+		if (this.lastFocused !== w.id) {
+			this.lastFocused = w.id;
 			this.notify();
 		}
 	};
@@ -159,6 +157,10 @@ class TabStore {
 
 	getTabsForWindow(windowId: number) {
 		return Array.from(this.tabs.values()).filter(t => t.windowId === windowId);
+	}
+	
+	focusPreviousWindow() {
+		browser.windows.update(this.lastFocused, { focused: true });
 	}
 }
 

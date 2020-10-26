@@ -11,6 +11,7 @@ import TabStore from './TabStore.js';
 import showToast from '../export/Toast.js';
 import ListWindow from './ListWindow.js';
 import PopupType from './PopupType.js';
+import onMessage from '../../lib/browser/onMessage.js';
 
 let q = UrlQuery.fromString();
 let type = (() => {
@@ -52,7 +53,7 @@ class PopupApp extends React.Component<P, S> {
 	constructor(p: P) {
 		super(p);
 		let { oneWindow } = this;
-		TabStore.init(!oneWindow, (oneWindow ? undefined : p.openerWindowId)).then(() => this.forceUpdate());
+		TabStore.init(!oneWindow, (oneWindow ? undefined : p.openerWindowId));
 		this.state = {
 			// selectedTabId: (p.isSidebar ? undefined : p.tm.getFirst()),
 			showURL: false,
@@ -72,6 +73,9 @@ class PopupApp extends React.Component<P, S> {
 
 		// Clean this up in componentWillUnmount?
 		addEventListener('beforeunload', this.handlePageHide);
+		if (this.props.type === PopupType.ExternalPopup) {
+			onMessage('focusPreviousWindow', () => TabStore.focusPreviousWindow());
+		}
 	}
 
 	componentWillUnmount() {
@@ -79,6 +83,7 @@ class PopupApp extends React.Component<P, S> {
 		removeEventListener('focus', this.handleFocus);
 		removeEventListener('blur', this.handleBlur);
 		removeEventListener('keydown', this.handleKeyDown);
+		onMessage('focusPreviousWindow');
 	}
 
 	private handleFocus() {
