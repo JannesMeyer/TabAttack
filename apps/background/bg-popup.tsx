@@ -33,7 +33,7 @@ pp.onUpdate(({ browserAction }) => {
 
 browser.browserAction.onClicked.addListener((tab, info) => {
 	let { browserAction } = pp.obj;
-	if (browserAction === PopupType.ExternalPopup || info?.button === 1) {
+	if (browserAction === PopupType.ExternalPopup || info?.button === 1 || info?.modifiers.includes('Shift')) {
 		openExternalPopup(tab).catch(logError);
 
 	} else if (browserAction === PopupType.Sidebar) {
