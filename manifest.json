@@ -20,9 +20,9 @@
 		"chrome://favicon/"
 	],
 	"icons": {
-		"48": "images/icon-48.png",
-		"96": "images/icon-96.png",
-		"128": "images/icon.svg"
+		"48": "icons/icon-48.png",
+		"96": "icons/icon-96.png",
+		"128": "icons/icon.svg"
 	},
 	"background": {
 		"page": "background.html"
@@ -32,11 +32,11 @@
 		"browser_style": true
 	},
 	"browser_action": {
-		"default_icon": "images/transparent.png",
+		"default_icon": "icons/transparent.png",
 		"default_title": "__MSG_icon_tooltip__"
 	},
   "sidebar_action": {
-		"default_icon": "images/tab.svg",
+		"default_icon": "icons/firefox/tab.svg",
 		"default_title": "Tabs",
     "default_panel": "popup.html?t=Sidebar",
     "browser_style": false,

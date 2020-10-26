@@ -92,11 +92,12 @@ Special thanks to these projects:
 
 Icons from Firefox (MPL v2):
 
- - /icons/extension.svg
- - /icons/tab-audio-playing.svg
- - /icons/tab-audio-muted.svg
- - /icons/tab-loading.png
- - /icons/tab-loading@2x.png
+ - /icons/firefox/extension.svg
+ - /icons/firefox/tab.svg
+ - /icons/firefox/tab-audio-muted.svg
+ - /icons/firefox/tab-audio-playing.svg
+ - /icons/firefox/tab-loading.png
+ - /icons/firefox/tab-loading@2x.png
 
 ## License
 

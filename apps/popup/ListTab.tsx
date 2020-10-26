@@ -106,12 +106,12 @@ export default class ListTab extends React.PureComponent<P> {
 		let favicon: string;
 		if (p.status === 'loading') {
 			// From Firefox (chrome://browser/skin/tabbrowser/tab-loading.png)
-			favicon = (devicePixelRatio > 1 ? '/icons/tab-loading@2x.png' : '/icons/tab-loading.png');
+			favicon = (devicePixelRatio > 1 ? '/icons/firefox/tab-loading@2x.png' : '/icons/firefox/tab-loading.png');
 
 		} else if (p.favIconUrl) {
 			// Extensions don't have access to this (in Firefox)
 			if (p.favIconUrl === 'chrome://mozapps/skin/extensions/extension.svg') {
-				favicon = '/icons/extension.svg';
+				favicon = '/icons/firefox/extension.svg';
 
 			} else {
 				favicon = p.favIconUrl;
@@ -149,7 +149,7 @@ export default class ListTab extends React.PureComponent<P> {
 			<div className="title">{text}</div>
 			{(audible || muted) && <img
 				className="sound"
-				src={muted ? '/icons/tab-audio-muted.svg' : '/icons/tab-audio-playing.svg'}
+				src={muted ? '/icons/firefox/tab-audio-muted.svg' : '/icons/firefox/tab-audio-playing.svg'}
 				onClick={this.handleMute}
 			/>}
 		</a>;
