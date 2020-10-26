@@ -36,7 +36,7 @@ class TabStore {
 	private tabs = new Map<number, TTab>();
 
 	static convertTab(tab: bt.Tab) {
-		return requireValues(tab, 'id', 'url', 'discarded', 'status', 'title', 'windowId');
+		return requireValues(tab, 'id', 'url', 'status', 'title', 'windowId');
 		// TODO: remove "active" property
 	}
 
@@ -54,7 +54,7 @@ class TabStore {
 		bt.onActivated.addListener(this.handleTabActivated);
 		try {
 			// Firefox is the only browser that currently supports filters
-			bt.onUpdated.addListener(this.handleTabUpdate, { properties: ['title', 'status', 'favIconUrl', 'discarded'] });
+			bt.onUpdated.addListener(this.handleTabUpdate, { properties: ['title', 'status', 'favIconUrl', 'discarded', 'audible', 'mutedInfo'] });
 		} catch {
 			bt.onUpdated.addListener(this.handleTabUpdate);
 		}

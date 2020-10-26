@@ -12,6 +12,7 @@ import showToast from '../export/Toast.js';
 import ListWindow from './ListWindow.js';
 import PopupType from './PopupType.js';
 import onMessage from '../../lib/browser/onMessage.js';
+import bt = browser.tabs;
 
 let q = UrlQuery.fromString();
 let type = (() => {
@@ -204,14 +205,14 @@ class PopupApp extends React.Component<P, S> {
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			browser.tabs.discard(this.state.selectedTabId).catch(logError);
+			bt.discard(this.state.selectedTabId).catch(logError);
 
 		} else if (key === 'r') {
 			ev.preventDefault();
 			if (this.state.selectedTabId == null) {
 				return;
 			}
-			browser.tabs.reload(this.state.selectedTabId).catch(logError);
+			bt.reload(this.state.selectedTabId).catch(logError);
 
 		} else if (key === 'x') {
 			this.setState({ showURL: !this.state.showURL });
@@ -261,7 +262,7 @@ class PopupApp extends React.Component<P, S> {
 		if (id == null) {
 			return;
 		}
-		browser.tabs.update(id, { active: true }).catch(logError);
+		bt.update(id, { active: true }).catch(logError);
 		this.endActionPopup();
 	}
 
@@ -269,7 +270,7 @@ class PopupApp extends React.Component<P, S> {
 		if (id == null) {
 			return;
 		}
-		browser.tabs.remove(id).catch(logError);
+		bt.remove(id).catch(logError);
 	}
 
 	// private moveSelectionTo(index: number) {

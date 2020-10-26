@@ -2,7 +2,7 @@ import { isFirefox } from '../../lib/browser/runtime.js';
 import css, { X } from '../../lib/css.js';
 import { TTab } from './TabStore.js';
 
-interface P extends Pick<TTab, 'id' | 'status' | 'url' | 'title' | 'favIconUrl' | 'active' | 'discarded'> {
+interface P extends Pick<TTab, 'id' | 'status' | 'url' | 'title' | 'favIconUrl' | 'active' | 'discarded' | 'audible' | 'mutedInfo' | 'pinned'> {
 	selected: boolean;
 	showURL: boolean;
 	hidden: boolean;
@@ -43,8 +43,7 @@ export default class ListTab extends React.PureComponent<P> {
 	body:not(.inactive) &.selected {
 		box-shadow: inset 0 0 0 1px #0a84ff;
 	}
-	& img {
-		box-sizing: content-box;
+	& .favicon {
 		display: block;
 		width: 16px;
 		height: 16px;
@@ -58,18 +57,18 @@ export default class ListTab extends React.PureComponent<P> {
 			image-rendering: pixelated;
 		}
 	}
-	& .Title {
+	& .title {
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		margin-right: 7px;
 		line-height: 1.5;
 	}
-	&.showURL .Title {
+	&.showURL .title {
 		white-space: pre;
 		color: #777;
 	}
-	&.showURL .Title::first-line {
+	&.showURL .title::first-line {
 		color: #000;
 	}
 	&:hover {
@@ -98,7 +97,8 @@ export default class ListTab extends React.PureComponent<P> {
 	}`;
 
 	render() {
-		let { discarded, active, hidden, selected, showURL, ...p } = this.props;
+		let { discarded, active, hidden, selected, audible, pinned, showURL, ...p } = this.props;
+		let muted = p.mutedInfo?.muted;
 		
 		let favicon: string;
 		if (p.status === 'loading') {
@@ -142,8 +142,9 @@ export default class ListTab extends React.PureComponent<P> {
 			onAuxClick={ev => p.onAuxClick(p.id, ev)}
 			className={X(ListTab.css, p.status, { discarded, active, selected, hidden, showURL })}
 		>
-			<img src={favicon} />
-			<div className="Title">{text}</div>
+			<img className="favicon" src={favicon} />
+			<div className="title">{text}</div>
+			{(audible || muted) && <img src={muted ? '/icons/tab-audio-muted.svg' : '/icons/tab-audio-playing.svg'}/>}
 		</a>;
 	}
 }

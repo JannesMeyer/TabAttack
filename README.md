@@ -90,16 +90,26 @@ Special thanks to these projects:
 - [React](https://reactjs.org/)
 - [marked](https://github.com/markedjs/marked)
 
+Icons from Firefox (MPL v2):
+
+ - /icons/extension.svg
+ - /icons/tab-audio-playing.svg
+ - /icons/tab-audio-muted.svg
+ - /icons/tab-loading.png
+ - /icons/tab-loading@2x.png
+
 ## License
 
 [Affero GPL v3](https://spdx.org/licenses/AGPL-3.0-only.html)
 
 ## Todo
 
-- Add link to keyboard shortcuts on editor/popup
+- Tab move, tab discard
+- Fix keyboard selection
+	- Use keybinding library
+	- Add popup with keyboard shortcuts
 - Figure out why discarding resets the TabId
 - Style indicator for: audio, muted, ...
-- Use keybinding library
 - "open links" doesn't work with file:, moz-extension:, about:, chrome:
 - Add "ignore protocols" option
 - "1 Tab" instead of "1 Tabs" in tab list
