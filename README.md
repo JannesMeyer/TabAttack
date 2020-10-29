@@ -114,3 +114,9 @@ Icons from Firefox (MPL v2):
 - "open links" doesn't work with file:, moz-extension:, about:, chrome:
 - Add "ignore protocols" option
 - "1 Tab" instead of "1 Tabs" in tab list
+- Find icons for:
+  - Search
+	- URL view (settings)
+	- Export
+	- Import
+	- Help
