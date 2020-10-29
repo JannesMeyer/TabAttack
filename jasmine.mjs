@@ -7,8 +7,22 @@ const ext = '.test.js';
 glob('./dist/**/*' + ext, async (err, files) => {
 	if (err) { throw err; }
 	let jasmine = new Jasmine();
-	await Promise.all(files.map(f => import(f).then(mod => {
-		describe(path.basename(f, ext), () =>	Object.entries(mod).filter(([, fn]) => typeof fn === 'function').forEach(([n, fn]) => it(n, fn)));
-	})));
+	let specials = { beforeEach, afterEach, beforeAll, afterAll };
+	await Promise.all(files.map(f => import(f).then(suite => describe(path.basename(f, ext), () => {
+		for (let [n, fn] of Object.entries(suite)) {
+			if (typeof fn !== 'function') {
+				continue;
+			}
+			if (specials.hasOwnProperty(n)) {
+				specials[n](fn);
+			} else if (fn.x) {
+				xit(n, fn);
+			} else if (fn.f) {
+				fit(n, fn);
+			} else {
+				it(n, fn);
+			}
+		}
+	}))));
 	jasmine.execute();
 });
