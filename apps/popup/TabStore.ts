@@ -3,6 +3,12 @@ import requireValues from '../../lib/requireValues.js';
 import bt = browser.tabs;
 import bw = browser.windows;
 
+const debug = true;
+
+function log(...params: unknown[]) {
+	debug && console.log(params.map(x => typeof x === 'object' ? JSON.stringify(x, undefined, '  ') : x).join(' '));
+}
+
 type OnTabRemoved = Parameters<typeof bt.onRemoved.addListener>[0];
 type OnTabUpdated = Parameters<typeof bt.onUpdated.addListener>[0];
 type OnTabActivated = Parameters<typeof bt.onActivated.addListener>[0];
@@ -37,7 +43,7 @@ class TabStore {
 			incognito,
 			focusOrder: id,
 			tabs,
-			activeTabId: tabs.filter(t => t.active).single().id,
+			activeTabId: tabs.find(t => t.active)?.id,
 		};
 	}
 	
@@ -88,12 +94,14 @@ class TabStore {
 	}
 
 	private handleWindowCreated = (w: bw.Window) => {
+		log('window created', w.id);
 		let converted = TabStore.convertWindow(w, this.tabs.values());
 		this.windows.set(converted.id, converted);
 		this.notify();
 	};
 
 	private handleWindowRemoved = (windowId: number) => {
+		log('window closed', windowId);
 		assert(this.windows.delete(windowId));
 		this.notify();
 	};
@@ -116,22 +124,30 @@ class TabStore {
 	};
 
 	private handleTabCreated = (t: bt.Tab) => {
-		let { index } = t;
-		let w = this.windows.getOrThrow(t.windowId);
-		let current = w.tabs[index];
-		if (current?.id === t.id) {
-			return;
-		}
+		log('tab created', t.id);
 		let tab = TabStore.convertTab(t);
 		this.tabs.set(tab.id, tab);
 
+		
+		let w = this.windows.get(t.windowId);
+		if (w == null) {
+			// In Firefox the tabCreated event fires before windowCreated, so the window properties
+			// are not known yet
+			return;
+		}
+		if (w.tabs[t.index]?.id === t.id) {
+			// This tab could already be in the array, if the windowCreated event fired first
+			return;
+		}
+
 		// Update tab list
 		w.tabs = w.tabs.slice();
-		w.tabs.splice(index, 0, tab);
+		w.tabs.splice(t.index, 0, tab);
 		this.notify();
 	};
 
 	private handleTabRemoved: OnTabRemoved = (tabId, { windowId, isWindowClosing }) => {
+		log('tab closed', tabId);
 		assert(this.tabs.delete(tabId));
 
 		// Update tab list
@@ -144,6 +160,7 @@ class TabStore {
 	};
 
 	private handleTabDetached: OnTabDetached = (tabId, { oldWindowId }) => {
+		log('tab detached', tabId);
 		let tab = this.tabs.getOrThrow(tabId);
 		tab.windowId = bw.WINDOW_ID_NONE;
 
@@ -156,6 +173,7 @@ class TabStore {
 	};
 	
 	private handleTabAttached: OnTabAttached = (tabId, { newWindowId, newPosition }) => {
+		log('tab attached', tabId);
 		let tab = this.tabs.getOrThrow(tabId);
 		tab.windowId = newWindowId;
 
@@ -167,6 +185,7 @@ class TabStore {
 	};
 
 	private handleTabMoved: OnTabMoved = (tabId, { windowId, fromIndex, toIndex }) => {
+		log('tab moved', tabId);
 		// Update list
 		let w = this.windows.getOrThrow(windowId);
 		let tab = w.tabs[fromIndex];
@@ -179,7 +198,11 @@ class TabStore {
 	 * When the active tab in a window changes
 	 */
 	private handleTabActivated: OnTabActivated = ({ tabId, windowId }) => {
-		let w = this.windows.getOrThrow(windowId);
+		let w = this.windows.get(windowId);
+		if (w == null) {
+			// It is possible that this event fires before windowCreate
+			return;
+		}
 		// TODO: update selectedTabId
 		w.activeTabId = tabId;
 		this.notify();
@@ -189,7 +212,7 @@ class TabStore {
 	 * Informs us whenever a tab property updates
 	 */
 	private handleTabUpdate: OnTabUpdated = (tabId, info, fullTab) => {
-		// w.tabs.set(tabId, convertTab(fullTab));
+		log('tab update', tabId, info);
 		let tab = this.tabs.getOrThrow(tabId);
 		Object.assign(tab, info);
 		tab.lastAccessed = fullTab.lastAccessed;
