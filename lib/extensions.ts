@@ -4,6 +4,7 @@ interface Array<T> {
 	first(): T;
 	single(): T;
 	toMap: typeof toMap;
+	moveItem: typeof moveItem;
 }
 
 interface ReadonlyArray<T> {
@@ -41,6 +42,17 @@ function toMap<T, K, V>(this: readonly T[], getKey: (item: T) => K, getValue?: (
 	return map;
 }
 Array.prototype.toMap = toMap;
+
+function moveItem<T>(this: T[], fromIndex: number, toIndex: number) {
+	let { length } = this;
+	if (fromIndex >= length || toIndex >= length || fromIndex < 0 || toIndex < 0) {
+		throw new Error('Index out of bounds');
+	}
+	let item = this.splice(fromIndex, 1)[0] as T;
+	this.splice(toIndex, 0, item);
+	return this;
+}
+Array.prototype.moveItem = moveItem;
 
 interface Map<K, V> {
 	get(key: K | undefined): V | undefined;
