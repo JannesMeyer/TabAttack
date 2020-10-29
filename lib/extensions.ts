@@ -78,4 +78,4 @@ Map.prototype.filter = function filter<K, V>(this: ReadonlyMap<K, V>, fn: (value
 		fn(v, k) && values.push(v);
 	}
 	return values;
-}
+};

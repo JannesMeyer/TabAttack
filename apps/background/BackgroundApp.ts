@@ -1,4 +1,4 @@
-import '../../lib/Array.extensions.js';
+import '../../lib/extensions.js';
 import './bg-icon.js';
 import './bg-copy-link.js';
 import './bg-keyboard.js';

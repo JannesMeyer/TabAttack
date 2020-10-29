@@ -1,4 +1,4 @@
-import '../../lib/Array.extensions.js';
+import '../../lib/extensions.js';
 import assertDefined from '../../lib/assertDefined.js';
 import ready from '../../lib/dom/ready.js';
 import markdownLink from '../../lib/markdownLink.js';
