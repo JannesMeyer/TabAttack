@@ -21,9 +21,14 @@ class TabStore {
 
 	private windows = new Map<number, TWindow>();
 
-	static convertWindow(wndw: bw.Window) {
-		let { id, type, state, focused, tabs, incognito } = requireValues(wndw, 'id', 'type', 'state');
+	static convertWindow(wndw: bw.Window, allTabs: Iterable<TTab>) {
+		let { id, type, state, focused, incognito, ...w } = requireValues(wndw, 'id', 'type', 'state');
 		assert(id !== bw.WINDOW_ID_NONE);
+		let tabs: TTab[] = [];
+		for (let t of w.tabs?.map(TabStore.convertTab) ?? Array.from(allTabs).filter(t => t.windowId === id)) {
+			// Index is only the initial index. It is never updated
+			tabs[t.index] = t;
+		}
 		return {
 			id,
 			type,
@@ -31,8 +36,8 @@ class TabStore {
 			focused,
 			incognito,
 			focusOrder: id,
-			tabListVersion: 0,
-			activeTabId: tabs?.filter(t => t.active).single().id,
+			tabs,
+			activeTabId: tabs.filter(t => t.active).single().id,
 		};
 	}
 	
@@ -45,8 +50,8 @@ class TabStore {
 
 	async init(observeFocus: boolean, focusedWindowId?: number) {
 		let windows = await bw.getAll({ populate: true });
-		this.windows = windows.map(TabStore.convertWindow).toMap(w => w.id);
-		this.tabs = windows.flatMap(w => w.tabs?.map(TabStore.convertTab) ?? []).toMap(t => t.id);
+		this.windows = windows.map(w => TabStore.convertWindow(w, this.tabs.values())).toMap(w => w.id);
+		this.tabs = Array.from(this.windows.values(), w => w.tabs).flat().toMap(t => t.id);
 
 		// Event handlers
 		bw.onCreated.addListener(this.handleWindowCreated);
@@ -83,7 +88,7 @@ class TabStore {
 	}
 
 	private handleWindowCreated = (w: bw.Window) => {
-		let converted = TabStore.convertWindow(w);
+		let converted = TabStore.convertWindow(w, this.tabs.values());
 		this.windows.set(converted.id, converted);
 		this.notify();
 	};
@@ -110,13 +115,19 @@ class TabStore {
 		}
 	};
 
-	private handleTabCreated = (tab: bt.Tab) => {
-		let x = TabStore.convertTab(tab);
-		this.tabs.set(x.id, x);
+	private handleTabCreated = (t: bt.Tab) => {
+		let { index } = t;
+		let w = this.windows.getOrThrow(t.windowId);
+		let current = w.tabs[index];
+		if (current?.id === t.id) {
+			return;
+		}
+		let tab = TabStore.convertTab(t);
+		this.tabs.set(tab.id, tab);
 
 		// Update tab list
-		this.windows.getOrThrow(tab.windowId).tabListVersion++;
-		
+		w.tabs = w.tabs.slice();
+		w.tabs.splice(index, 0, tab);
 		this.notify();
 	};
 
@@ -124,36 +135,43 @@ class TabStore {
 		assert(this.tabs.delete(tabId));
 
 		// Update tab list
-		this.windows.getOrThrow(windowId).tabListVersion++;
-
-		!isWindowClosing && this.notify();
+		if (isWindowClosing) {
+			return;
+		}
+		let w = this.windows.getOrThrow(windowId);
+		w.tabs = w.tabs.filter(t => t.id !== tabId);
+		this.notify();
 	};
 
-	private handleTabDetached: OnTabDetached = (id, { oldWindowId }) => {
-		let tab = this.tabs.getOrThrow(id);
+	private handleTabDetached: OnTabDetached = (tabId, { oldWindowId }) => {
+		let tab = this.tabs.getOrThrow(tabId);
 		tab.windowId = bw.WINDOW_ID_NONE;
 
 		// Update tab list
-		this.windows.getOrThrow(oldWindowId).tabListVersion++;
+		let w = this.windows.getOrThrow(oldWindowId);
+		let tabs = w.tabs.filter(t => t.id !== tabId);
+		assert(tabs.length === w.tabs.length - 1);
+		w.tabs = tabs;
 		this.notify();
 	};
 	
-	private handleTabAttached: OnTabAttached = (id, { newWindowId, newPosition }) => {
-		let tab = this.tabs.getOrThrow(id);
+	private handleTabAttached: OnTabAttached = (tabId, { newWindowId, newPosition }) => {
+		let tab = this.tabs.getOrThrow(tabId);
 		tab.windowId = newWindowId;
-		tab.index = newPosition;
 
 		// Update tab list
-		this.windows.getOrThrow(newWindowId).tabListVersion++;
+		let w = this.windows.getOrThrow(newWindowId);
+		w.tabs = w.tabs.slice();
+		w.tabs.splice(newPosition, 0, tab);
 		this.notify();
 	};
 
-	private handleTabMoved: OnTabMoved = (tabId, { toIndex, windowId }) => {
-		let tab = this.tabs.getOrThrow(tabId);
-		tab.index = toIndex;
-
+	private handleTabMoved: OnTabMoved = (tabId, { windowId, fromIndex, toIndex }) => {
 		// Update list
-		this.windows.getOrThrow(windowId).tabListVersion++;
+		let w = this.windows.getOrThrow(windowId);
+		let tab = w.tabs[fromIndex];
+		assert(tab?.id === tabId);
+		w.tabs = w.tabs.slice().moveItem(fromIndex, toIndex);
 		this.notify();
 	};
 
@@ -192,10 +210,6 @@ class TabStore {
 		return this.tabs;
 	}
 
-	getTabsForWindow(windowId: number) {
-		return Array.from(this.tabs.values()).filter(t => t.windowId === windowId);
-	}
-	
 	focusPreviousWindow() {
 		browser.windows.update(this.lastFocused, { focused: true });
 	}

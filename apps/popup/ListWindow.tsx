@@ -1,4 +1,4 @@
-import TabStore, { TWindow } from './TabStore.js';
+import { TWindow } from './TabStore.js';
 import ListTab, { ListTabProps } from './ListTab.js';
 
 interface P extends Pick<ListTabProps, 'onMouseDown' | 'onClick' | 'onAuxClick'> {
@@ -15,8 +15,8 @@ export default function ListWindow(p: P) {
 		return null;
 	}
 	let tabs = React.useMemo(() => {
-		return TabStore.getTabsForWindow(w.id).sort((a, b) => b.index - a.index);
-	}, [w, w.tabListVersion]);
+		return w.tabs.slice().reverse();
+	}, [w.tabs]);
 	if (tabs.length === 0) {
 		return null;
 	}
