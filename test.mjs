@@ -1,10 +1,14 @@
 import glob from 'glob';
 import Jasmine from 'jasmine';
-import './dist/lib/extensions.js';
+import path from 'path';
 
-glob('./dist/**/*.test.js', async (err, files) => {
+const ext = '.test.js';
+
+glob('./dist/**/*' + ext, async (err, files) => {
 	if (err) { throw err; }
 	let jasmine = new Jasmine();
-	await Promise.all(files.map(f => import(f)));
+	await Promise.all(files.map(f => import(f).then(mod => {
+		describe(path.basename(f, ext), () =>	Object.entries(mod).filter(([, fn]) => typeof fn === 'function').forEach(([n, fn]) => it(n, fn)));
+	})));
 	jasmine.execute();
 });
