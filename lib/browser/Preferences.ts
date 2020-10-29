@@ -39,12 +39,12 @@ export default class Preferences<T> {
 			if (this.areaName !== area) {
 				return;
 			}
-			for (let [k, change] of Object.entries(changes) as [K, bs.StorageChange][]) {
+			for (let [k, change] of Object.entries(changes)) {
 				if (!obj.hasOwnProperty(k)) {
 					delete changes[k];
 					continue;
 				}
-				obj[k] = change.newValue;
+				obj[k as K] = change.newValue;
 			}
 			fn?.(changes as Changes);
 		});
