@@ -1,5 +1,6 @@
 describe('extensions', () => {
-	it('does something', () => {
-		expect(1).toBe(1);
+	it('Array.first', () => {
+		expect([1, 2].first()).toBe(1);
+		expect(() => [].first()).toThrowError();
 	});
 });
