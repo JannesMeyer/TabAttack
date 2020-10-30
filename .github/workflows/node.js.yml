@@ -9,7 +9,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: 15
+        node-version: 'x'
     - run: npm ci
     - run: npm run tsc
     - run: npm test
