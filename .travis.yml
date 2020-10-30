@@ -1,2 +1,2 @@
 language: node_js
-yarn: cache
+cache: yarn
