@@ -6,11 +6,11 @@
 	"repository": "JannesMeyer/TabAttack",
 	"type": "module",
 	"scripts": {
-		"tsc": "tsc",
+		"build": "tsc",
 		"test": "node jasmine.mjs",
 		"lint": "eslint . --ext .ts,.tsx --format visualstudio",
 		"lint-stylish": "eslint . --ext .ts,.tsx",
-		"build": "pwsh build.ps1"
+		"build-zip": "pwsh build.ps1"
 	},
 	"dependencies": {
 		"@types/firefox-webext-browser": "^78.0.1",
