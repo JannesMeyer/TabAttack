@@ -1,7 +1,5 @@
 # TabAttack Browser Extension
 
-[![Dependencies](https://david-dm.org/JannesMeyer/TabAttack.svg)](https://david-dm.org/JannesMeyer/TabAttack)
-
 Save browser memory by exporting your tabs as Markdown. The extension allows you to edit the document in a text editor before you save it.
 
 Later, you can import these Markdown documents and restore all windows exactly like they were before.
