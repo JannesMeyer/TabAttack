@@ -6,6 +6,7 @@
 	"repository": "JannesMeyer/TabAttack",
 	"type": "module",
 	"scripts": {
+		"tsc": "tsc",
 		"test": "node jasmine.mjs",
 		"lint": "eslint . --ext .ts,.tsx --format visualstudio",
 		"lint-stylish": "eslint . --ext .ts,.tsx",
