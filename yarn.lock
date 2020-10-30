@@ -1297,9 +1297,9 @@ type-fest@^0.8.1:
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
 
 typescript@^4.1.0-beta:
-  version "4.1.0-dev.20201029"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.0-dev.20201029.tgz#c1dcfa06270aeb193494cbdadc98fc3bb2c161bc"
-  integrity sha512-79ZW2B8s4P1ZvR8KLv4gnJfn01oCmHZkhs4CsVR8nnJN1yD6xbbf/rEAD3ROcAvD20oQ+RYEId3B67YqcFPmCg==
+  version "4.1.0-dev.20201030"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.0-dev.20201030.tgz#6c0d5d67bd97545004ced554deb9616f00c16a39"
+  integrity sha512-L73VfJ023OpORF020zpRUERy/TtXMg+IkKHaVArylq7OHoNYOxCurPDx4JvpW+pwWhF+ebdDHZJm28QVY+tJuw==
 
 uri-js@^4.2.2:
   version "4.4.0"
