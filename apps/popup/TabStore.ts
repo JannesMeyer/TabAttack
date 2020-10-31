@@ -3,7 +3,7 @@ import requireValues from '../../lib/requireValues.js';
 import bt = browser.tabs;
 import bw = browser.windows;
 
-const debug = true;
+const debug = false;
 
 function log(...params: unknown[]) {
 	debug && console.log(params.map(x => typeof x === 'object' ? JSON.stringify(x, undefined, '  ') : x).join(' '));
