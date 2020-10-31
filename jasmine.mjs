@@ -21,5 +21,5 @@ glob('./dist/**/*' + ext, async (err, files) => {
 			}
 		}
 	}))));
-	jasmine.execute();
+	await jasmine.execute();
 });
