@@ -1,8 +1,7 @@
 {
 	"files.exclude": {
 		"node_modules": true,
-		"**/*.js": true,
-		"**/*.js.map": true,
+		"dist": true
 	},
 	"editor.tabSize": 2,
 	"editor.insertSpaces": false,

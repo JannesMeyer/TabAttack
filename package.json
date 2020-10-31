@@ -7,8 +7,8 @@
 	"type": "module",
 	"scripts": {
 		"tsc": "tsc",
-		"test": "node jasmine.mjs",
-		"test-watch": "node watch.mjs jasmine.mjs",
+		"test": "node jasmine",
+		"test-watch": "node watch jasmine",
 		"lint": "eslint . --ext .ts,.tsx --format visualstudio",
 		"lint-stylish": "eslint . --ext .ts,.tsx",
 		"build-zip": "pwsh build.ps1"
