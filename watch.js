@@ -7,7 +7,7 @@ const scriptPath = process.argv[2];
 
 run();
 fs.watch(dir, { recursive: true })
-	.on('change', debounce(run, 200))
+	.on('change', debounce(run, 250))
 	.on('error', console.error);
 
 function run() {
