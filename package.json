@@ -8,7 +8,7 @@
 	"scripts": {
 		"tsc": "tsc",
 		"test": "node jasmine.mjs",
-		"test-watch": "node jasmine-watch.mjs",
+		"test-watch": "node watch.mjs jasmine.mjs",
 		"lint": "eslint . --ext .ts,.tsx --format visualstudio",
 		"lint-stylish": "eslint . --ext .ts,.tsx",
 		"build-zip": "pwsh build.ps1"

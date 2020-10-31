@@ -3,12 +3,11 @@ import child_process from 'child_process';
 import debounce from './dist/lib/debounce.js';
 
 const dir = 'dist';
-const debounceMs = 200;
-const scriptPath = 'jasmine.mjs';
+const scriptPath = process.argv[2];
 
 run();
 fs.watch(dir, { recursive: true })
-	.on('change', debounce(run, debounceMs))
+	.on('change', debounce(run, 200))
 	.on('error', console.error);
 
 function run() {
