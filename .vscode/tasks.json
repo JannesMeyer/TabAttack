@@ -17,9 +17,6 @@
 		{
 			"type": "npm",
 			"script": "test-watch",
-			"problemMatcher": [
-				"$jasmine"
-			],
 			"group": {
 				"kind": "test",
 				"isDefault": true
