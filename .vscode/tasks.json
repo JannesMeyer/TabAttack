@@ -12,7 +12,19 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"label": "TypeScript"
+			"label": "TypeScript (watch)"
+		},
+		{
+			"type": "npm",
+			"script": "test-watch",
+			"problemMatcher": [
+				"$jasmine"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"label": "Jasmine (watch)"
 		},
 		{
 			"type": "npm",
@@ -20,6 +32,7 @@
 			"problemMatcher": [
 				"$eslint-stylish"
 			],
+			"group": "test",
 			"label": "ESLint"
 		}
 	]
