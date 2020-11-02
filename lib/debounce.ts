@@ -1,7 +1,7 @@
-export default function debounce<F extends (...args: any[]) => void>(fn: F, delay: number) {
+export default function debounce<A extends unknown[]>(fn: (...args: A) => void, delay: number) {
 	let id: number | undefined;
-	return function(this: ThisParameterType<F>, ...args: Parameters<F>) {
+	return function(...args: A) {
 		clearTimeout(id);
-		id = setTimeout(() => fn.apply(this, args), delay);
+		id = setTimeout(fn, delay, ...args);
 	};
 }

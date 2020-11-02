@@ -1,10 +1,14 @@
-type Callback = (...args: any[]) => any;
+type Callback = (message: Record<string, unknown>, sender: browser.runtime.MessageSender) => (Promise<unknown> | void);
 
 const listeners = new Map<string, Callback>();
 
 /** Collective listener */
-const globalHandler: Callback = (message: any, sender, sendResponse) => {
-	listeners.get(message._operation)?.(message, sender, sendResponse);
+const globalHandler: Callback = (message, sender) => {
+	let { _operation } = message;
+	if (typeof _operation !== 'string') {
+		throw new Error('Invalid operation');
+	}
+	listeners.get(_operation)?.(message, sender);
 };
 
 /**

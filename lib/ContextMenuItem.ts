@@ -15,7 +15,7 @@ interface MenuProps extends Omit<Parameters<typeof browser.contextMenus.create>[
  */
 export default class ContextMenuItem {
 
-	readonly id: MenuProps['id'];
+	readonly id;
 
 	/**
 	 * Registers a context menu item
