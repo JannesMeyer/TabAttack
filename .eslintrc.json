@@ -25,7 +25,6 @@
 		"linebreak-style": ["error", "windows"],
 		"quotes": ["error", "single"],
 		"semi": ["error", "always"],
-		"@typescript-eslint/no-namespace": ["error", { "allowDeclarations": true }],
 		"@typescript-eslint/explicit-function-return-type": "off",
 		"@typescript-eslint/explicit-module-boundary-types": "off",
 		"@typescript-eslint/no-empty-interface": "off",
