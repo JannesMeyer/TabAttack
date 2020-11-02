@@ -40,6 +40,7 @@ export default class Preferences<T> {
 				return;
 			}
 			for (let [k, change] of Object.entries(changes)) {
+				// eslint-disable-next-line no-prototype-builtins
 				if (!obj.hasOwnProperty(k)) {
 					delete changes[k];
 					continue;
