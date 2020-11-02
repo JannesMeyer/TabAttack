@@ -9,7 +9,7 @@
 		"tsc": "tsc",
 		"test": "node jasmine",
 		"test-watch": "node watch jasmine",
-		"posttest": "eslint . --ext .ts,.tsx --format visualstudio",
+		"posttest": "eslint . --ext .ts,.tsx",
 		"build-zip": "pwsh build.ps1"
 	},
 	"dependencies": {
