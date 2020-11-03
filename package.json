@@ -7,8 +7,8 @@
 	"type": "module",
 	"scripts": {
 		"tsc": "tsc",
-		"test": "node jasmine",
-		"test-watch": "node watch jasmine",
+		"test": "node --enable-source-maps jasmine",
+		"test-watch": "node --enable-source-maps watch jasmine",
 		"posttest": "eslint . --ext .ts,.tsx",
 		"build-zip": "pwsh build.ps1"
 	},
