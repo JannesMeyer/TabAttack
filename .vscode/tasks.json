@@ -12,6 +12,9 @@
 				"kind": "build",
 				"isDefault": true
 			},
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
 			"label": "TypeScript (watch)"
 		},
 		{
