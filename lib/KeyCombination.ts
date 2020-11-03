@@ -1,3 +1,32 @@
+const isBrowser = (typeof window !== 'undefined');
+
+/**
+ * We're using this to determine which modifier key should be used for ctrl key combinations.
+ * On Macs the command key is used for key combinations that usually use the ctrl key.
+ */
+const isMac = (isBrowser && navigator.platform.includes('Mac'));
+
+type KeyName =
+	// Control Characters: https://www.w3.org/TR/uievents-key/#control
+	|'Backspace'
+	|'Tab'
+	|'Enter'
+	|'Escape'
+	|'Delete'
+	|'Space'
+
+	// Navigation keys: https://www.w3.org/TR/uievents-key/#keys-navigation
+	|'ArrowDown'
+	|'ArrowLeft'
+	|'ArrowRight'
+	|'ArrowUp'
+
+	|'End'
+	|'Home'
+	|'PageDown'
+	|'PageUp'
+;
+
 type TagNames = Uppercase<keyof HTMLElementTagNameMap>;
 
 interface Options {
@@ -16,35 +45,6 @@ interface KbEvent extends Pick<KeyboardEvent, 'defaultPrevented' | 'preventDefau
 	target: unknown;
 	currentTarget: unknown;
 }
-
-const enum KeyName {
-	// Control Characters: https://www.w3.org/TR/uievents-key/#control
-	Backspace,
-	Tab,
-	Enter,
-	Escape,
-	Delete,
-	Space,
-
-	// Navigation keys: https://www.w3.org/TR/uievents-key/#keys-navigation
-	ArrowDown,
-	ArrowLeft,
-	ArrowRight,
-	ArrowUp,
-
-	End,
-	Home,
-	PageDown,
-	PageUp,
-}
-
-const isBrowser = (typeof window !== 'undefined');
-
-/**
- * We're using this to determine which modifier key should be used for ctrl key combinations.
- * On Macs the command key is used for key combinations that usually use the ctrl key.
- */
-const isMac = (isBrowser && navigator.platform.includes('Mac'));
 
 /** Handles a specific key combination */
 export default class KeyCombination {
@@ -65,7 +65,7 @@ export default class KeyCombination {
 	 * Creates a KeyPress object which can be used as an event handler
 	 * @param key Case-sensitive key identifier (https://www.w3.org/TR/uievents-key/)
 	 */
-	constructor(key: keyof typeof KeyName | (string & {}), options: Options = {}) {
+	constructor(key: KeyName | (string & {}), options: Options = {}) {
 		this.key = (key === 'Space' ? ' ' : key);
 		
 		// Default values
