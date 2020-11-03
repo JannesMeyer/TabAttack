@@ -234,7 +234,7 @@ class TabStore {
 	}
 
 	focusPreviousWindow() {
-		browser.windows.update(this.lastFocused, { focused: true });
+		return browser.windows.update(this.lastFocused, { focused: true });
 	}
 }
 
