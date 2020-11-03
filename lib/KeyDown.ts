@@ -14,7 +14,7 @@ interface KBE extends Pick<KeyboardEvent, 'defaultPrevented' | 'preventDefault' 
 	target: unknown;
 }
 
-export enum Key {
+export enum K {
 	// Control Characters: https://www.w3.org/TR/uievents-key/#control
 	Backspace = 'Backspace',
 	Tab = 'Tab',
@@ -37,7 +37,7 @@ const isBrowser = (typeof window !== 'undefined');
 const isMac = (isBrowser && navigator.platform.includes('Mac'));
 
 /** Handles a specific key combination */
-export default class KeyPress {
+export default class KeyDown {
 
 	private listener?: () => void;
 	private options: Options = {

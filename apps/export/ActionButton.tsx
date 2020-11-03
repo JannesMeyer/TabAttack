@@ -1,10 +1,10 @@
 import css, { X } from '../../lib/css.js';
-import KeyPress from '../../lib/KeyPress.js';
+import KeyDown from '../../lib/KeyDown.js';
 
 interface P {
 	title: string;
 	onClick(): void;
-	keyPress?: KeyPress;
+	globalKey?: KeyDown;
 	className?: string;
 }
 
@@ -30,15 +30,15 @@ export default class ActionButton extends React.Component<P> {
 	}`;
 
 	componentDidMount() {
-		this.props.keyPress?.setListener(() => this.props.onClick(), true);
+		this.props.globalKey?.setListener(() => this.props.onClick(), true);
 	}
 
 	componentWillUnmount() {
-		this.props.keyPress?.removeListener();
+		this.props.globalKey?.removeListener();
 	}
 
 	render() {
 		let p = this.props;
-		return <button onClick={p.onClick} className={X(ActionButton.css, p.className)} title={p.keyPress?.toString()}>{p.title}</button>;
+		return <button onClick={p.onClick} className={X(ActionButton.css, p.className)} title={p.globalKey?.toString()}>{p.title}</button>;
 	}
 }

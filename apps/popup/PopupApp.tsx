@@ -13,6 +13,7 @@ import ListWindow from './ListWindow.js';
 import PopupType from './PopupType.js';
 import onMessage from '../../lib/browser/onMessage.js';
 import bt = browser.tabs;
+import KeyDown from '../../lib/KeyDown.js';
 
 let q = UrlQuery.fromString();
 let type = (() => {
@@ -70,7 +71,6 @@ class PopupApp extends React.Component<P, S> {
 		addEventListener('focus', this.handleFocus);
 		addEventListener('blur', this.handleBlur);
 		addEventListener('keydown', this.handleKeyDown);
-		// Clean this up in componentWillUnmount?
 		addEventListener('beforeunload', this.handlePageHide);
 		if (this.props.type === PopupType.ExternalPopup) {
 			onMessage('focusPreviousWindow', () => TabStore.focusPreviousWindow());

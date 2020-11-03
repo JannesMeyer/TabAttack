@@ -16,7 +16,7 @@ import ActionButton from './ActionButton.js';
 import Editor, { Doc } from './Editor.js';
 import showToast from './Toast.js';
 import buildDocument from './buildDocument.js';
-import KeyPress from '../../lib/KeyPress.js';
+import KeyDown from '../../lib/KeyDown.js';
 
 let p = UrlQuery.fromString();
 let params: P = {
@@ -141,10 +141,10 @@ class TabsApp extends React.Component<P, S> {
 		display: none;
 	}`;
 
-	ctrlS = new KeyPress('s', { ctrl: true });
-	ctrlQ = new KeyPress('q', { ctrl: true });
-	ctrlO = new KeyPress('o', { ctrl: true });
-	ctrlShiftO = new KeyPress('o', { ctrl: true, shift: true });
+	ctrlS = new KeyDown('s', { ctrl: true });
+	ctrlQ = new KeyDown('q', { ctrl: true });
+	ctrlO = new KeyDown('o', { ctrl: true });
+	ctrlShiftO = new KeyDown('o', { ctrl: true, shift: true });
 
 	render() {
 		let { state: s } = this;
