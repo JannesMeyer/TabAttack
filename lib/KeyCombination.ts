@@ -1,3 +1,5 @@
+type TagNames = Uppercase<keyof HTMLElementTagNameMap>;
+
 interface Options {
 	ctrl?: boolean;
 	meta?: boolean;
@@ -7,9 +9,10 @@ interface Options {
 	preventDefault?: boolean;
 	stopPropagation?: boolean;
 	repeat?: boolean;
+	noBubbleTags?: TagNames[];
 }
 
-interface KbEvent extends Pick<KeyboardEvent, 'defaultPrevented' | 'preventDefault' | 'key' | 'ctrlKey' | 'metaKey' | 'shiftKey' | 'altKey' | 'repeat'> {
+interface KbEvent extends Pick<KeyboardEvent, 'defaultPrevented' | 'preventDefault' | 'stopPropagation' | 'key' | 'ctrlKey' | 'metaKey' | 'shiftKey' | 'altKey' | 'repeat'> {
 	target: unknown;
 	currentTarget: unknown;
 }
@@ -43,47 +46,47 @@ const isBrowser = (typeof window !== 'undefined');
  */
 const isMac = (isBrowser && navigator.platform.includes('Mac'));
 
-const noBubbleTags = new Set(['INPUT', 'TEXTAREA', 'SELECT']);
-
 /** Handles a specific key combination */
 export default class KeyCombination {
 
 	private listener?: () => void;
-
-	readonly options: Readonly<Required<Options>>;
-
-	readonly key: string;
+	private key: string;
+	private alt;
+	private ctrl;
+	private macCtrl;
+	private meta;
+	private shift;
+	private preventDefault;
+	private stopPropagation;
+	private repeat;
+	private noBubbleTags: Set<string>;
 
 	/**
 	 * Creates a KeyPress object which can be used as an event handler
 	 * @param key Case-sensitive key identifier (https://www.w3.org/TR/uievents-key/)
 	 */
 	constructor(key: keyof typeof KeyName | (string & {}), options: Options = {}) {
-		if (key === 'Space') {
-			key = ' ';
-		}
-		this.key = key;
+		this.key = (key === 'Space' ? ' ' : key);
+		
 		// Default values
-		let m = this.options = {
-			alt: options.alt ?? false,
-			ctrl: options.ctrl ?? false,
-			macCtrl: options.macCtrl ?? false,
-			meta: options.meta ?? false,
-			shift: options.shift ?? false,
-			preventDefault: options.preventDefault ?? true,
-			stopPropagation: options.stopPropagation ?? false,
-			repeat: options.repeat ?? false,
-		};
+		this.alt = options.alt ?? false;
+		this.ctrl = options.ctrl ?? false;
+		this.macCtrl = options.macCtrl ?? false;
+		this.meta = options.meta ?? false;
+		this.shift = options.shift ?? false;
+		this.preventDefault = options.preventDefault ?? true;
+		this.stopPropagation = options.stopPropagation ?? false;
+		this.repeat = options.repeat ?? false;
+		this.noBubbleTags = new Set(options.noBubbleTags ?? ['INPUT', 'TEXTAREA', 'SELECT']);
 
 		// Do some processing for macOS
-		if (isMac && m.ctrl) {
-			m.ctrl = false;
-			m.meta = true;
+		if (isMac && this.ctrl) {
+			this.ctrl = false;
+			this.meta = true;
 		}
-		if (m.macCtrl) {
-			m.ctrl = true;
+		if (this.macCtrl) {
+			this.ctrl = true;
 		}
-		this.options = m;
 	}
 
 	on(listener?: () => void) {
@@ -92,11 +95,14 @@ export default class KeyCombination {
 	}
 
 	toString() {
-		let m = this.options;
-		if (isMac) {
-			return (m.ctrl  ? '⌃' : '') + (m.alt   ? '⌥' : '') + (m.shift ? '⇧' : '') + (m.meta  ? '⌘' : '') + this.key;
+		let { key, ctrl, alt, shift, meta } = this;
+		if (key.length === 1) {
+			key = key.toLocaleUpperCase();
 		}
-		return (m.meta  ? 'Win + '   : '') + (m.ctrl  ? 'Ctrl + '  : '') + (m.alt   ? 'Alt + '   : '') + (m.shift ? 'Shift + ' : '') + this.key;
+		if (isMac) {
+			return (ctrl ? '⌃' : '') + (alt ? '⌥' : '') + (shift ? '⇧' : '') + (meta ? '⌘' : '') + key;
+		}
+		return (meta ? 'Win + ' : '') + (ctrl ? 'Ctrl + ' : '') + (alt ? 'Alt + ' : '') + (shift ? 'Shift + ' : '') + key;
 	}
 
 	/**
@@ -104,27 +110,30 @@ export default class KeyCombination {
 	 * Compatible with DOM and React events.
 	 */
 	handle = (ev: KbEvent) => {
+		if (this.listener == null) {
+			throw new Error('Cannot handle events without a listener');
+		}
 		if (ev.defaultPrevented) {
 			return;
 		}
-		let { options: m } = this;
-		if (!m.repeat && ev.repeat) {
+		if (!this.repeat && ev.repeat) {
 			return;
 		}
 		if (ev.key !== this.key ||
-			ev.ctrlKey !== m.ctrl ||
-			ev.metaKey !== m.meta ||
-			ev.shiftKey !== m.shift ||
-			ev.altKey !== m.alt) {
+			ev.ctrlKey !== this.ctrl ||
+			ev.metaKey !== this.meta ||
+			ev.shiftKey !== this.shift ||
+			ev.altKey !== this.alt) {
 			return;
 		}
-		if (ev.target !== ev.currentTarget && noBubbleTags.has((ev.target as HTMLElement).tagName)) {
+		if (ev.target !== ev.currentTarget && this.noBubbleTags.has((ev.target as HTMLElement).tagName)) {
 			return;
 		}
 
 		// We have a match!
-		m.preventDefault && ev.preventDefault();
-		this.listener!();
+		this.preventDefault && ev.preventDefault();
+		this.stopPropagation && ev.stopPropagation();
+		this.listener();
 	};
 }
 
