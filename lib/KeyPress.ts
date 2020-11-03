@@ -6,7 +6,7 @@ interface Options {
 	macCtrl: boolean;
 	preventDefault: boolean;
 	stopPropagation: boolean;
-	ignoreInput: boolean;
+	ignoreInputElements: boolean;
 	repeat: boolean;
 }
 
@@ -48,7 +48,7 @@ export default class KeyPress {
 		shift: false,
 		preventDefault: true,
 		stopPropagation: false,
-		ignoreInput: false,
+		ignoreInputElements: false,
 		repeat: false,
 	};
 
@@ -111,7 +111,7 @@ export default class KeyPress {
 			ev.altKey !== options.alt) {
 			return;
 		}
-		if (options.ignoreInput && isInputElement(ev.target)) {
+		if (options.ignoreInputElements && isInputElement(ev.target)) {
 			return;
 		}
 
