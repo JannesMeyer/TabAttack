@@ -13,7 +13,7 @@ import ListWindow from './ListWindow.js';
 import PopupType from './PopupType.js';
 import onMessage from '../../lib/browser/onMessage.js';
 import bt = browser.tabs;
-import KeyDown from '../../lib/KeyDown.js';
+import { Key } from '../../lib/KeyCombination.js';
 
 let q = UrlQuery.fromString();
 let type = (() => {
@@ -118,180 +118,108 @@ class PopupApp extends React.Component<P, S> {
 	//   }
 	// };
 
-	private handleKeyDown = (ev: KeyboardEvent) => {
-		let key = ev.key;
+	// Page DOWN
+	// if (this.selectedTabRef == null) {
+	//   throw new Error('Selected item not found');
+	// }
+	// let itemHeight = this.selectedTabRef.offsetHeight; // Depends on the CSS
+	// let moveByItems = (Math.round(innerHeight / itemHeight) - 3);
+	// this.moveSelection(moveByItems, false);
 
-		if ((ev.target as Element).tagName === 'INPUT') {
-			if (key === 'ArrowDown') {
-				ev.preventDefault();
-				// this.moveSelection(-1);
+	// Page UP
+	// if (this.selectedTabRef == null) {
+	//   throw new Error('Selected item not found');
+	// }
+	// let itemHeight = this.selectedTabRef.offsetHeight; // Depends on the CSS
+	// let moveByItems = (Math.round(innerHeight / itemHeight) - 3);
+	// this.moveSelection(-moveByItems, false);
 
-			} else if (key === 'ArrowUp') {
-				ev.preventDefault();
-				// this.moveSelection(+1);
-
-			} else if (key === 'Escape') {
-				ev.preventDefault();
-				this.handleSearchToggle();
-			}
-
-			// No keyboard shortcuts while writing except the above
+	private copyAsMarkdownLink = (id = this.state.selectedTabId) => {
+		let tab = TabStore.getTabs().get(id);
+		if (tab == null) {
 			return;
 		}
-
-		if (key === 'Escape') {
-			close();
-
-		} else if (key === 'ArrowDown' || key === 'j') { // Select next tab
-			ev.preventDefault();
-			// this.moveSelection(-1);
-			
-		} else if (key === 'ArrowUp' || key === 'k') { // Select previous tab
-			ev.preventDefault();
-			// this.moveSelection(+1);
-
-		} else if (key === 'Tab') { // Select next/previous tab
-			ev.preventDefault();
-			// this.moveSelection(ev.shiftKey ? +1 : -1);  
-
-		} else if (key === 'End') { // Select topmost tab
-			ev.preventDefault();
-			// this.moveSelectionTo(0);
-
-		} else if (key === 'Home') { // Select bottommost tab
-			ev.preventDefault();
-			// this.moveSelectionTo(Infinity);
-
-		} else if (key === 'PageDown') { // Select page down
-			ev.preventDefault();
-			// if (this.selectedTabRef == null) {
-			//   throw new Error('Selected item not found');
-			// }
-			// let itemHeight = this.selectedTabRef.offsetHeight; // Depends on the CSS
-			// let moveByItems = (Math.round(innerHeight / itemHeight) - 3);
-			// this.moveSelection(moveByItems, false);
-
-		} else if (key === 'PageUp') { // Select page up
-			ev.preventDefault();
-			// if (this.selectedTabRef == null) {
-			//   throw new Error('Selected item not found');
-			// }
-			// let itemHeight = this.selectedTabRef.offsetHeight; // Depends on the CSS
-			// let moveByItems = (Math.round(innerHeight / itemHeight) - 3);
-			// this.moveSelection(-moveByItems, false);
-
-		} else if (key === 'Enter' || key === ' ') { // Activate tab
-			ev.preventDefault();
-			this.activateTab(this.state.selectedTabId);
-
-		} else if (key === 'w') { // Close tab
-			ev.preventDefault();
-			this.closeTab(this.state.selectedTabId);
-
-		} else if (key === 'c' || key === 'l') { // Copy as markdown link
-			ev.preventDefault();
-			if (this.state.selectedTabId == null) {
-				return;
-			}
-			let selectedTab = TabStore.getTabs().get(this.state.selectedTabId);
-			if (selectedTab == null) {
-				return;
-			}
-			writeClipboard(markdownLink(selectedTab.title, assertDefined(selectedTab.url)));
-			// TODO: Show toast "Link copied"
-
-		} else if (key === 'd') { // Discard tab
-			ev.preventDefault();
-			if (this.state.selectedTabId == null) {
-				return;
-			}
-			bt.discard(this.state.selectedTabId).catch(logError);
-
-		} else if (key === 'r') {
-			ev.preventDefault();
-			if (this.state.selectedTabId == null) {
-				return;
-			}
-			bt.reload(this.state.selectedTabId).catch(logError);
-
-		} else if (key === 'x') {
-			this.setState({ showURL: !this.state.showURL });
-
-		} else if (key === '/') {
-			ev.preventDefault();
-			this.handleSearchToggle();
-
-		} else if (key === 'e') {
-			ev.preventDefault();
-			this.handleExport();
-		}
+		writeClipboard(markdownLink(tab.title, assertDefined(tab.url)));
+		showToast('Link copied');
+		// TODO: Show toast "Link copied"
 	};
-
-	// private moveSelection(x: number, wrapsAround = true) {
-	// 	let { windows } = this.props;
-	// 	if (windows == null) {
-	// 		throw new Error('No tabs available');
-	// 	}
-	// 	let selected = this.state.selectedTabId;
-	// 	let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
-	// 	tabs.reverse();
-	// 	let selectedIndex = tabs.findIndex(t => t.id === selected);
-	// 	if (selectedIndex < 0) {
-	// 		throw new Error('Selected tab not found');
-	// 	}
-	// 	let nextIndex = (selectedIndex + x);
-	// 	if (wrapsAround) {
-	// 		nextIndex = (nextIndex + tabs.length) % tabs.length;
-	// 	} else if (nextIndex < 0) {
-	// 		nextIndex = 0;
-	// 	} else if (nextIndex > tabs.length - 1) {
-	// 		nextIndex = tabs.length - 1;
-	// 	}
-	// 	let nextTab = tabs[nextIndex];
-	// 	if (nextTab == null || nextTab.id == null) {
-	// 		throw new Error('Next tab not found');
-	// 	}
-	// 	this.setState({ selectedTabId: nextTab.id });
-	// }
 
 	private endActionPopup() {
 		(this.props.type === PopupType.ActionPopup) && close();
 	}
 
-	private activateTab(id: number | undefined) {
-		if (id == null) {
-			return;
+	private activateTab = (id = this.state.selectedTabId) => {
+		if (id == null) { return; }
+		bt.update(id, { active: true });
+		let tab = TabStore.getTabs().get(id);
+		if (tab && !this.oneWindow) {
+			browser.windows.update(tab.windowId, { focused: true });
 		}
-		bt.update(id, { active: true }).catch(logError);
 		this.endActionPopup();
-	}
+	};
 
-	private closeTab(id: number | undefined) {
-		if (id == null) {
-			return;
-		}
+	private closeTab = (id = this.state.selectedTabId) => {
+		if (id == null) { return; }
 		bt.remove(id).catch(logError);
+	};
+
+	private discardTab = (id = this.state.selectedTabId) => {
+		if (id == null) { return; }
+		bt.discard(id).catch(logError);
+	};
+
+	private reloadTab = (id = this.state.selectedTabId) => {
+		if (id == null) { return; }
+		bt.reload(id).catch(logError);
+	};
+
+	private selectNext = () => this.moveSelection(+1);
+	private selectPrevious = () => this.moveSelection(-1);
+	private selectFirst = () => this.moveSelectionTo(0);
+	private selectLast = () => this.moveSelectionTo(Infinity);
+
+	private moveSelection(_x: number, _wrapsAround = true) {
+		// let { windows } = this.props;
+		// if (windows == null) {
+		// 	throw new Error('No tabs available');
+		// }
+		// let selected = this.state.selectedTabId;
+		// let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
+		// tabs.reverse();
+		// let selectedIndex = tabs.findIndex(t => t.id === selected);
+		// if (selectedIndex < 0) {
+		// 	throw new Error('Selected tab not found');
+		// }
+		// let nextIndex = (selectedIndex + x);
+		// if (wrapsAround) {
+		// 	nextIndex = (nextIndex + tabs.length) % tabs.length;
+		// } else if (nextIndex < 0) {
+		// 	nextIndex = 0;
+		// } else if (nextIndex > tabs.length - 1) {
+		// 	nextIndex = tabs.length - 1;
+		// }
+		// let nextTab = tabs[nextIndex];
+		// if (nextTab == null || nextTab.id == null) {
+		// 	throw new Error('Next tab not found');
+		// }
+		// this.setState({ selectedTabId: nextTab.id });
 	}
 
-	// private moveSelectionTo(index: number) {
-	// 	let { windows } = this.props;
-	// 	if (this.state.selectedTabId == null) {
-	// 		return;
-	// 	}
-	// 	if (windows == null) {
-	// 		throw new Error('No tabs available');
-	// 	}
-	// 	let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
-	// 	tabs.reverse();
-	// 	if (index === Infinity) {
-	// 		index = (tabs.length - 1);
-	// 	}
-	// 	let selected = tabs[index];
-	// 	if (selected == null || selected.id == null) {
-	// 		throw new Error('Index out of bounds');
-	// 	}
-	// 	this.setState({ selectedTabId: selected.id });
-	// }
+	private moveSelectionTo(_index: number) {
+		// if (this.state.selectedTabId == null) {
+		// 	return;
+		// }
+		// let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
+		// tabs.reverse();
+		// if (index === Infinity) {
+		// 	index = (tabs.length - 1);
+		// }
+		// let selected = tabs[index];
+		// if (selected == null || selected.id == null) {
+		// 	throw new Error('Index out of bounds');
+		// }
+		// this.setState({ selectedTabId: selected.id });
+	}
 
 	private handleMouseDown = (tabId: number) => {
 		if (this.state.selectedTabId != null) {
@@ -318,18 +246,49 @@ class PopupApp extends React.Component<P, S> {
 	};
 
 	private handleExport = () => {
-		openTabsEditor({});
+		// TODO: set tabId and windowId
+		openTabsEditor();
 		this.endActionPopup();
 	};
 
 	private handleImport = () => {
-		openTabsEditor({ import: true });
+		openTabsEditor({ import: true }).catch(logError);
 		this.endActionPopup();
 	};
 
-	private handleUrlToggle = () => {
-		this.setState(s => ({ showURL: !s.showURL }));
+	private handleUrlToggle = () => this.setState(s => ({ showURL: !s.showURL }));
+
+	private shortcuts = [
+		Key('Escape').on(() => close()),
+		Key('ArrowUp').on(this.selectNext),
+		Key('ArrowDown').on(this.selectPrevious),
+		Key('k').on(this.selectNext),
+		Key('j').on(this.selectPrevious),
+		Key('Tab').on(this.selectNext),
+		Key('Tab', { shift: true }).on(this.selectPrevious),
+		Key('End').on(this.selectFirst),
+		Key('Home').on(this.selectLast),
+		Key('Enter').on(this.activateTab),
+		Key(' ').on(this.activateTab),
+		Key('w').on(this.closeTab),
+		Key('c').on(this.copyAsMarkdownLink),
+		Key('l').on(this.copyAsMarkdownLink),
+		Key('d').on(this.discardTab),
+		Key('r').on(this.reloadTab),
+		Key('x').on(this.handleUrlToggle),
+		Key('/').on(this.handleSearchToggle),
+		Key('e').on(this.handleExport),
+	];
+
+	private handleKeyDown = (ev: KeyboardEvent) => {
+		this.shortcuts.forEach(k => k.handle(ev));
 	};
+
+	private searchShortcuts = [
+		Key('ArrowUp').on(this.selectNext),
+		Key('ArrowDown').on(this.selectPrevious),
+		Key('Escape').on(this.handleSearchToggle),
+	];
 
 	static readonly css = css`
 	.WindowList {
@@ -396,6 +355,7 @@ class PopupApp extends React.Component<P, S> {
 				className="SearchInput"
 				placeholder="Search tabs"
 				value={s.search}
+				onKeyDown={ev => this.searchShortcuts.forEach(k => k.handle(ev))}
 				onChange={ev => this.setState({ search: ev.target.value })}
 				onBlur={ev => ev.target.value === '' && this.setState({ search: undefined })}
 				autoFocus

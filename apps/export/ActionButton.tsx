@@ -1,10 +1,10 @@
 import css, { X } from '../../lib/css.js';
-import KeyDown from '../../lib/KeyDown.js';
+import KeyCombination from '../../lib/KeyCombination.js';
 
 interface P {
 	title: string;
 	onClick(): void;
-	globalKey?: KeyDown;
+	globalKey?: KeyCombination;
 	className?: string;
 }
 
@@ -29,12 +29,14 @@ export default class ActionButton extends React.Component<P> {
 		opacity: 0.6;
 	}`;
 
+	handleGlobal = this.props.globalKey?.on(() => this.props.onClick()).handle;
+
 	componentDidMount() {
-		this.props.globalKey?.setListener(() => this.props.onClick(), true);
+		this.handleGlobal && addEventListener('keydown', this.handleGlobal);
 	}
 
 	componentWillUnmount() {
-		this.props.globalKey?.removeListener();
+		this.handleGlobal && removeEventListener('keydown', this.handleGlobal);
 	}
 
 	render() {

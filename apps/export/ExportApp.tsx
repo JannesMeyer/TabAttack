@@ -16,7 +16,7 @@ import ActionButton from './ActionButton.js';
 import Editor, { Doc } from './Editor.js';
 import showToast from './Toast.js';
 import buildDocument from './buildDocument.js';
-import KeyDown from '../../lib/KeyDown.js';
+import KeyCombination from '../../lib/KeyCombination.js';
 
 let p = UrlQuery.fromString();
 let params: P = {
@@ -141,10 +141,10 @@ class TabsApp extends React.Component<P, S> {
 		display: none;
 	}`;
 
-	ctrlS = new KeyDown('s', { ctrl: true });
-	ctrlQ = new KeyDown('q', { ctrl: true });
-	ctrlO = new KeyDown('o', { ctrl: true });
-	ctrlShiftO = new KeyDown('o', { ctrl: true, shift: true });
+	ctrlS = new KeyCombination('s', { ctrl: true });
+	ctrlQ = new KeyCombination('q', { ctrl: true });
+	ctrlO = new KeyCombination('o', { ctrl: true });
+	ctrlShiftO = new KeyCombination('o', { ctrl: true, shift: true });
 
 	render() {
 		let { state: s } = this;
