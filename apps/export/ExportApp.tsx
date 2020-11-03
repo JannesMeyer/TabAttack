@@ -150,10 +150,10 @@ class TabsApp extends React.Component<P, S> {
 		let { state: s } = this;
 		return <>
 			<div className={'Toolbar ' + (s.theme?.cssClass ?? '')}>
-				<ActionButton onClick={this.downloadAsTextFile} title={TabsApp.str.save} keyPress={this.ctrlS} />
-				<ActionButton onClick={this.loadFile} title={TabsApp.str.loadFile} keyPress={this.ctrlO} />
-				<ActionButton onClick={closeOtherTabs} title={TabsApp.str.close} keyPress={this.ctrlQ} />
-				<ActionButton onClick={this.openLinks} title={TabsApp.str.openLinks} keyPress={this.ctrlShiftO} />
+				<ActionButton onClick={this.downloadAsTextFile} title={TabsApp.str.save} globalKey={this.ctrlS} />
+				<ActionButton onClick={this.loadFile} title={TabsApp.str.loadFile} globalKey={this.ctrlO} />
+				<ActionButton onClick={closeOtherTabs} title={TabsApp.str.close} globalKey={this.ctrlQ} />
+				<ActionButton onClick={this.openLinks} title={TabsApp.str.openLinks} globalKey={this.ctrlShiftO} />
 				<a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank" rel="noreferrer">Keyboard Shortcuts</a>
 				<input type="file" ref={this.fileInput} />
 				<div className="ace_print-margin" />
