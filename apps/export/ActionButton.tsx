@@ -1,10 +1,10 @@
 import css, { X } from '../../lib/css.js';
-// import { ListenerBucket } from 'keypress-tool';
+import KeyPress from '../../lib/KeyPress.js';
 
 interface P {
 	title: string;
-	onClick(ev: Event): void;
-	// keyPress?: ListenerBucket;
+	onClick(): void;
+	keyPress?: KeyPress;
 	className?: string;
 }
 
@@ -29,27 +29,16 @@ export default class ActionButton extends React.Component<P> {
 		opacity: 0.6;
 	}`;
 
-	// componentDidMount() {
-	// 	let p = this.props;
-	// 	if (p.keyPress) {
-	// 		p.keyPress.addListener(p.onClick, true);
-	// 	}
-	// }
+	componentDidMount() {
+		this.props.keyPress?.setListener(() => this.props.onClick(), true);
+	}
 
-	// componentWillUnmount() {
-	// 	let p = this.props;
-	// 	if (p.keyPress) {
-	// 		p.keyPress.removeListener(p.onClick);
-	// 	}
-	// }
-
-	handleClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
-		this.props.onClick(ev.nativeEvent);
+	componentWillUnmount() {
+		this.props.keyPress?.removeListener();
 	}
 
 	render() {
 		let p = this.props;
-		return <button onClick={this.handleClick} className={X(ActionButton.css, p.className)}>{p.title}</button>;
+		return <button onClick={p.onClick} className={X(ActionButton.css, p.className)} title={p.keyPress?.toString()}>{p.title}</button>;
 	}
-
 }

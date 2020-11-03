@@ -16,6 +16,7 @@ import ActionButton from './ActionButton.js';
 import Editor, { Doc } from './Editor.js';
 import showToast from './Toast.js';
 import buildDocument from './buildDocument.js';
+import KeyPress from '../../lib/KeyPress.js';
 
 let p = UrlQuery.fromString();
 let params: P = {
@@ -73,12 +74,6 @@ class TabsApp extends React.Component<P, S> {
 		this.pref.promise.then(() => this.updateTheme().catch(logError));
 		this.pref.onUpdate(() => this.updateTheme().catch(logError));
 		prefersDark.addEventListener('change', () => this.updateTheme().catch(logError));
-
-		// import KeyPress from 'keypress-tool';
-		// var ctrlS      = KeyPress('S', 'ctrl');
-		// var ctrlQ      = KeyPress('Q', 'ctrl');
-		// var ctrlO      = KeyPress('O', 'ctrl');
-		// var ctrlShiftO = KeyPress('O', 'ctrl', 'shift');
 	}
 
 	async updateTheme() {
@@ -146,14 +141,19 @@ class TabsApp extends React.Component<P, S> {
 		display: none;
 	}`;
 
+	ctrlS = new KeyPress('s', { ctrl: true });
+	ctrlQ = new KeyPress('q', { ctrl: true });
+	ctrlO = new KeyPress('o', { ctrl: true });
+	ctrlShiftO = new KeyPress('o', { ctrl: true, shift: true });
+
 	render() {
 		let { state: s } = this;
 		return <>
 			<div className={'Toolbar ' + (s.theme?.cssClass ?? '')}>
-				<ActionButton onClick={this.downloadAsTextFile} title={TabsApp.str.save} />
-				<ActionButton onClick={this.loadFile} title={TabsApp.str.loadFile} />
-				<ActionButton onClick={closeOtherTabs} title={TabsApp.str.close} />
-				<ActionButton onClick={this.openLinks} title={TabsApp.str.openLinks} />
+				<ActionButton onClick={this.downloadAsTextFile} title={TabsApp.str.save} keyPress={this.ctrlS} />
+				<ActionButton onClick={this.loadFile} title={TabsApp.str.loadFile} keyPress={this.ctrlO} />
+				<ActionButton onClick={closeOtherTabs} title={TabsApp.str.close} keyPress={this.ctrlQ} />
+				<ActionButton onClick={this.openLinks} title={TabsApp.str.openLinks} keyPress={this.ctrlShiftO} />
 				<a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank" rel="noreferrer">Keyboard Shortcuts</a>
 				<input type="file" ref={this.fileInput} />
 				<div className="ace_print-margin" />
