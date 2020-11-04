@@ -38,13 +38,13 @@
 				{
 					"owner": "eslint",
 					"pattern": {
-						"regexp": "^(.+):(\\d+):(\\d+):\\s(.+)\\[(Error|Warning|Info)/(.+)\\]",
+						"regexp": "^(.+)\\((\\d+),(\\d+)\\): (error|warning|info) ([^ ]+) : (.+)",
 						"file": 1,
 						"line": 2,
 						"column": 3,
-						"message": 4,
-						"severity": 5,
-						"code": 6
+						"severity": 4,
+						"code": 5,
+						"message": 6
 					},
 					"fileLocation": "absolute"
 				}
