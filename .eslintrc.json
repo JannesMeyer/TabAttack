@@ -41,6 +41,7 @@
 		"@typescript-eslint/no-empty-interface": "off",
 		"prefer-const": "off",
 
+		// https://github.com/yannickcr/eslint-plugin-react#list-of-supported-rules
 		"react/destructuring-assignment": "off",
 		"react/jsx-closing-bracket-location": ["error", "line-aligned"],
 		"react/jsx-closing-tag-location": "off",
