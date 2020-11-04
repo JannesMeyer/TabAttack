@@ -20,13 +20,14 @@ import showToast from './Toast.js';
 import buildDocument from './buildDocument.js';
 import KeyCombination from '../../lib/KeyCombination.js';
 
-let p = UrlQuery.fromString();
-let params: P = {
-	isImport: p.getBoolean('import'),
-	tabId: p.getNumber('tab'),
-	windowId: p.getNumber('window'),
-};
-ready().then(root => ReactDOM.render(<TabsApp {...params}  />, root));
+ready().then(root => {
+	let p = UrlQuery.fromString();
+	ReactDOM.render(<ExportApp
+		isImport={p.getBoolean('import')}
+		tabId={p.getNumber('tab')}
+		windowId={p.getNumber('window')}
+	/>, root);
+});
 
 interface P {
 	isImport: boolean | undefined;
@@ -38,7 +39,7 @@ interface S extends Doc {
 	theme?: AceThemeModule;
 }
 
-class TabsApp extends React.Component<P, S> {
+class ExportApp extends React.Component<P, S> {
 
 	private editor = React.createRef<Editor>();
 	private fileInput = React.createRef<HTMLInputElement>();
@@ -152,10 +153,10 @@ class TabsApp extends React.Component<P, S> {
 		let { state: s } = this;
 		return <>
 			<div className={'Toolbar ' + (s.theme?.cssClass ?? '')}>
-				<ActionButton onClick={this.downloadAsTextFile} title={TabsApp.str.save} globalKey={this.ctrlS} />
-				<ActionButton onClick={this.loadFile} title={TabsApp.str.loadFile} globalKey={this.ctrlO} />
-				<ActionButton onClick={closeOtherTabs} title={TabsApp.str.close} globalKey={this.ctrlQ} />
-				<ActionButton onClick={this.openLinks} title={TabsApp.str.openLinks} globalKey={this.ctrlShiftO} />
+				<ActionButton onClick={this.downloadAsTextFile} title={ExportApp.str.save} globalKey={this.ctrlS} />
+				<ActionButton onClick={this.loadFile} title={ExportApp.str.loadFile} globalKey={this.ctrlO} />
+				<ActionButton onClick={closeOtherTabs} title={ExportApp.str.close} globalKey={this.ctrlQ} />
+				<ActionButton onClick={this.openLinks} title={ExportApp.str.openLinks} globalKey={this.ctrlShiftO} />
 				<a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank" rel="noreferrer">Keyboard Shortcuts</a>
 				<input type="file" ref={this.fileInput} />
 				<div className="ace_print-margin" />

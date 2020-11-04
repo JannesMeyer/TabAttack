@@ -36,7 +36,6 @@ export default function ListWindow(p: P) {
 			audible={tab.audible}
 			mutedInfo={tab.mutedInfo}
 			pinned={tab.pinned}
-
 			onMouseDown={p.onMouseDown}
 			onClick={p.onClick}
 			onAuxClick={p.onAuxClick}

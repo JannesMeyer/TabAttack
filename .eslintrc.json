@@ -5,7 +5,7 @@
 	},
 	"extends": [
 		"eslint:recommended",
-		"plugin:react/recommended",
+		"plugin:react/all",
 		"plugin:@typescript-eslint/recommended"
 	],
 	"parser": "@typescript-eslint/parser",
@@ -40,7 +40,27 @@
 		"@typescript-eslint/explicit-module-boundary-types": "off",
 		"@typescript-eslint/no-empty-interface": "off",
 		"prefer-const": "off",
+
+		"react/destructuring-assignment": "off",
+		"react/jsx-closing-bracket-location": ["error", "line-aligned"],
+		"react/jsx-closing-tag-location": "off",
+		"react/jsx-filename-extension": "off",
+		"react/jsx-handler-names": "off",
+		"react/jsx-indent-props": ["error", "tab"],
+		"react/jsx-indent": ["error", "tab"],
+		"react/jsx-max-depth": "off",
+		"react/jsx-max-props-per-line": ["error", { "maximum": 3 }],
+		"react/jsx-no-bind": ["off", { "ignoreDOMComponents": true }],
+		"react/jsx-no-literals": "off",
+		"react/jsx-one-expression-per-line": "off",
+		"react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
+		"react/jsx-sort-props": "off",
+		"react/jsx-wrap-multilines": "off",
+		"react/no-array-index-key": "off",
+		"react/no-render-return-value": "off",
+		"react/no-set-state": "off",
 		"react/react-in-jsx-scope": "off",
-		"react/no-render-return-value": "off"
+		"react/require-optimization": "off",
+		"react/sort-comp": "off"
 	}
 }
