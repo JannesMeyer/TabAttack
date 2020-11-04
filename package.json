@@ -10,6 +10,7 @@
 		"test": "node --enable-source-maps jasmine",
 		"test-watch": "node --enable-source-maps watch jasmine",
 		"posttest": "eslint . --ext .ts,.tsx",
+		"lint": "eslint . --ext .ts,.tsx --format unix || exit 0",
 		"build-zip": "pwsh build.ps1"
 	},
 	"dependencies": {
