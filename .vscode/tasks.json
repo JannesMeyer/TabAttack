@@ -35,6 +35,7 @@
 			"group": "test",
 			"label": "ESLint",
 			"problemMatcher": {
+				"owner": "eslint",
 				"pattern": {
 					"regexp": "^(.+)\\((\\d+),(\\d+)\\): (error|warning|info) ([^ ]+) : (.+)",
 					"file": 1,
