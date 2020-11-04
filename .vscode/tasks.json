@@ -34,6 +34,21 @@
 			"script": "lint",
 			"group": "test",
 			"label": "ESLint",
+			"problemMatcher": [
+				{
+					"owner": "eslint",
+					"pattern": {
+						"regexp": "^(.+):(\\d+):(\\d+):\\s(.+)\\[(Error|Warning|Info)/(.+)\\]",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"message": 4,
+						"severity": 5,
+						"code": 6
+					},
+					"fileLocation": "absolute"
+				}
+			],
 			"presentation": {
 				"focus": true,
 				"clear": true,
