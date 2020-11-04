@@ -1,6 +1,6 @@
-import Icon from '../apps/background/Icon.js';
-import loadFont from '../lib/dom/loadFont.js';
-import assertDefined from '../lib/assertDefined.js';
+import Icon from './apps/background/Icon.js';
+import loadFont from './lib/dom/loadFont.js';
+import assertDefined from './lib/assertDefined.js';
 
 const scales = [1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4];
 const prefersDark = matchMedia('(prefers-color-scheme: dark)');
