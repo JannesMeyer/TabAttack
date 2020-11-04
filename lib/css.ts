@@ -24,7 +24,7 @@ function getId(length: number): string {
 }
 
 /** Concatenates classNames */
-export function X(...names: (string | undefined | null | { [name: string]: unknown })[]) {
+export function X(...names: (string | undefined | null | Record<string, unknown>)[]) {
 	return names.map(n => {
 		if (n == null) {
 			return;

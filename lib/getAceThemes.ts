@@ -12,7 +12,7 @@ export interface AceThemeModule extends AceTheme {
 }
 
 export function getAceThemeList() {
-	return new Promise<{ themes: AceTheme[], themesByName: { [name: string]: AceTheme } }>(resolve => {
+	return new Promise<{ themes: AceTheme[], themesByName: Record<string, AceTheme> }>(resolve => {
 		ace.config.loadModule('ace/ext/themelist', resolve);
 	});
 }
