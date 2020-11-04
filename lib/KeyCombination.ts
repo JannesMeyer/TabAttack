@@ -67,8 +67,6 @@ export default class KeyCombination {
 	 */
 	constructor(key: KeyName | (string & {}), options: Options = {}) {
 		this.key = (key === 'Space' ? ' ' : key);
-		
-		// Default values
 		this.alt = options.alt ?? false;
 		this.ctrl = options.ctrl ?? false;
 		this.macCtrl = options.macCtrl ?? false;
