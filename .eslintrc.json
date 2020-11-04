@@ -21,6 +21,7 @@
 		"@typescript-eslint"
 	],
 	"rules": {
+		"eqeqeq": ["error", "always", {"null": "ignore"}],
 		"indent": ["error", "tab"],
 		"linebreak-style": ["error", "windows"],
 		"quotes": ["error", "single"],
