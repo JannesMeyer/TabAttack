@@ -48,9 +48,9 @@
 				"fileLocation": "absolute"
 			},
 			"presentation": {
-				"revealProblems": "onProblem",
 				"clear": true,
-				"echo": false
+				"echo": false,
+				"revealProblems": "onProblem"
 			}
 		}
 	]
