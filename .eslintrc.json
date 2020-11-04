@@ -42,19 +42,20 @@
 		"prefer-const": "off",
 
 		// https://github.com/yannickcr/eslint-plugin-react#list-of-supported-rules
-		"react/destructuring-assignment": "off",
 		"react/jsx-closing-bracket-location": ["error", "line-aligned"],
+		"react/jsx-indent-props": ["error", "tab"],
+		"react/jsx-indent": ["error", "tab"],
+		"react/jsx-max-props-per-line": ["error", { "maximum": 3 }],
+		"react/jsx-no-bind": ["error", { "ignoreDOMComponents": true }],
+		"react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
+		
+		"react/destructuring-assignment": "off",
 		"react/jsx-closing-tag-location": "off",
 		"react/jsx-filename-extension": "off",
 		"react/jsx-handler-names": "off",
-		"react/jsx-indent-props": ["error", "tab"],
-		"react/jsx-indent": ["error", "tab"],
 		"react/jsx-max-depth": "off",
-		"react/jsx-max-props-per-line": ["error", { "maximum": 3 }],
-		"react/jsx-no-bind": ["off", { "ignoreDOMComponents": true }],
 		"react/jsx-no-literals": "off",
 		"react/jsx-one-expression-per-line": "off",
-		"react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
 		"react/jsx-sort-props": "off",
 		"react/jsx-wrap-multilines": "off",
 		"react/no-array-index-key": "off", // Doesn't work with custom objects that have .map()

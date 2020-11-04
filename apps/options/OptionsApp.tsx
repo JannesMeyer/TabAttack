@@ -130,13 +130,17 @@ class OptionsApp extends React.Component<P, S> {
 		}
 	}`;
 
+	handleBlacklistChange = (list: string[]) => {
+		this.setPref('domainBlacklist', list);
+	};
+
 	render() {
 		let { props: p, state: s } = this;
 		let { prefs } = s;
 		if (s.showDomainBlacklist) {
 			return <DomainBlacklist
 				list={prefs.domainBlacklist}
-				onChange={list => this.setPref('domainBlacklist', list)}
+				onChange={this.handleBlacklistChange}
 				onBack={this.toggleDomainBlacklist}
 			/>;
 		}
