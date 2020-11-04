@@ -7,24 +7,41 @@ const isBrowser = (typeof window !== 'undefined');
 const isMac = (isBrowser && navigator.platform.includes('Mac'));
 
 type KeyName =
-	// Control Characters: https://www.w3.org/TR/uievents-key/#control
-	|'Backspace'
+	// https://www.w3.org/TR/uievents-key/#keys-ui
+	|'Escape'
+
+	// https://www.w3.org/TR/uievents-key/#keys-whitespace
 	|'Tab'
 	|'Enter'
-	|'Escape'
-	|'Delete'
 	|'Space'
 
-	// Navigation keys: https://www.w3.org/TR/uievents-key/#keys-navigation
+	// https://www.w3.org/TR/uievents-key/#keys-editing
+	|'Backspace'
+	|'Delete'
+
+	// https://www.w3.org/TR/uievents-key/#keys-navigation
 	|'ArrowDown'
 	|'ArrowLeft'
 	|'ArrowRight'
 	|'ArrowUp'
-
 	|'End'
 	|'Home'
 	|'PageDown'
 	|'PageUp'
+
+	// https://www.w3.org/TR/uievents-key/#keys-function
+	|'F1'
+	|'F2'
+	|'F3'
+	|'F4'
+	|'F5'
+	|'F6'
+	|'F7'
+	|'F8'
+	|'F9'
+	|'F10'
+	|'F11'
+	|'F12'
 ;
 
 type TagNames = Uppercase<keyof HTMLElementTagNameMap>;
