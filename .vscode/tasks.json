@@ -47,7 +47,6 @@
 				"fileLocation": "absolute"
 			},
 			"presentation": {
-				"focus": true,
 				"clear": true,
 				"echo": false
 			}
