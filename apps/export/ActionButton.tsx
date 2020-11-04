@@ -1,5 +1,5 @@
 import css, { X } from '../../lib/css.js';
-import KeyCombination from '../../lib/KeyCombination.js';
+import type KeyCombination from '../../lib/KeyCombination.js';
 
 interface P {
 	title: string;

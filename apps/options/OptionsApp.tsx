@@ -1,6 +1,7 @@
 import syncPrefs from '../syncPrefs.js';
 import getString from '../../lib/browser/getString.js';
-import { getAceThemeList, AceTheme } from '../../lib/getAceThemes.js';
+import { getAceThemeList } from '../../lib/getAceThemes.js';
+import type { AceTheme } from '../../lib/getAceThemes.js';
 import css from '../../lib/css.js';
 import debounce from '../../lib/debounce.js';
 import PopupType from '../popup/PopupType.js';

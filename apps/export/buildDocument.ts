@@ -2,7 +2,7 @@ import assertDefined from '../../lib/assertDefined.js';
 import getString from '../../lib/browser/getString.js';
 import markdownLink from '../../lib/markdownLink.js';
 import syncPrefs from '../syncPrefs.js';
-import { Doc } from './Editor.js';
+import type { Doc } from './Editor.js';
 
 const protocolBlacklist = new Set([
 	'about:',

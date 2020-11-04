@@ -1,6 +1,6 @@
 import { isFirefox } from '../../lib/browser/runtime.js';
 import css, { X } from '../../lib/css.js';
-import { TTab } from './TabStore.js';
+import type { TTab } from './TabStore.js';
 
 interface P extends Pick<TTab, 'id' | 'status' | 'url' | 'title' | 'favIconUrl' | 'active' | 'discarded' | 'audible' | 'mutedInfo' | 'pinned'> {
 	selected: boolean;

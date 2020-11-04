@@ -1,5 +1,6 @@
-import { TWindow } from './TabStore.js';
-import ListTab, { ListTabProps } from './ListTab.js';
+import type { TWindow } from './TabStore.js';
+import ListTab from './ListTab.js';
+import type { ListTabProps } from './ListTab.js';
 
 interface P extends Pick<ListTabProps, 'onMouseDown' | 'onClick' | 'onAuxClick'> {
 	window: TWindow;
