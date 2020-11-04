@@ -15,6 +15,7 @@
 	},
 	"dependencies": {
 		"ace-builds": "^1.4.12",
+		"jasmine-core": "file:..\\..\\npm\\jasmine",
 		"marked": "^1.2.0",
 		"react": "^17.0.0",
 		"react-dom": "^17.0.0",
