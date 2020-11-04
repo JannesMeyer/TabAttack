@@ -153,7 +153,3 @@ export default class KeyCombination {
 		this.listener();
 	};
 }
-
-export function Key(...args: ConstructorParameters<typeof KeyCombination>) {
-	return new KeyCombination(...args);
-}

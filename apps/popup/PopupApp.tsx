@@ -13,7 +13,7 @@ import ListWindow from './ListWindow.js';
 import PopupType from './PopupType.js';
 import onMessage from '../../lib/browser/onMessage.js';
 import bt = browser.tabs;
-import { Key } from '../../lib/KeyCombination.js';
+import KeyCombination from '../../lib/KeyCombination.js';
 
 let q = UrlQuery.fromString();
 let type = (() => {
@@ -261,25 +261,25 @@ class PopupApp extends React.Component<P, S> {
 	private handleUrlToggle = () => this.setState(s => ({ showURL: !s.showURL }));
 
 	private shortcuts = [
-		Key('Escape').on(() => close()),
-		Key('ArrowUp').on(this.selectNext),
-		Key('ArrowDown').on(this.selectPrevious),
-		Key('k').on(this.selectNext),
-		Key('j').on(this.selectPrevious),
-		Key('Tab').on(this.selectNext),
-		Key('Tab', { shift: true }).on(this.selectPrevious),
-		Key('End').on(this.selectFirst),
-		Key('Home').on(this.selectLast),
-		Key('Enter').on(this.activateTab),
-		Key(' ').on(this.activateTab),
-		Key('w').on(this.closeTab),
-		Key('c').on(this.copyAsMarkdownLink),
-		Key('l').on(this.copyAsMarkdownLink),
-		Key('d').on(this.discardTab),
-		Key('r').on(this.reloadTab),
-		Key('x').on(this.handleUrlToggle),
-		Key('/').on(this.handleSearchToggle),
-		Key('e').on(this.handleExport),
+		new KeyCombination('').on(() => close()),
+		new KeyCombination('ArrowUp').on(this.selectNext),
+		new KeyCombination('ArrowDown').on(this.selectPrevious),
+		new KeyCombination('k').on(this.selectNext),
+		new KeyCombination('j').on(this.selectPrevious),
+		new KeyCombination('Tab').on(this.selectNext),
+		new KeyCombination('Tab', { shift: true }).on(this.selectPrevious),
+		new KeyCombination('End').on(this.selectFirst),
+		new KeyCombination('Home').on(this.selectLast),
+		new KeyCombination('Enter').on(this.activateTab),
+		new KeyCombination(' ').on(this.activateTab),
+		new KeyCombination('w').on(this.closeTab),
+		new KeyCombination('c').on(this.copyAsMarkdownLink),
+		new KeyCombination('l').on(this.copyAsMarkdownLink),
+		new KeyCombination('d').on(this.discardTab),
+		new KeyCombination('r').on(this.reloadTab),
+		new KeyCombination('x').on(this.handleUrlToggle),
+		new KeyCombination('/').on(this.handleSearchToggle),
+		new KeyCombination('e').on(this.handleExport),
 	];
 
 	private handleKeyDown = (ev: KeyboardEvent) => {
@@ -287,9 +287,9 @@ class PopupApp extends React.Component<P, S> {
 	};
 
 	private searchShortcuts = [
-		Key('ArrowUp').on(this.selectNext),
-		Key('ArrowDown').on(this.selectPrevious),
-		Key('Escape').on(this.handleSearchToggle),
+		new KeyCombination('ArrowUp').on(this.selectNext),
+		new KeyCombination('ArrowDown').on(this.selectPrevious),
+		new KeyCombination('Escape').on(this.handleSearchToggle),
 	];
 
 	static readonly css = css`
