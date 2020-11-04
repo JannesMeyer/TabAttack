@@ -83,6 +83,6 @@ async function showPopup(opener: browser.tabs.Tab) {
 	let id = assertDefined(w.id);
 	// Some browsers ignore the top and left coordinates
 	// https://bugzilla.mozilla.org/show_bug.cgi?id=1271047
-	setTimeout(() => browser.windows.update(id, popupWindow));
+	browser.windows.update(id, popupWindow);
 	return id;
 }
