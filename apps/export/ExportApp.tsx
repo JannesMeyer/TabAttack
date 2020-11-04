@@ -144,7 +144,7 @@ class TabsApp extends React.Component<P, S> {
 	ctrlS = new KeyCombination('s', { ctrl: true, noBubbleTags: [] });
 	ctrlQ = new KeyCombination('q', { ctrl: true, noBubbleTags: [] });
 	ctrlO = new KeyCombination('o', { ctrl: true, noBubbleTags: [] });
-	ctrlShiftO = new KeyCombination('o', { ctrl: true, shift: true, noBubbleTags: [] });
+	ctrlShiftO = new KeyCombination('O', { ctrl: true, shift: true, noBubbleTags: [] });
 
 	render() {
 		let { state: s } = this;
