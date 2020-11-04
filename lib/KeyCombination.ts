@@ -82,7 +82,9 @@ export default class KeyCombination {
 	 * Creates a KeyPress object which can be used as an event handler
 	 * @param key Case-sensitive key identifier (https://www.w3.org/TR/uievents-key/)
 	 */
-	constructor(key: KeyName | (string & {}), options: Options = {}) {
+	constructor(key: KeyName, options?: Options);
+	constructor(key: string, options?: Options);
+	constructor(key: KeyName | string, options: Options = {}) {
 		this.key = (key === 'Space' ? ' ' : key);
 		this.alt = options.alt ?? false;
 		this.ctrl = options.ctrl ?? false;
