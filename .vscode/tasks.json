@@ -34,20 +34,18 @@
 			"script": "lint",
 			"group": "test",
 			"label": "ESLint",
-			"problemMatcher": [
-				{
-					"pattern": {
-						"regexp": "^(.+)\\((\\d+),(\\d+)\\): (error|warning|info) ([^ ]+) : (.+)",
-						"file": 1,
-						"line": 2,
-						"column": 3,
-						"severity": 4,
-						"code": 5,
-						"message": 6
-					},
-					"fileLocation": "absolute"
-				}
-			],
+			"problemMatcher": {
+				"pattern": {
+					"regexp": "^(.+)\\((\\d+),(\\d+)\\): (error|warning|info) ([^ ]+) : (.+)",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"code": 5,
+					"message": 6
+				},
+				"fileLocation": "absolute"
+			},
 			"presentation": {
 				"focus": true,
 				"clear": true,
