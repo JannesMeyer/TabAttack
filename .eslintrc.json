@@ -57,7 +57,7 @@
 		"react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
 		"react/jsx-sort-props": "off",
 		"react/jsx-wrap-multilines": "off",
-		"react/no-array-index-key": "off",
+		"react/no-array-index-key": "off", // Doesn't work with custom objects that have .map()
 		"react/no-render-return-value": "off",
 		"react/no-set-state": "off",
 		"react/react-in-jsx-scope": "off",
