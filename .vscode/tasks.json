@@ -12,6 +12,9 @@
 				"kind": "build",
 				"isDefault": true
 			},
+			"presentation": {
+				"reveal": "never"
+			},
 			"runOptions": {
 				"runOn": "folderOpen"
 			},
