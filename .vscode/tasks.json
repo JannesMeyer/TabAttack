@@ -51,6 +51,12 @@
 				"echo": false,
 				"revealProblems": "onProblem"
 			}
-		}
+		},
+		{
+			"type": "shell",
+			"command": "exit",
+			"label": "ESLint (clear)",
+			"problemMatcher": { "owner": "eslint", "pattern": { "regexp": "$^" } }
+		},
 	]
 }
