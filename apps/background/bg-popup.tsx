@@ -1,5 +1,4 @@
 import onCommand from '../../lib/browser/onCommand.js';
-import logError from '../../lib/logError.js';
 import assertDefined from '../../lib/assertDefined.js';
 import localPrefs from '../localPrefs.js';
 import getActiveTab from '../../lib/browser/getActiveTab.js';
@@ -34,7 +33,7 @@ pp.onUpdate(({ browserAction }) => {
 browser.browserAction.onClicked.addListener((tab, info) => {
 	let { browserAction } = pp.obj;
 	if (browserAction === PopupType.ExternalPopup || info?.button === 1 || info?.modifiers.includes('Shift')) {
-		openExternalPopup(tab).catch(logError);
+		openExternalPopup(tab);
 
 	} else if (browserAction === PopupType.Sidebar) {
 		browser.sidebarAction.toggle();
@@ -48,7 +47,7 @@ browser.browserAction.onClicked.addListener((tab, info) => {
 /** Window ID of the TabAttack popup window */
 let popupId: number | undefined;
 
-onCommand('open_tab_list', () => getActiveTab().then(openExternalPopup).catch(logError));
+onCommand('open_tab_list', () => getActiveTab().then(openExternalPopup));
 
 /** Opens popup or switches back to previous window */
 async function openExternalPopup(tab: browser.tabs.Tab) {

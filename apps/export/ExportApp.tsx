@@ -10,7 +10,6 @@ import FileLoader from '../../lib/files/FileLoader.js';
 import { saveTextFile } from '../../lib/files/saveTextFile.js';
 import { getAceThemeModule } from '../../lib/getAceThemes.js';
 import type { AceThemeModule } from '../../lib/getAceThemes.js';
-import logError from '../../lib/logError.js';
 import prefersDark from '../../lib/prefersDark.js';
 import syncPrefs from '../syncPrefs.js';
 import ActionButton from './ActionButton.js';
@@ -55,7 +54,7 @@ class ExportApp extends React.Component<P, S> {
 	constructor(p: P) {
 		super(p);
 		this.state = {};
-		this.load().catch(logError);
+		this.load();
 	}
 
 	async load() {
@@ -74,9 +73,9 @@ class ExportApp extends React.Component<P, S> {
 		}), this.fileInput.current, document.body);
 
 		// Load theme
-		this.pref.promise.then(() => this.updateTheme().catch(logError));
-		this.pref.onUpdate(() => this.updateTheme().catch(logError));
-		prefersDark.addEventListener('change', () => this.updateTheme().catch(logError));
+		this.pref.promise.then(() => this.updateTheme());
+		this.pref.onUpdate(() => this.updateTheme());
+		prefersDark.addEventListener('change', () => this.updateTheme());
 	}
 
 	async updateTheme() {

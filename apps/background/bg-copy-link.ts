@@ -4,7 +4,6 @@ import getString from '../../lib/browser/getString.js';
 import onCommand from '../../lib/browser/onCommand.js';
 import onMessage from '../../lib/browser/onMessage.js';
 import ContextMenuItem from '../../lib/ContextMenuItem.js';
-import logError from '../../lib/logError.js';
 import markdownLink from '../../lib/markdownLink.js';
 import writeClipboard from '../../lib/writeClipboard.js';
 import syncPrefs from '../syncPrefs.js';
@@ -48,10 +47,10 @@ const copyLinkCmi = new ContextMenuItem({
 	},
 });
 syncPrefs.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown: x }) => {
-	copyLinkCmi.setVisible(x).catch(logError);
+	copyLinkCmi.setVisible(x);
 });
-onMessage('show copyLinkItem', () => copyLinkCmi.setVisible(true).catch(logError));
-onMessage('hide copyLinkItem', () => copyLinkCmi.setVisible(false).catch(logError));
+onMessage('show copyLinkItem', () => copyLinkCmi.setVisible(true));
+onMessage('hide copyLinkItem', () => copyLinkCmi.setVisible(false));
 
 // Context menu: Copy page as Markdown link
 const copyPageCmi = new ContextMenuItem({
@@ -61,11 +60,9 @@ const copyPageCmi = new ContextMenuItem({
 		copyLink(tab.title, assertDefined(tab.url));
 	},
 });
-syncPrefs.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown: x }) => {
-	copyPageCmi.setVisible(x).catch(logError);
-});
-onMessage('show copyPageItem', () => copyPageCmi.setVisible(true).catch(logError));
-onMessage('hide copyPageItem', () => copyPageCmi.setVisible(false).catch(logError));
+syncPrefs.get('showCopyPageAsMarkdown').then(({ showCopyPageAsMarkdown: x }) => copyPageCmi.setVisible(x));
+onMessage('show copyPageItem', () => copyPageCmi.setVisible(true));
+onMessage('hide copyPageItem', () => copyPageCmi.setVisible(false));
 
 
 /**

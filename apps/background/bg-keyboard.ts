@@ -1,6 +1,5 @@
 import onCommand from '../../lib/browser/onCommand.js';
 import isDefined from '../../lib/isDefined.js';
-import logError from '../../lib/logError.js';
 import assertDefined from '../../lib/assertDefined.js';
 
 /** Global shortcut: Move highlighted tabs left */
@@ -23,8 +22,7 @@ onCommand('pin_tab', function() {
 // Global shortcut: Duplicate highlighted tabs
 onCommand('duplicate_tab', function() {
 	getHighlighted()
-		.then(tabs => Promise.all(tabs.map(t => t.id).filter(isDefined).map(id => browser.tabs.duplicate(id))))
-		.catch(logError);
+		.then(tabs => Promise.all(tabs.map(t => t.id).filter(isDefined).map(id => browser.tabs.duplicate(id))));
 });
 
 /**
