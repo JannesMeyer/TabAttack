@@ -179,7 +179,8 @@ class PopupApp extends React.Component<P, S> {
 	private selectLast = () => this.moveSelectionTo(Infinity);
 
 	private moveSelection(x: number, wrapsAround = true) {
-		console.log('moveSelection', x, wrapsAround);
+		x;
+		wrapsAround;
 		// let { windows } = this.props;
 		// if (windows == null) {
 		// 	throw new Error('No tabs available');
@@ -207,7 +208,7 @@ class PopupApp extends React.Component<P, S> {
 	}
 
 	private moveSelectionTo(index: number) {
-		console.log('moveSelectionTo', index);
+		index;
 		// if (this.state.selectedTabId == null) {
 		// 	return;
 		// }
@@ -374,6 +375,7 @@ class PopupApp extends React.Component<P, S> {
 }
 
 function logError(error: Error) {
+	/* eslint-disable-next-line no-console */
 	console.error(error);
 	showToast(error.message);
 }

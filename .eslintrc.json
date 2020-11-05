@@ -26,6 +26,8 @@
 		"@typescript-eslint"
 	],
 	"rules": {
+		"no-debugger": "error",
+		"no-console": "error",
 		"eqeqeq": ["error", "always", {"null": "ignore"}],
 		"indent": ["error", "tab"],
 		"linebreak-style": ["error", "windows"],
