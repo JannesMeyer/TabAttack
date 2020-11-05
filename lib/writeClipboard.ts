@@ -10,10 +10,7 @@ document.addEventListener('copy', ev => {
 	clipboardText = undefined;
 });
 
-export default function writeClipboard(text: string): void {
+export default function writeClipboard(text: string) {
 	clipboardText = text;
-	let success = document.execCommand('copy');
-	if (!success) {
-		console.warn('Could not copy because the browser does not allow it.');
-	}
+	return document.execCommand('copy');
 }
