@@ -176,7 +176,7 @@ class OptionsApp extends React.Component<P, S> {
 					style={{ width: 203 }}
 				>
 					<optgroup label="Light">
-						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
+						{p.lightThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 					<optgroup label="Dark">
 						{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
@@ -192,7 +192,7 @@ class OptionsApp extends React.Component<P, S> {
 					style={{ width: 203 }}
 				>
 					<optgroup label="Light">
-						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
+						{p.lightThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
 					<optgroup label="Dark">
 						{p.darkThemes.map(t => <option value={t.name} key={t.name}>{t.caption}</option>)}
