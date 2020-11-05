@@ -5,7 +5,7 @@ export default function markdownLink(title: string | undefined, url: string): st
 	title ||= 'Untitled';
 
 	// Escape []*`_\ and < in the title
-	title = title.replace(/[[]\*`_\\]/gu, char => '\\' + char).replace(/</gu, '&lt;');
+	title = title.replace(/[[\]*`_\\]/gu, char => '\\' + char).replace(/</gu, '&lt;');
 
 	// Escape closing parenthesis
 	url = url.replace(/\)/gu, '%29');
