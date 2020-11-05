@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"incremental": true,
 		"sourceMap": true,
 		"jsx": "react",
 		"strict": true,
