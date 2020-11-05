@@ -1,13 +1,8 @@
 import assert from '../../lib/assert.js';
+import log from '../../lib/log.js';
 import requireValues from '../../lib/requireValues.js';
 import bt = browser.tabs;
 import bw = browser.windows;
-
-const debug = false;
-
-function log(...params: unknown[]) {
-	debug && console.log(params.map(x => typeof x === 'object' ? JSON.stringify(x, undefined, '  ') : x).join(' '));
-}
 
 type OnTabRemoved = Parameters<typeof bt.onRemoved.addListener>[0];
 type OnTabUpdated = Parameters<typeof bt.onUpdated.addListener>[0];
