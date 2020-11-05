@@ -1,8 +1,20 @@
 import { isFirefox } from '../../lib/browser/runtime.js';
-import css, { X } from '../../lib/css.js';
+import css, { x } from '../../lib/css.js';
 import type { TTab } from './TabStore.js';
 
-interface P extends Pick<TTab, 'id' | 'status' | 'url' | 'title' | 'favIconUrl' | 'active' | 'discarded' | 'audible' | 'mutedInfo' | 'pinned'> {
+type TTabProps =
+	|'id'
+	|'status'
+	|'url'
+	|'title'
+	|'favIconUrl'
+	|'active'
+	|'discarded'
+	|'audible'
+	|'mutedInfo'
+	|'pinned';
+
+interface P extends Pick<TTab, TTabProps> {
 	selected: boolean;
 	showURL: boolean;
 	hidden: boolean;
@@ -91,7 +103,7 @@ export default class ListTab extends React.PureComponent<P> {
 		background: #0a84ff;
 	}
 	&.pinned {
-		background-color: #ece8e0;	
+		background-color: #ece8e0;
 	}
 	@media (prefers-color-scheme: dark) {
 		&.active {
@@ -105,7 +117,7 @@ export default class ListTab extends React.PureComponent<P> {
 	render() {
 		let { discarded, active, hidden, selected, audible, pinned, showURL, ...p } = this.props;
 		let muted = p.mutedInfo?.muted;
-		
+
 		let favicon: string;
 		if (p.status === 'loading') {
 			// From Firefox (chrome://browser/skin/tabbrowser/tab-loading.png)
@@ -120,16 +132,16 @@ export default class ListTab extends React.PureComponent<P> {
 				favicon = p.favIconUrl;
 			}
 
-		} else if (!isFirefox) {
-			favicon = 'chrome://favicon/size/16@' + devicePixelRatio + 'x/' + p.url;
-			
-		} else {
+		} else if (isFirefox) {
 			favicon = 'chrome://branding/content/icon32.png';
+
+		} else {
+			favicon = 'chrome://favicon/size/16@' + devicePixelRatio + 'x/' + p.url;
 		}
 
 		let text: string;
 		if (showURL) {
-			text = decodeURI((p.url ?? '').replace(/^[^:]+:[/]+(www\.)?/, '').replace(/\//, '\n/'));
+			text = decodeURI((p.url ?? '').replace(/^[^:]+:[/]+(www\.)?/u, '').replace(/\//u, '\n/'));
 
 		} else if (p.title) {
 			text = p.title;
@@ -146,7 +158,7 @@ export default class ListTab extends React.PureComponent<P> {
 			onMouseDown={ev => p.onMouseDown(p.id, ev)}
 			onClick={ev => p.onClick(p.id, ev)}
 			onAuxClick={ev => p.onAuxClick(p.id, ev)}
-			className={X(ListTab.css, p.status, { discarded, active, selected, hidden, showURL, pinned })}
+			className={x(ListTab.css, p.status, { discarded, active, selected, hidden, showURL, pinned })}
 		>
 			<img className="favicon" src={favicon} />
 			<div className="title">{text}</div>

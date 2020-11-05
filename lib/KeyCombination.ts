@@ -58,7 +58,18 @@ interface Options {
 	noBubbleTags?: TagNames[];
 }
 
-interface KbEvent extends Pick<KeyboardEvent, 'defaultPrevented' | 'preventDefault' | 'stopPropagation' | 'key' | 'ctrlKey' | 'metaKey' | 'shiftKey' | 'altKey' | 'repeat'> {
+type KbEventProps =
+ |'defaultPrevented'
+ |'preventDefault'
+ |'stopPropagation'
+ |'key'
+ |'ctrlKey'
+ |'metaKey'
+ |'shiftKey'
+ |'altKey'
+ |'repeat';
+
+interface KbEvent extends Pick<KeyboardEvent, KbEventProps> {
 	target: unknown;
 	currentTarget: unknown;
 }

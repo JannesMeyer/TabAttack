@@ -6,9 +6,9 @@ interface MenuProps extends Omit<Parameters<typeof browser.contextMenus.create>[
 
 /**
  * A context menu item can appear in various places in the browser.
- * The class is necessary so it can be shown and hidden without the need to 
+ * The class is necessary so it can be shown and hidden without the need to
  * re-specify the configuration again.
- * 
+ *
  * Documentation:
  * https://developer.chrome.com/extensions/contextMenus
  * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/menus

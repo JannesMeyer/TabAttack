@@ -12,7 +12,7 @@ let pp = syncPrefs.getWithUpdates('browserAction');
 pp.promise.then(() => {
 	if (pp.obj.browserAction === PopupType.ActionPopup) {
 		// Enable
-		browser.browserAction.setPopup({ popup: 'popup.html?t=' + PopupType.ActionPopup });		
+		browser.browserAction.setPopup({ popup: 'popup.html?t=' + PopupType.ActionPopup });
 	}
 });
 pp.onUpdate(({ browserAction }) => {
@@ -54,7 +54,7 @@ async function openExternalPopup(tab: browser.tabs.Tab) {
 	if (popupId == null) {
 		// First open
 		popupId = await showPopup(tab);
-		
+
 	} else if (popupId === tab.windowId) {
 		// Popup already focused, switch back to previous window
 		await sendMessage('focusPreviousWindow');
@@ -63,7 +63,7 @@ async function openExternalPopup(tab: browser.tabs.Tab) {
 		// Existing
 		try {
 			await browser.windows.update(popupId, { focused: true });
-			// await sendMessage('selectTab', { id: tab.id }).catch(logError);
+			// TODO: send 'selectTab' message to the existing window
 
 		} catch (e) {
 			popupId = undefined;

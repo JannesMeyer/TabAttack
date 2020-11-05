@@ -44,7 +44,7 @@ export default class Editor extends React.Component<P> {
 
 	setText() {
 		let { props: p, editor } = this;
-		// session.setValue: https://github.com/ajaxorg/ace/issues/1243
+		// https://github.com/ajaxorg/ace/issues/1243
 		editor.session.setValue(p.text ?? '');
 		editor.gotoLine(p.highlightLine ?? 0, 0, false);
 		editor.focus();
@@ -100,5 +100,4 @@ export default class Editor extends React.Component<P> {
 	render() {
 		return <div ref={this.ref} />;
 	}
-
 }

@@ -3,7 +3,7 @@ import assertDefined from '../assertDefined.js';
 export default async function closeOtherTabs() {
 	const [sourceTab, windows] = await Promise.all([
 		browser.tabs.getCurrent(),
-		browser.windows.getAll({ populate: true })
+		browser.windows.getAll({ populate: true }),
 	]);
 	// Identify the window that hosts the sourceTab
 	let sourceWindow = assertDefined(windows.find(w => assertDefined(w.id) === sourceTab.windowId));

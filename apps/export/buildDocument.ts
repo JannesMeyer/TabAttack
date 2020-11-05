@@ -3,6 +3,7 @@ import getString from '../../lib/browser/getString.js';
 import markdownLink from '../../lib/markdownLink.js';
 import syncPrefs from '../syncPrefs.js';
 import type { Doc } from './Editor.js';
+import showToast from './Toast.js';
 
 const protocolBlacklist = new Set([
 	'about:',
@@ -20,6 +21,7 @@ const protocolBlacklist = new Set([
  */
 export default async function buildDocument(sourceTabId?: number, windowId?: number) {
 	let p = await syncPrefs.get('format', 'ignorePinned', 'domainBlacklist');
+	// TODO: Use TabStore
 	let windows = await browser.windows.getAll({ populate: true });
 
 	// Pull a window to the top
@@ -31,56 +33,59 @@ export default async function buildDocument(sourceTabId?: number, windowId?: num
 	// Count highlighted tabs. If >1 only export those.
 	let highlightedTabs = assertDefined(windows.first().tabs).filter(t => t.highlighted);
 	if (highlightedTabs.length > 1) {
-		windows = [ { tabs: highlightedTabs, focused: false, incognito: false, alwaysOnTop: false } ];
+		windows = [{ tabs: highlightedTabs, focused: false, incognito: false, alwaysOnTop: false }];
+		showToast(getString('toast_highlighted_tabs'));
 	}
 
-	// Filter some urls out and count the number of tabs that are still loading
-	// let loadingTabs = 0;
 	for (let w of windows) {
 		w.tabs = assertDefined(w.tabs).filter(tab => {
 
 			// Compatibility with The Great Suspender
 			let urlStr = assertDefined(tab.url);
 			if (urlStr.startsWith('chrome-extension://klbibkeccnjlkjkiokjodocebajanakg/suspended.html#uri=')) {
-				tab.url = urlStr.replace(/^chrome-extension:\/\/klbibkeccnjlkjkiokjodocebajanakg\/suspended\.html#uri=/, '');
+				tab.url = urlStr.replace(/^chrome-extension:\/\/klbibkeccnjlkjkiokjodocebajanakg\/suspended\.html#uri=/u, '');
 			}
 
 			let url = new URL(urlStr);
-
-			return !protocolBlacklist.has(url.protocol) && !p.domainBlacklist.includes(url.hostname) && !(p.ignorePinned && tab.pinned);
+			if (protocolBlacklist.has(url.protocol)) {
+				return false;
+			}
+			if (p.domainBlacklist.includes(url.hostname)) {
+				return false;
+			}
+			if (p.ignorePinned && tab.pinned) {
+				return false;
+			}
+			return true;
 		});
-		// Count the number of loading tabs
-		// loadingTabs += w.tabs.reduce((n, tab) => n + (tab.status === 'loading' ? 1 : 0), 0);
 	}
 
 	// Ignore empty windows
-	windows = windows.filter(wnd => assertDefined(wnd.tabs).length > 0);
+	windows = windows.filter(w => assertDefined(w.tabs).length > 0);
+
+	// Warn the user if all tabs were ignored
+	if (windows.length === 0) {
+		showToast(getString('toast_no_tabs'));
+	}
+
+	// Warn the user if some tabs didn't finish loading
+	let loading = windows.flatMap(w => w.tabs?.length ?? 0).reduce((a, b) => a + b);
+	if (loading > 0) {
+		showToast(getString('toast_loading_tab'), loading);
+	}
 
 	// Build document
 	return (p.format === 'json' ? makeJson(windows) : makeMarkdown(windows, sourceTabId));
-
-	// // Tell the user if only highlighted tabs were exported
-	// if (highlightedTabs.length > 1) {
-	// 	throw new Error(getString('toast_highlighted_tabs'));
-		
-	// } else if (windows.length === 0) {
-	// 	// Warn the user if all tabs were ignored
-	// 	throw new Error(getString('toast_no_tabs'));
-
-	// } else if (loadingTabs > 0) {
-	// 	// Warn the user if some tabs didn't finish loading
-	// 	throw new Error(getString('toast_loading_tab', loadingTabs));
-	// }
 }
 
 /**
  * Build a pretty-printed JSON document from an array of windows
  */
 function makeJson(windows: browser.windows.Window[]): Doc {
-	let w = windows.map(w => assertDefined(w.tabs).map(({ title, url }) => ({ title, url })));
+	let data = windows.map(w => assertDefined(w.tabs).map(({ title, url }) => ({ title, url })));
 	return {
 		format: 'json',
-		text: JSON.stringify(w, undefined, 2),
+		text: JSON.stringify(data, undefined, 2),
 	};
 }
 

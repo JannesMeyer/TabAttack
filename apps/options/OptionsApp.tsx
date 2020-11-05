@@ -46,8 +46,11 @@ class OptionsApp extends React.Component<P, S> {
 		};
 	}
 
-	private handleChange<K extends keyof SyncPrefs>({ target }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: K) {
-		let value = (target.type === 'checkbox' ? ('checked' in target ? target.checked : false) : target.value);
+	private handleChange<K extends keyof SyncPrefs>(
+		{ target }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		field: K,
+	) {
+		let value = ('checked' in target ? target.checked : target.value);
 		this.setPref(field, value);
 	}
 
@@ -167,7 +170,11 @@ class OptionsApp extends React.Component<P, S> {
 
 			<label className="row">
 				<span>Color Scheme</span>
-				<select value={prefs.editorTheme} onChange={ev => this.handleChange(ev, 'editorTheme')} style={{ width: 203 }}>
+				<select
+					value={prefs.editorTheme}
+					onChange={ev => this.handleChange(ev, 'editorTheme')}
+					style={{ width: 203 }}
+				>
 					<optgroup label="Light">
 						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
@@ -179,7 +186,11 @@ class OptionsApp extends React.Component<P, S> {
 
 			<label className="row">
 				<span>Color Scheme - Dark Mode</span>
-				<select value={prefs.editorThemeDarkMode} onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')} style={{ width: 203 }}>
+				<select
+					value={prefs.editorThemeDarkMode}
+					onChange={ev => this.handleChange(ev, 'editorThemeDarkMode')}
+					style={{ width: 203 }}
+				>
 					<optgroup label="Light">
 						{p.lightThemes.map(t =>	<option value={t.name} key={t.name}>{t.caption}</option>)}
 					</optgroup>
@@ -193,36 +204,56 @@ class OptionsApp extends React.Component<P, S> {
 
 			<label className="row">
 				<span>Click Action</span>
-				<select value={prefs.browserAction} onChange={ev => this.handleChange(ev, 'browserAction')} style={{ width: 203 }}>
+				<select
+					value={prefs.browserAction}
+					onChange={ev => this.handleChange(ev, 'browserAction')}
+					style={{ width: 203 }}
+				>
 					<option value={PopupType.ActionPopup}>Tab Switcher (Popup)</option>
 					{isFirefox && <option value={PopupType.Sidebar}>Tab Switcher (Sidebar)</option>}
 					<option value={PopupType.ExternalPopup}>Tab Switcher (Window)</option>
 					<option value={PopupType.DirectExport}>Export Tabs</option>
 				</select>
 			</label>
-			
+
 			<label className="row">
 				<span>Color</span>
-				<input type="color" value={prefs.iconColor} onChange={ev => this.handleChange(ev, 'iconColor')} />
+				<input
+					type="color"
+					value={prefs.iconColor}
+					onChange={ev => this.handleChange(ev, 'iconColor')}
+				/>
 			</label>
 
 			<label className="row">
 				<span>Color - Dark Mode</span>
-				<input type="color" value={prefs.iconColorDarkMode} onChange={ev => this.handleChange(ev, 'iconColorDarkMode')} />
+				<input
+					type="color"
+					value={prefs.iconColorDarkMode}
+					onChange={ev => this.handleChange(ev, 'iconColorDarkMode')}
+				/>
 			</label>
 
 			<h3>Context Menu Items</h3>
 
 			<div className="row">
 				<label>
-					<input type="checkbox" checked={prefs.showCopyLinkAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyLinkAsMarkdown')} />
+					<input
+						type="checkbox"
+						checked={prefs.showCopyLinkAsMarkdown}
+						onChange={ev => this.handleChange(ev, 'showCopyLinkAsMarkdown')}
+					/>
 					{getString('options_show_copy_link')}
 				</label>
 			</div>
 
 			<div className="row">
 				<label>
-					<input type="checkbox" checked={prefs.showCopyPageAsMarkdown} onChange={ev => this.handleChange(ev, 'showCopyPageAsMarkdown')} />
+					<input
+						type="checkbox"
+						checked={prefs.showCopyPageAsMarkdown}
+						onChange={ev => this.handleChange(ev, 'showCopyPageAsMarkdown')}
+					/>
 					{getString('options_show_copy_page')}
 				</label>
 			</div>

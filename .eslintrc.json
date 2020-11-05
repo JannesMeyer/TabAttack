@@ -4,7 +4,7 @@
 		"es2021": true
 	},
 	"extends": [
-		"eslint:recommended",
+		"eslint:all",
 		"plugin:react/all",
 		"plugin:@typescript-eslint/recommended"
 	],
@@ -13,7 +13,6 @@
 		"ecmaFeatures": {
 			"jsx": true
 		},
-		"ecmaVersion": 12,
 		"sourceType": "module"
 	},
 	"settings": {
@@ -26,13 +25,70 @@
 		"@typescript-eslint"
 	],
 	"rules": {
-		"no-debugger": "error",
-		"no-console": "error",
-		"eqeqeq": ["error", "always", {"null": "ignore"}],
+		"arrow-parens": "off", // We like this
+		"comma-dangle": ["error", "always-multiline"],
+		"eqeqeq": ["error", "always", { "null": "ignore" }],
+		"func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+		"function-call-argument-newline": "off", // What?
+		"generator-star-spacing": ["error", "after"],
+		"id-length": "off",
 		"indent": ["error", "tab"],
+		"init-declarations": "off", // TypeScript already handles this
 		"linebreak-style": ["error", "windows"],
-		"quotes": ["error", "single"],
+		"max-len": ["error", { "code": 120, "tabWidth": 2, "ignoreUrls": true }],
+		"multiline-comment-style": "off",
+		"newline-per-chained-call": "off",
+		"no-console": "error",
+		"no-debugger": "error",
+		"no-eq-null": "off", // We like this
+		"no-invalid-this": "off", // Not compatible with class properties
+		"no-magic-numbers": "off",
+		"no-param-reassign": "off",
+		"no-plusplus": "off",
+		"no-tabs": ["error", { "allowIndentationTabs": true }],
+		"no-ternary": "off", // We like this
+		"no-undefined": "off", // We like this
+		"no-use-before-define": "off", // TypeScript is better at this
+		"no-useless-constructor": "off", // Incompatible with TypeScript
+		"object-curly-spacing": ["error", "always"],
+		"object-property-newline": "off",
+		"one-var": "off", // No way!
+		"padded-blocks": "off",
+		"prefer-const": "off",
+		"prefer-template": "off",
+		"quote-props": ["error", "as-needed"],
 		"semi": ["error", "always"],
+		"sort-imports": "off", // No way!
+		"sort-keys": "off", // No way!
+		"space-before-function-paren": ["error", "never"],
+		"no-extra-parens": "off",
+		"multiline-ternary": "off",
+		"dot-location": ["error", "property"],
+		"brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+		"max-statements-per-line": ["error", { "max": 2 }],
+		"spaced-comment": ["error", "always"],
+		"array-element-newline": ["error", "consistent"],
+		"no-warning-comments": "off",
+		"max-params": ["error", 6],
+		"consistent-return": "off", // TypeScript can handle this
+		"no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTaggedTemplates": true }],
+		"lines-between-class-members": "off", // Does not work with TypeScript overload definitions
+
+		"prefer-destructuring": "off",
+		"max-statements": "off",
+		"max-lines": ["error", { "max": 400 }],
+		"max-lines-per-function": ["error", { "max": 200 }],
+		"lines-around-comment": "off", // Doesn't really work with interfaces in TypeScript
+		"no-continue": "off", // This is very useful. Works like return in .forEach()
+		"no-return-assign": "off", // Is useful
+		"prefer-named-capture-group": "off", // ES2018 required, TypeScript doesn't transpile regular expressions
+		"capitalized-comments": ["error", "always", { "ignoreConsecutiveComments": true }],
+		"no-multi-assign": "off", // Is useful
+		"array-callback-return": "off", // TypeScript is better
+		"require-atomic-updates": "off", // Too many false positives
+
+		// https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin
+		"func-call-spacing": "off", // Use @typescript-eslint/func-call-spacing
 		"@typescript-eslint/func-call-spacing": "error",
 		"@typescript-eslint/array-type": "error",
 		"@typescript-eslint/member-delimiter-style": ["error", { "singleline": { "delimiter": "comma" } }],
@@ -41,7 +97,12 @@
 		"@typescript-eslint/consistent-type-imports": "error",
 		"@typescript-eslint/explicit-module-boundary-types": "off",
 		"@typescript-eslint/no-empty-interface": "off",
-		"prefer-const": "off",
+		"quotes": "off", // Use @typescript-eslint/quotes
+		"@typescript-eslint/quotes": ["error", "single"],
+		"no-duplicate-imports": "off", // Use @typescript-eslint/no-duplicate-imports
+		"@typescript-eslint/no-duplicate-imports": "off",
+		"no-shadow": "off", // Use @typescript-eslint/no-shadow
+		"@typescript-eslint/no-shadow": ["error"],
 
 		// https://github.com/yannickcr/eslint-plugin-react#list-of-supported-rules
 		"react/jsx-closing-bracket-location": ["error", "line-aligned"],
@@ -50,7 +111,7 @@
 		"react/jsx-max-props-per-line": ["error", { "maximum": 3 }],
 		"react/jsx-no-bind": ["error", { "ignoreDOMComponents": true }],
 		"react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
-		
+
 		"react/destructuring-assignment": "off",
 		"react/jsx-closing-tag-location": "off",
 		"react/jsx-filename-extension": "off",

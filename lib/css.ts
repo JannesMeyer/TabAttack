@@ -5,7 +5,7 @@ export default function css(style: TemplateStringsArray): string {
 	}
 	let st = document.createElement('style');
 	st.id = 'css-' + getId(5);
-	let text = style.join('').replace(/&/g, '.' + st.id);
+	let text = style.join('').replace(/&/gu, '.' + st.id);
 	st.appendChild(document.createTextNode(text));
 	document.head.appendChild(st);
 	return st.id;
@@ -16,7 +16,7 @@ function getId(length: number): string {
 	if (length < 1) {
 		throw new Error('length needs to be at least 1');
 	}
-	let n = Math.floor(Math.random() * Math.pow(36, length));
+	let n = Math.floor(Math.random() * (36 ** length));
 	if (n === Infinity) {
 		throw new Error(`length ${length} is too long to generate`);
 	}
@@ -24,7 +24,7 @@ function getId(length: number): string {
 }
 
 /** Concatenates classNames */
-export function X(...names: (string | undefined | null | Record<string, unknown>)[]) {
+export function x(...names: (string | undefined | null | Record<string, unknown>)[]) {
 	return names.map(n => {
 		if (n == null) {
 			return;

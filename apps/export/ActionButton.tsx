@@ -1,4 +1,4 @@
-import css, { X } from '../../lib/css.js';
+import css, { x } from '../../lib/css.js';
 import type KeyCombination from '../../lib/KeyCombination.js';
 
 interface P {
@@ -44,7 +44,7 @@ export default class ActionButton extends React.Component<P> {
 		return <button
 			type="button"
 			onClick={p.onClick}
-			className={X(ActionButton.css, p.className)}
+			className={x(ActionButton.css, p.className)}
 			title={p.globalKey?.toString()}
 		>
 			{p.title}

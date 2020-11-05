@@ -31,24 +31,24 @@ Promise.all([
 /**
  * Update browser action with the current tab count
  */
-async function updateIcon(windowId?: number) {
+async function updateIcon(onlyWindowId?: number) {
 	let scales = getScales();
 
 	icon.textColor = sPrefs.obj.iconColor;
 	icon.textColorDark = sPrefs.obj.iconColorDarkMode;
 
 	// Single window
-	if (windowId != null) {
-		let tabs = tabCounter.windows.getOrThrow(windowId);
+	if (onlyWindowId != null) {
+		let tabs = tabCounter.windows.getOrThrow(onlyWindowId);
 		let icons = drawIcons(tabs.size, scales);
-		await setIcon(windowId, tabs, icons);
+		await setIcon(onlyWindowId, tabs, icons);
 		return;
 	}
 
 	// Many windows
 	for (let [windowId, tabs] of tabCounter.windows) {
 		let icons = drawIcons(tabs.size, scales);
-		await setIcon(windowId, tabs, icons);
+		setIcon(windowId, tabs, icons);
 	}
 }
 
@@ -60,7 +60,7 @@ async function setIcon(windowId: number, tabs: Iterable<number>, imageData: Reco
 		// Firefox is currently the only browser that supports `windowId`
 		// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserAction/setIcon#Browser_compatibility
 		await browser.browserAction.setIcon({ windowId, imageData });
-		
+
 	} catch {
 		// Install tab update handler that sets the icon whenever a navigation occurs
 		if (!browser.tabs.onUpdated.hasListener(handleTabUpdate)) {

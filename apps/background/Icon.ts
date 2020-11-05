@@ -25,7 +25,7 @@ export default class Icon {
 		this.scale = scale;
 		let { canvas, size } = this;
 		let w = Math.floor(size * scale);
-		if (canvas.width  !== w) { canvas.width = w; }
+		if (canvas.width !== w) { canvas.width = w; }
 		if (canvas.height !== w) { canvas.height = w; }
 		return this;
 	}
@@ -50,7 +50,6 @@ export default class Icon {
 		// Draw the text
 		ctx.font = `${scale * 11}px Roboto` + (text.length > 2 ? ' Condensed' : '');
 		ctx.textAlign = 'center';
-		//ctx.textBaseline = 'middle';
 
 		// TODO: prefersDark needs to be moved to allow caching
 		// Read prefersDark because of Chrome bug:
@@ -73,7 +72,14 @@ export default class Icon {
  *
  * https://stackoverflow.com/questions/1255512/how-to-draw-a-rounded-rectangle-on-html-canvas
  */
-function roundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
+function roundedRect(
+	ctx: CanvasRenderingContext2D,
+	x: number,
+	y: number,
+	width: number,
+	height: number,
+	radius: number,
+) {
 	ctx.beginPath();
 	ctx.moveTo(x + radius, y);
 	ctx.lineTo(x + width - radius, y);

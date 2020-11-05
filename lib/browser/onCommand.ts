@@ -14,7 +14,7 @@ const listeners = new Map<string, () => void>();
 export default function onCommand(command: Command, listener: () => void) {
 	if (listeners.size === 0) {
 		// First time this function is called
-		browser.commands.onCommand.addListener(command => listeners.get(command)?.());
+		browser.commands.onCommand.addListener(c => listeners.get(c)?.());
 	}
 	if (listener) {
 		listeners.set(command, listener);

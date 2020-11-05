@@ -1,8 +1,14 @@
 import css from '../../lib/css.js';
 const { useState, useMemo, useCallback } = React;
 
-export default function DomainBlacklist(p: { list: string[], onChange(list: string[]): void, onBack(ev: React.MouseEvent): void }) {
-	let list = useMemo(() => new Set(p.list), [p.list]);
+interface P {
+	list: string[];
+	onChange(list: string[]): void;
+	onBack(ev: React.MouseEvent): void;
+}
+
+export default function DomainBlacklist(p: P) {
+	let listSet = useMemo(() => new Set(p.list), [p.list]);
 
 	// Add item
 	let [text, setText] = useState('');
@@ -18,18 +24,18 @@ export default function DomainBlacklist(p: { list: string[], onChange(list: stri
 	let [selection, setSelection] = useState<string[]>([]);
 	let remove = useCallback(() => {
 		for (let value of selection) {
-			list.delete(value);
+			listSet.delete(value);
 		}
 		setSelection([]);
-		p.onChange(Array.from(list));
-	}, [selection, list, p.onChange]);
+		p.onChange(Array.from(listSet));
+	}, [selection, listSet, p.onChange]);
 
 	return <div className={DomainBlacklist.css}>
 		<a href="" onClick={p.onBack}>Back</a>
 		<h3>Ignore Domains When Exporting Tabs</h3>
 		<form onSubmit={addItem}>
 			<input autoFocus value={text} onChange={ev => setText(ev.target.value)} />
-			<button type="button" disabled={list.has(text.toLocaleLowerCase()) || text.trim() === ''}>Add</button>
+			<button type="button" disabled={listSet.has(text.toLocaleLowerCase()) || text.trim() === ''}>Add</button>
 		</form>
 		<p>
 			<select

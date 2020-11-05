@@ -15,9 +15,7 @@ export default function ListWindow(p: P) {
 	if (w.type !== 'normal') {
 		return null;
 	}
-	let tabs = React.useMemo(() => {
-		return w.tabs.slice().reverse();
-	}, [w.tabs]);
+	let tabs = React.useMemo(() => w.tabs.slice().reverse(), [w.tabs]);
 	if (tabs.length === 0) {
 		return null;
 	}

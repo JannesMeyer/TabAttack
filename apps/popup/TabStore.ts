@@ -22,13 +22,13 @@ class TabStore {
 
 	private windows = new Map<number, TWindow>();
 
-	static convertWindow(wndw: bw.Window, allTabs: Iterable<TTab>) {
-		let { id, type, state, focused, incognito, ...w } = requireValues(wndw, 'id', 'type', 'state');
+	static convertWindow(w: bw.Window, allTabs: Iterable<TTab>) {
+		let { id, type, state, focused, incognito, tabs: ogTabs } = requireValues(w, 'id', 'type', 'state');
 		assert(id !== bw.WINDOW_ID_NONE);
 		let tabs: TTab[] = [];
-		for (let t of w.tabs?.map(TabStore.convertTab) ?? Array.from(allTabs).filter(t => t.windowId === id)) {
+		for (let tab of ogTabs?.map(TabStore.convertTab) ?? Array.from(allTabs).filter(t => t.windowId === id)) {
 			// Index is only the initial index. It is never updated
-			tabs[t.index] = t;
+			tabs[tab.index] = tab;
 		}
 		return {
 			id,
@@ -41,7 +41,7 @@ class TabStore {
 			activeTabId: tabs.find(t => t.active)?.id,
 		};
 	}
-	
+
 	private tabs = new Map<number, TTab>();
 
 	static convertTab(tab: bt.Tab) {
@@ -66,7 +66,14 @@ class TabStore {
 		bt.onActivated.addListener(this.handleTabActivated);
 		try {
 			// Firefox is the only browser that currently supports filters
-			bt.onUpdated.addListener(this.handleTabUpdate, { properties: ['title', 'status', 'favIconUrl', 'discarded', 'audible', 'mutedInfo'] });
+			bt.onUpdated.addListener(this.handleTabUpdate, { properties: [
+				'title',
+				'status',
+				'favIconUrl',
+				'discarded',
+				'audible',
+				'mutedInfo',
+			] });
 		} catch {
 			bt.onUpdated.addListener(this.handleTabUpdate);
 		}
@@ -123,7 +130,7 @@ class TabStore {
 		let tab = TabStore.convertTab(t);
 		this.tabs.set(tab.id, tab);
 
-		
+
 		let w = this.windows.get(t.windowId);
 		if (w == null) {
 			// In Firefox the tabCreated event fires before windowCreated, so the window properties
@@ -166,7 +173,7 @@ class TabStore {
 		w.tabs = tabs;
 		this.notify();
 	};
-	
+
 	private handleTabAttached: OnTabAttached = (tabId, { newWindowId, newPosition }) => {
 		log('tab attached', tabId);
 		let tab = this.tabs.getOrThrow(tabId);
@@ -233,4 +240,4 @@ class TabStore {
 	}
 }
 
-export default new TabStore;
+export default new TabStore();

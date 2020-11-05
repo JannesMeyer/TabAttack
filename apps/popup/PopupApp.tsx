@@ -14,29 +14,32 @@ import PopupType from './PopupType.js';
 import onMessage from '../../lib/browser/onMessage.js';
 import bt = browser.tabs;
 import KeyCombination from '../../lib/KeyCombination.js';
+import log from '../../lib/log.js';
 
-let q = UrlQuery.fromString();
-let type = (() => {
-	let t = q.getString('t');
-	if (t === PopupType.ExternalPopup || t === PopupType.ActionPopup || t === PopupType.Sidebar) {
-		return t;
+{
+	let q = UrlQuery.fromString();
+	let type = (() => {
+		let t = q.getString('t');
+		if (t === PopupType.ExternalPopup || t === PopupType.ActionPopup || t === PopupType.Sidebar) {
+			return t;
+		}
+		return PopupType.Default;
+	})();
+
+	if (type === PopupType.ActionPopup) {
+		css`body {
+			width: 320px;
+			height: 520px;
+		}`;
 	}
-	return PopupType.Default;
-})();
 
-if (type === PopupType.ActionPopup) {
-	css`body {
-		width: 320px;
-		height: 520px;
-	}`;
+	Promise.all([
+		ready(),
+		q.getNumber('opener') ?? browser.windows.getCurrent().then(w => w.id),
+	]).then(([el, openerWindowId]) => {
+		ReactDOM.render(<PopupApp type={type} openerWindowId={openerWindowId} />, el);
+	});
 }
-
-Promise.all([
-	ready(),
-	q.getNumber('opener') ?? browser.windows.getCurrent().then(w => w.id),
-]).then(([el, openerWindowId]) => {
-	ReactDOM.render(<PopupApp type={type} openerWindowId={openerWindowId} />, el);
-});
 
 interface P {
 	type: PopupType;
@@ -55,7 +58,7 @@ class PopupApp extends React.Component<P, S> {
 	constructor(p: P) {
 		super(p);
 		this.state = {
-			// selectedTabId: (p.isSidebar ? undefined : p.tm.getFirst()),
+			// TODO: selectedTabId: (p.isSidebar ? undefined : p.tm.getFirst()),
 			showURL: false,
 		};
 	}
@@ -86,6 +89,7 @@ class PopupApp extends React.Component<P, S> {
 		onMessage('focusPreviousWindow');
 	}
 
+	/* eslint-disable-next-line class-methods-use-this */
 	private handleFocus() {
 		document.body.classList.remove('inactive');
 	}
@@ -100,8 +104,8 @@ class PopupApp extends React.Component<P, S> {
 		if (this.props.type !== PopupType.ExternalPopup) {
 			return;
 		}
-		// browser.windows.getCurrent() cannot be used because it is async and the browser
-		// does not wait for it when unloading the window
+		/* Cannot use browser.windows.getCurrent() because it is async and the browser
+		does not wait for it when unloading the window */
 		let width = outerWidth;
 		let height = outerHeight;
 		let top = screenY;
@@ -111,28 +115,6 @@ class PopupApp extends React.Component<P, S> {
 		}
 		localPrefs.set({ popupWindow: { width, height, top, left } });
 	};
-
-	// handleMessage = (m: Message) => {
-	//   if (m.type === 'selectTab') {
-	//     this.setState({ selectedTabId: m.id, search: '' });
-	//   }
-	// };
-
-	// Page DOWN
-	// if (this.selectedTabRef == null) {
-	//   throw new Error('Selected item not found');
-	// }
-	// let itemHeight = this.selectedTabRef.offsetHeight; // Depends on the CSS
-	// let moveByItems = (Math.round(innerHeight / itemHeight) - 3);
-	// this.moveSelection(moveByItems, false);
-
-	// Page UP
-	// if (this.selectedTabRef == null) {
-	//   throw new Error('Selected item not found');
-	// }
-	// let itemHeight = this.selectedTabRef.offsetHeight; // Depends on the CSS
-	// let moveByItems = (Math.round(innerHeight / itemHeight) - 3);
-	// this.moveSelection(-moveByItems, false);
 
 	private copyAsMarkdownLink = (id = this.state.selectedTabId) => {
 		let tab = TabStore.getTabs().get(id);
@@ -174,54 +156,23 @@ class PopupApp extends React.Component<P, S> {
 	};
 
 	private selectNext = () => this.moveSelection(+1);
+
 	private selectPrevious = () => this.moveSelection(-1);
+
 	private selectFirst = () => this.moveSelectionTo(0);
+
 	private selectLast = () => this.moveSelectionTo(Infinity);
 
+	// TODO: implement selection
+	// eslint-disable-next-line
 	private moveSelection(x: number, wrapsAround = true) {
-		x;
-		wrapsAround;
-		// let { windows } = this.props;
-		// if (windows == null) {
-		// 	throw new Error('No tabs available');
-		// }
-		// let selected = this.state.selectedTabId;
-		// let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
-		// tabs.reverse();
-		// let selectedIndex = tabs.findIndex(t => t.id === selected);
-		// if (selectedIndex < 0) {
-		// 	throw new Error('Selected tab not found');
-		// }
-		// let nextIndex = (selectedIndex + x);
-		// if (wrapsAround) {
-		// 	nextIndex = (nextIndex + tabs.length) % tabs.length;
-		// } else if (nextIndex < 0) {
-		// 	nextIndex = 0;
-		// } else if (nextIndex > tabs.length - 1) {
-		// 	nextIndex = tabs.length - 1;
-		// }
-		// let nextTab = tabs[nextIndex];
-		// if (nextTab == null || nextTab.id == null) {
-		// 	throw new Error('Next tab not found');
-		// }
-		// this.setState({ selectedTabId: nextTab.id });
+		log('moveSelection', x, wrapsAround);
 	}
 
+	// TODO: implement selection
+	// eslint-disable-next-line
 	private moveSelectionTo(index: number) {
-		index;
-		// if (this.state.selectedTabId == null) {
-		// 	return;
-		// }
-		// let tabs = windows.map(wnd => wnd.tabs).filter(isDefined).flat();
-		// tabs.reverse();
-		// if (index === Infinity) {
-		// 	index = (tabs.length - 1);
-		// }
-		// let selected = tabs[index];
-		// if (selected == null || selected.id == null) {
-		// 	throw new Error('Index out of bounds');
-		// }
-		// this.setState({ selectedTabId: selected.id });
+		log('moveSelectionTo', index);
 	}
 
 	private handleMouseDown = (tabId: number) => {
@@ -334,10 +285,10 @@ class PopupApp extends React.Component<P, S> {
 		let { props: p, state: s, oneWindow } = this;
 		let search = s.search?.toLocaleLowerCase();
 		let windows = Array.from(TabStore.getWindows().values());
-		if (!oneWindow) {
-			windows.sort((a, b) => b.focusOrder - a.focusOrder);
-		} else {
+		if (oneWindow) {
 			windows = windows.filter(w => w.id === p.openerWindowId);
+		} else {
+			windows.sort((a, b) => b.focusOrder - a.focusOrder);
 		}
 		let items = [
 			<div className="WindowList" key="WindowList">
@@ -368,7 +319,7 @@ class PopupApp extends React.Component<P, S> {
 				<button type="button" onClick={this.handleUrlToggle}>{s.showURL ? 'Titles' : 'URLs'}</button>
 				<button type="button" onClick={this.handleExport}>Export</button>
 				<button type="button" onClick={this.handleImport}>Import</button>
-			</div>
+			</div>,
 		];
 		return (p.type === PopupType.ActionPopup ? items.reverse() : items);
 	}

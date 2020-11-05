@@ -44,9 +44,9 @@ class ExportApp extends React.Component<P, S> {
 	private fileInput = React.createRef<HTMLInputElement>();
 	private fileLoader?: FileLoader;
 	static readonly str = {
-		save:      getString('action_save'),
-		close:     getString('action_close_tabs'),
-		loadFile:  getString('action_load_file'),
+		save: getString('action_save'),
+		close: getString('action_close_tabs'),
+		loadFile: getString('action_load_file'),
 		openLinks: getString('action_open_links'),
 	};
 	private pref = syncPrefs.getWithUpdates('editorTheme', 'editorThemeDarkMode');
@@ -83,7 +83,7 @@ class ExportApp extends React.Component<P, S> {
 		let name = (prefersDark.matches ? editorThemeDarkMode : editorTheme);
 		this.setState({ theme: await getAceThemeModule(name) });
 	}
-	
+
 	componentWillUnmount() {
 		this.fileLoader?.dispose();
 	}
@@ -114,7 +114,7 @@ class ExportApp extends React.Component<P, S> {
 			ul.parentNode?.removeChild(ul);
 			windows.push(Array.from(ul.getElementsByTagName('a'), a => a.href));
 		}
-		
+
 		// Check for leftovers
 		let extras = dom.getElementsByTagName('a');
 		if (extras.length > 0) {

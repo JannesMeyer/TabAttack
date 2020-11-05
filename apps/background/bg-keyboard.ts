@@ -9,21 +9,19 @@ onCommand('move_tab_left', () => moveHighlighted(-1));
 onCommand('move_tab_right', () => moveHighlighted(1));
 
 // Global shortcut: Pin highlighted tabs
-onCommand('pin_tab', function() {
-	getHighlighted().then(tabs => {
-		for (let tab of tabs) {
-			if (tab.id != null) {
-				browser.tabs.update(tab.id, { pinned: !tab.pinned });
-			}
+onCommand('pin_tab', () => getHighlighted().then(tabs => {
+	for (let tab of tabs) {
+		if (tab.id != null) {
+			browser.tabs.update(tab.id, { pinned: !tab.pinned });
 		}
-	});
-});
+	}
+}));
 
 // Global shortcut: Duplicate highlighted tabs
-onCommand('duplicate_tab', function() {
-	getHighlighted()
-		.then(tabs => Promise.all(tabs.map(t => t.id).filter(isDefined).map(id => browser.tabs.duplicate(id))));
-});
+onCommand('duplicate_tab', () => getHighlighted().then(tabs => Promise.all(tabs
+	.map(t => t.id)
+	.filter(isDefined)
+	.map(id => browser.tabs.duplicate(id)))));
 
 /**
  * Gets all highlighted tabs in the last focused window.
@@ -35,9 +33,8 @@ function getHighlighted() {
 	const isOpera = (navigator.vendor.indexOf('Opera') !== -1);
 	if (isOpera) {
 		return browser.tabs.query({ lastFocusedWindow: true, active: true });
-	} else {
-		return browser.tabs.query({ lastFocusedWindow: true, highlighted: true });
 	}
+	return browser.tabs.query({ lastFocusedWindow: true, highlighted: true });
 }
 
 /**
@@ -78,7 +75,7 @@ function moveHighlighted(direction: number) {
  * the original iterator.
  */
 function* valuesReversed<X>(this: readonly X[]) {
-	for (let i = this.length - 1; 0 <= i; --i) {
+	for (let i = this.length - 1; i >= 0; --i) {
 		yield this[i] as X;
 	}
 }

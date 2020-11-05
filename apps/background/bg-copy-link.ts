@@ -1,6 +1,5 @@
 import assertDefined from '../../lib/assertDefined.js';
 import getActiveTab from '../../lib/browser/getActiveTab.js';
-import getString from '../../lib/browser/getString.js';
 import onCommand from '../../lib/browser/onCommand.js';
 import onMessage from '../../lib/browser/onMessage.js';
 import ContextMenuItem from '../../lib/ContextMenuItem.js';
@@ -9,7 +8,7 @@ import writeClipboard from '../../lib/writeClipboard.js';
 import syncPrefs from '../syncPrefs.js';
 
 /** Global shortcut: Copy active tab as a Markdown link */
-onCommand('copy_tab_as_markdown', function() {
+onCommand('copy_tab_as_markdown', () => {
 	getActiveTab().then(t => copyLink(t.title, assertDefined(t.url)));
 });
 
@@ -38,7 +37,7 @@ const copyLinkCmi = new ContextMenuItem({
 				title = results.filter(Boolean)[0];
 				if (title != null) {
 					// Do the same processing that a browser does when displaying links
-					title = title.trim().replace(/[\r\n]+/g, '').replace(/\t+/g, ' ');
+					title = title.trim().replace(/[\r\n]+/gu, '').replace(/\t+/gu, ' ');
 				}
 			}
 			// Copy the link, whether we have a title or not
@@ -46,9 +45,7 @@ const copyLinkCmi = new ContextMenuItem({
 		});
 	},
 });
-syncPrefs.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown: x }) => {
-	copyLinkCmi.setVisible(x);
-});
+syncPrefs.get('showCopyLinkAsMarkdown').then(({ showCopyLinkAsMarkdown: x }) => copyLinkCmi.setVisible(x));
 onMessage('show copyLinkItem', () => copyLinkCmi.setVisible(true));
 onMessage('hide copyLinkItem', () => copyLinkCmi.setVisible(false));
 
@@ -66,23 +63,8 @@ onMessage('hide copyPageItem', () => copyPageCmi.setVisible(false));
 
 
 /**
- * Let the user modify link title and then copy it as Markdown
+ * Copy the title and URL as a Markdown link
  */
-function copyLink(originalTitle: string | undefined, url: string) {
-	// Let the user modify the title
-	let title = prompt(getString('prompt_title_change', originalTitle), originalTitle);
-
-	// Cancelled?
-	if (title === null) {
-		return;
-	}
-	title = title.trim();
-
-	// Shortcut: Use the naked domain name
-	if (title === '') {
-		title = new URL(url).hostname.replace(/^www\./, '');
-	}
-
-	// Copy the title and URL as a Markdown link
+function copyLink(title: string | undefined, url: string) {
 	writeClipboard(markdownLink(title, url));
 }

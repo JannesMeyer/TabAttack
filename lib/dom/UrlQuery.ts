@@ -1,7 +1,7 @@
 type SV = string | number | boolean | null | undefined;
 
 export default class UrlQuery<K extends string> {
-	
+
 	private entries = new Map<K, string>();
 
 	constructor(values?: Partial<Record<K, SV>>) {
@@ -25,7 +25,7 @@ export default class UrlQuery<K extends string> {
 
 	getNumber(k: K) {
 		let n = Number(this.entries.get(k));
-		return (!Number.isNaN(n) ? n : undefined);
+		return (Number.isNaN(n) ? undefined : n);
 	}
 
 	getBoolean(k: K) {
@@ -57,7 +57,9 @@ export default class UrlQuery<K extends string> {
 		if (this.entries.size === 0) {
 			return '';
 		}
-		return '?' + Array.from(this.entries.entries(), ([k, v]) => v === '' ? k : (k + '=' + encodeURIComponent(v))).join('&');
+		return '?' + Array.from(this.entries.entries(), ([k, v]) => {
+			if (v === '') { return k; }
+			return (k + '=' + encodeURIComponent(v));
+		}).join('&');
 	}
-
 }
