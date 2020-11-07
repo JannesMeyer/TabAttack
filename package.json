@@ -14,23 +14,23 @@
 		"build-zip": "pwsh build.ps1"
 	},
 	"dependencies": {
-		"ace-builds": "^1.4.12",
-		"marked": "^1.2.0",
-		"react": "^17.0.0",
-		"react-dom": "^17.0.0",
-		"webextension-polyfill": "^0.6.0"
+		"ace-builds": "latest",
+		"marked": "latest",
+		"react": "latest",
+		"react-dom": "latest",
+		"webextension-polyfill": "latest"
 	},
 	"devDependencies": {
-		"@types/firefox-webext-browser": "^78.0.1",
-		"@types/jasmine": "^3.6.0",
-		"@types/marked": "^1.1.0",
-		"@types/react": "^16.9.49",
-		"@types/react-dom": "^16.9.8",
-		"@typescript-eslint/eslint-plugin": "^4.4.0",
-		"@typescript-eslint/parser": "^4.6.1",
-		"eslint": "^7.11.0",
-		"eslint-plugin-react": "^7.21.4",
-		"jasmine": "^3.6.3",
+		"@types/firefox-webext-browser": "latest",
+		"@types/jasmine": "latest",
+		"@types/marked": "latest",
+		"@types/react": "latest",
+		"@types/react-dom": "latest",
+		"@typescript-eslint/eslint-plugin": "latest",
+		"@typescript-eslint/parser": "latest",
+		"eslint": "latest",
+		"eslint-plugin-react": "latest",
+		"jasmine": "latest",
 		"typescript": "^4.1.1-rc"
 	}
 }
