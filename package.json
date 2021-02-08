@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"ace-builds": "^1.4.12",
-		"marked": "^1.2.0",
+		"marked": "^2.0.0",
 		"react": "^17.0.0",
 		"react-dom": "^17.0.0",
 		"webextension-polyfill": "^0.6.0"
