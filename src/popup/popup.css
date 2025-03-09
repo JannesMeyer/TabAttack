@@ -1,0 +1,131 @@
+/* https://github.com/mozilla/gecko-dev/blob/a2abcf7ff6b7ae0c2d8a04b9a35679f8c84634e7/toolkit/mozapps/extensions/default-theme/manifest.json */
+:root {
+	--width: 320px;
+	--ntp_background: light-dark(#f9f9fb, rgb(43, 42, 51));
+	--ntp_card_background: light-dark(#fff, rgb(66, 65, 77));
+	--ntp_text: light-dark(#15141a, rgb(251, 251, 254));
+}
+
+html {
+	box-sizing: border-box;
+	font: menu;
+	height: 100%;
+}
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+body {
+	margin: 0;
+	user-select: none;
+	background-color: var(--ntp_background);
+	color: var(--ntp_text);
+}
+:root.tab {
+	body {
+		margin: 50px 44px 0;
+		overflow: auto;
+		display: grid;
+		gap: 20px;
+		grid-auto-flow: column;
+		/* grid-auto-columns: var(--width); */
+		grid-auto-columns: minmax(var(--width), 32%);
+	}
+}
+:root.dropdown body {
+	width: var(--width);
+}
+:root.sidebar .Window {
+	padding: 3px 4px;
+}
+
+.Window {
+	.mainTabs {
+		border-radius: 8px;
+		padding: 0.8rem;
+		background-color: color-mix(
+			in srgb,
+			var(--ntp_card_background) 33%,
+			transparent
+		);
+	}
+	.windowTitle {
+		font-size: 1.4rem;
+		font-weight: 500;
+		padding: 0.5rem;
+		padding-left: 1.2rem;
+	}
+	&.active .mainTabs {
+		background-color: var(--ntp_card_background);
+	}
+}
+
+.DisplayTab {
+	color: inherit;
+	text-decoration: none;
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border-radius: 4px;
+	padding: 0.4rem;
+	cursor: pointer !important;
+	border: 1px solid transparent;
+
+	&.active {
+		z-index: 1;
+		border-color: #b9b9b9;
+	}
+	&.ntp {
+		padding: 0;
+		gap: 0;
+		a {
+			flex: 1;
+			max-width: 100px;
+			aspect-ratio: 1.3;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: background 0.1s;
+		}
+		img {
+			width: 32%;
+			aspect-ratio: 1;
+			filter: saturate(0%) opacity(16%);
+			transition: filter 0.1s;
+		}
+		a:hover, a:focus {
+			background-color: rgba(0, 0, 0, 0.03);
+			transition: none;
+			outline: none;
+			img {
+				filter: none;
+				transition: none;
+			}
+		}
+	}
+	&.discarded {
+		opacity: 0.5;
+	}
+	&.selected {
+		box-shadow: inset 0 0 0 1px #0a84ff;
+	}
+	.favicon {
+		flex-shrink: 0;
+		display: block;
+		width: 16px;
+		height: 16px;
+	}
+	.title {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		margin-right: 7px;
+		line-height: 1.5;
+	}
+	&.showURL .title {
+		white-space: pre;
+	}
+	&.showURL .title::first-line {
+		color: #000;
+	}
+}

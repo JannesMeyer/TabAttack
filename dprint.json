@@ -1,0 +1,18 @@
+{
+  "typescript": {
+    "lineWidth": 150,
+    "quoteStyle": "preferSingle",
+    "quoteProps": "asNeeded",
+    "useTabs": true
+  },
+  "malva": {
+    "useTabs": true,
+    "quotes": "preferSingle"
+  },
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.94.0.wasm",
+    "https://plugins.dprint.dev/json-0.20.0.wasm",
+    "https://plugins.dprint.dev/markdown-0.18.0.wasm",
+    "https://plugins.dprint.dev/g-plane/malva-v0.11.2.wasm"
+  ]
+}

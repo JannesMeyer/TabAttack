@@ -1,62 +1,21 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "typescript",
-			"tsconfig": "tsconfig.json",
-			"option": "watch",
-			"problemMatcher": [
-				"$tsc-watch"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"presentation": {
-				"reveal": "never"
-			},
-			"runOptions": {
-				"runOn": "folderOpen"
-			},
-			"label": "TypeScript (watch)"
-		},
-		{
-			"type": "npm",
-			"script": "test-watch",
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			},
-			"label": "Jasmine (watch)"
-		},
-		{
-			"type": "npm",
-			"script": "lint",
-			"group": "test",
-			"label": "ESLint",
-			"problemMatcher": {
-				"owner": "eslint",
-				"pattern": {
-					"regexp": "^(.+)\\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\): (error|warning|info) ([^ ]+) : (.+)",
-					"file": 1,
-					"location": 2,
-					"severity": 3,
-					"code": 4,
-					"message": 5
-				},
-				"fileLocation": "absolute"
-			},
-			"presentation": {
-				"clear": true,
-				"echo": false,
-				"revealProblems": "onProblem"
-			}
-		},
-		{
-			"type": "shell",
-			"command": "exit",
-			"label": "ESLint (clear)",
-			"problemMatcher": { "owner": "eslint", "pattern": { "regexp": "$^" } }
-		},
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "TypeScript",
+      "type": "typescript",
+      "tsconfig": "tsconfig.json",
+      "option": "watch",
+      "presentation": { "reveal": "never" },
+      "runOptions": { "runOn": "folderOpen" }
+    },
+    {
+      "label": "Bundle (watch)",
+      "type": "npm",
+      "script": "start",
+      "isBackground": true,
+      "presentation": { "reveal": "silent" },
+      "runOptions": { "runOn": "folderOpen" }
+    }
+  ]
 }
