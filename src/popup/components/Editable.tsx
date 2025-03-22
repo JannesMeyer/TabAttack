@@ -54,4 +54,7 @@ const editable = css`
 	outline: none;
 	font: inherit;
 	color: inherit;
+}
+input& {
+	cursor: text;
 }`;

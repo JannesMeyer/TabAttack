@@ -1,5 +1,4 @@
 import Preferences from './lib/browser/Preferences';
-import { BrowserAction } from './types';
 
 export const localPrefs = new Preferences({
 	/** Like first parameter of browser.windows.create() */
@@ -12,7 +11,6 @@ export const localPrefs = new Preferences({
 }, chrome.storage.local);
 
 export const syncPrefs = new Preferences({
-	action: BrowserAction.Dropdown,
 	format: 'markdown',
 	domainBlacklist: [
 		'mail.google.com',

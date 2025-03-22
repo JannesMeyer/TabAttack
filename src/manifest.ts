@@ -7,7 +7,6 @@ import icon96 from './icons/icon-96.png';
 import transparent from './icons/transparent.png';
 import newtab from './newtab.html';
 import options from './options.html';
-import popup from './popup.html';
 import { BrowserAction } from './types';
 
 const isFirefox = process.env.TARGET === 'firefox';
@@ -36,7 +35,7 @@ const manifest: chrome.runtime.ManifestV3 = {
 		? {
 			default_icon: 'icons/firefox/tab.svg',
 			default_title: 'Tabs',
-			default_panel: `${popup}?t=${BrowserAction.Sidebar}`,
+			default_panel: `${newtab}?t=${BrowserAction.Sidebar}`,
 			browser_style: false,
 			open_at_install: false,
 		}
@@ -44,6 +43,9 @@ const manifest: chrome.runtime.ManifestV3 = {
 	commands: {
 		_execute_action: {
 			suggested_key: { default: 'Ctrl+Shift+E' },
+		},
+		_execute_sidebar_action: {
+			suggested_key: { default: 'MacCtrl+T' },
 		},
 		copy_tab_as_markdown: {
 			description: '__MSG_shortcut_copy_tab_as_markdown__',

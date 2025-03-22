@@ -1,81 +1,71 @@
-import { DragDropContext } from '@hello-pangea/dnd';
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import React from 'react';
+import { cx } from '../../lib/css';
+import { BrowserAction } from '../../types';
 import { TabStore } from '../TabStore';
-import { Window } from './Window';
+import { WindowTabList } from './WindowTabList';
+import { WindowTitle } from './WindowTitle';
 
-// const shortcuts = [
-// 	// new KeyCombination('').on(() => close()),
-// 	new KeyCombination('ArrowUp').on(() => console.log('selectNext')),
-// 	new KeyCombination('ArrowDown').on(() => console.log('selectPrevious')),
-// 	new KeyCombination('k').on(() => console.log('selectNext')),
-// 	new KeyCombination('j').on(() => console.log('selectPrevious')),
-// 	// new KeyCombination('Tab').on(this.selectNext),
-// 	// new KeyCombination('Tab', { shift: true }).on(this.selectPrevious),
-// 	// new KeyCombination('End').on(this.selectFirst),
-// 	// new KeyCombination('Home').on(this.selectLast),
-// 	// new KeyCombination('Enter').on(this.activateTab),
-// 	// new KeyCombination(' ').on(this.activateTab),
-// 	// new KeyCombination('w').on(this.closeTab),
-// 	// new KeyCombination('c').on(this.copyAsMarkdownLink),
-// 	// new KeyCombination('l').on(this.copyAsMarkdownLink),
-// 	// new KeyCombination('d').on(this.discardTab),
-// 	// new KeyCombination('r').on(this.reloadTab),
-// 	// new KeyCombination('x').on(this.handleUrlToggle),
-// 	// new KeyCombination('/').on(this.handleSearchToggle),
-// 	// new KeyCombination('e').on(this.handleExport),
-// ];
+const reverse = true;
 
-interface PopupAppProps {
-	store: TabStore;
-}
-
-export function PopupApp({ store }: PopupAppProps) {
-	// private copyAsMarkdownLink = (id = this.state.selectedTabId ?? throwError()) => {
-	// 	let tab = store.getTabs().get(id) ?? throwError();
-	// 	writeClipboard(markdownLink(tab.title, tab.url ?? throwError()));
-	// 	showToast('Link copied');
-	// 	// TODO: Show toast "Link copied"
-	// };
-
-	// private reloadTab = (id = this.state.selectedTabId) => {
-	// 	if (id == null) return;
-	// 	chrome.tabs.reload(id).catch(logError);
-	// };
-
-	// private handleKeyDown = (ev: KeyboardEvent) => {
-	// 	this.shortcuts.forEach(k => k.handle(ev));
-	// };
-
-	// const searchShortcuts = [
-	// 	new KeyCombination('Escape').on(this.handleSearchToggle),
-	// ];
-
-	// private selectNext = () => this.moveSelection(+1);
-	// private selectPrevious = () => this.moveSelection(-1);
-	// private selectFirst = () => this.moveSelectionTo(0);
-	// private selectLast = () => this.moveSelectionTo(Infinity);
-
+export function PopupApp({ store }: { store: TabStore }) {
 	const windows = store.useWindows();
 	const activeWindowId = store.getActiveWindowId();
-	const reverse = true;
-
 	return (
 		<DragDropContext
-			onDragEnd={({ source, destination, draggableId }) => {
+			onDragEnd={({ source, destination, draggableId, type }) => {
 				if (!destination || source.droppableId === destination.droppableId && source.index === destination.index) {
 					return;
 				}
-				store.moveTab({
-					tabId: parseInt(draggableId),
-					sourceWindowId: parseInt(source.droppableId),
-					targetWindowId: parseInt(destination.droppableId),
-					reverse,
-					sourceIndex: source.index,
-					targetIndex: destination.index,
-				});
+				const id = parseInt(draggableId);
+				if (type === 'WINDOW') {
+					console.log(source, destination, id);
+					return;
+				}
+				if (type === 'TAB') {
+					store.moveTab({
+						tabId: id,
+						sourceWindowId: parseInt(source.droppableId),
+						targetWindowId: parseInt(destination.droppableId),
+						reverse,
+						sourceIndex: source.index,
+						targetIndex: destination.index,
+					});
+					return;
+				}
+				throw new Error(`Unknown drag type: ${type}`);
 			}}
 		>
-			{windows.map((w) => <Window key={w.id} window={w} activeWindowId={activeWindowId} reverse={reverse} store={store} />)}
+			<Droppable droppableId='windows' type='WINDOW' direction='horizontal'>
+				{provided => (
+					<div {...provided.droppableProps} className={'WindowList'} ref={provided.innerRef}>
+						{store.type === BrowserAction.Tab
+							? (
+								windows.map((w, index) => (
+									<Draggable key={w.id} draggableId={`${w.id} :window`} index={index}>
+										{provided => (
+											<div {...provided.draggableProps} ref={provided.innerRef} className={cx('Window', { active: w.id === activeWindowId })}>
+												<WindowTitle {...provided.dragHandleProps} index={index} />
+												<WindowTabList window={w} activeWindowId={activeWindowId} reverse={reverse} store={store} />
+											</div>
+										)}
+									</Draggable>
+								))
+							)
+							: (
+								<div className={cx('Window', 'active')}>
+									<WindowTabList
+										window={windows.find(w => w.id === activeWindowId)}
+										activeWindowId={activeWindowId}
+										reverse={reverse}
+										store={store}
+									/>
+								</div>
+							)}
+						{provided.placeholder}
+					</div>
+				)}
+			</Droppable>
 		</DragDropContext>
 	);
 }

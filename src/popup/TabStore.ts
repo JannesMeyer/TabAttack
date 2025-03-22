@@ -10,6 +10,7 @@ export type TWindow = Readonly<{
 	tabs: readonly number[];
 	tabsOverlay?: readonly number[];
 }>;
+
 export type TTab = Readonly<{
 	id: number;
 	url: string;
@@ -26,9 +27,16 @@ export type TTab = Readonly<{
 
 export class TabStore {
 	public affinity: { tabId?: number; windowId?: number } = {};
+
 	private windows = new Map<number, TWindow>();
-	private tabs = new Map<number, TTab>();
+	private windowList: TWindow[] = [];
 	private windowListeners = new Set<() => void>();
+	private windowSubscribe = (onChange: () => void) => {
+		this.windowListeners.add(onChange);
+		return () => this.windowListeners.delete(onChange);
+	};
+
+	private tabs = new Map<number, TTab>();
 	private tabListeners = new Set<(tabId: number) => void>();
 
 	constructor(readonly type: BrowserAction) {
@@ -157,6 +165,7 @@ export class TabStore {
 	}
 
 	private notifyWindows() {
+		this.windowList = this.windows.values().filter(w => w.type === 'normal').toArray();
 		this.windowListeners.forEach(listener => listener());
 	}
 
@@ -168,6 +177,7 @@ export class TabStore {
 		const source = this.getWindow(data.sourceWindowId);
 		const sourceIndex = data.reverse ? getTabs(source).length - 1 - data.sourceIndex : data.sourceIndex;
 		this.setWindow({ ...source, tabsOverlay: getTabs(source).toSpliced(sourceIndex, 1) });
+
 		const target = this.getWindow(data.targetWindowId);
 		const targetIndex = data.reverse ? getTabs(target).length - data.targetIndex : data.targetIndex;
 		this.setWindow({ ...target, tabsOverlay: getTabs(target).toSpliced(targetIndex, 0, data.tabId) });
@@ -177,16 +187,7 @@ export class TabStore {
 	}
 
 	useWindows() {
-		const getValue = () => this.windows.values().filter(w => w.type === 'normal').toArray();
-		const [value, setValue] = React.useState(getValue);
-		React.useEffect(() => {
-			const callback = () => setValue(getValue());
-			this.windowListeners.add(callback);
-			return () => {
-				this.windowListeners.delete(callback);
-			};
-		}, []);
-		return value;
+		return React.useSyncExternalStore(this.windowSubscribe, () => this.windowList);
 	}
 
 	useTab(tabId: number) {

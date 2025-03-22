@@ -4,74 +4,78 @@ import { isFirefox } from '../../lib/browser/runtime';
 import { cx } from '../../lib/css';
 import { BrowserAction } from '../../types';
 import { TabStore } from '../TabStore';
+import { AudibleIcon } from './icons/AudibleIcon';
+import { DefaultIcon } from './icons/DefaultIcon';
+import { MutedIcon } from './icons/MutedIcon';
+
+const self = location.href;
 
 type Props = {
 	store: TabStore;
 	tabId: number;
 	index: number;
-	active: boolean;
 	windowId: number;
+	activeTabId: number | undefined;
 	activeWindowId: number | undefined;
-	showTabId?: boolean;
 };
 
-export const Tab = React.memo(({ store, tabId, index, active, windowId, activeWindowId, showTabId }: Props) => {
+export const Tab = React.memo(({ store, tabId, index, activeTabId, windowId, activeWindowId }: Props) => {
 	const { type } = store;
 	const tab = store.useTab(tabId);
 	const muted = tab.mutedInfo?.muted;
-	const isNTP = tab.url === location.href;
-	const isActivePage = active && windowId === activeWindowId;
-	// if (isNTP) {
-	// 	return (
-	// 		<Draggable index={index} draggableId={tabId.toString()}>
-	// 			{({ draggableProps, dragHandleProps, innerRef }) => <NTP {...draggableProps} {...dragHandleProps} ref={innerRef} />}
-	// 		</Draggable>
-	// 	);
-	// }
-	const handleClick = (ev: React.MouseEvent) => {
-		if (ev.button !== 0) {
-			return;
-		}
-		ev.preventDefault();
+	const isActiveWindow = windowId === activeWindowId;
+	const isActiveTab = tabId === activeTabId && isActiveWindow;
+	const activate = () => {
 		chrome.tabs.update(tabId, { active: true });
-		if (type === BrowserAction.Dropdown) {
-			window.close();
-		}
-		if (windowId === activeWindowId) {
-			if (type === BrowserAction.Tab && !isActivePage) {
-				window.close();
-			} else {
-				chrome.windows.update(windowId, { focused: true });
-				chrome.tabs.update(tabId, { active: true });
-			}
-		} else {
+		if (!isActiveWindow) {
 			chrome.windows.update(windowId, { focused: true });
 		}
 	};
+	const handleMouseDown = (ev: React.MouseEvent) => {
+		if (type === BrowserAction.Tab || ev.button !== 0) {
+			return;
+		}
+		ev.preventDefault();
+		activate();
+	};
+	const handleClick = (ev: React.MouseEvent) => {
+		ev.preventDefault();
+		if (type === BrowserAction.Tab) {
+			activate();
+		}
+		if (type === BrowserAction.Dropdown) {
+			window.close();
+		}
+		if (type === BrowserAction.Tab && isActiveWindow) {
+			window.close();
+		}
+	};
 	return (
-		<Draggable index={index} draggableId={tabId.toString()} isDragDisabled={isActivePage}>
-			{({ draggableProps, dragHandleProps, innerRef }) => (
+		<Draggable index={index} draggableId={`${tabId} tab`}>
+			{({ draggableProps, dragHandleProps, innerRef }, snapshot) => (
 				<a
-					draggable={false}
 					{...draggableProps}
 					{...dragHandleProps}
+					style={snapshot.isDropAnimating ? { ...draggableProps.style, transitionDuration: '0.001s' } : draggableProps.style}
 					ref={innerRef}
 					href={tab.url}
-					onMouseDown={type === BrowserAction.Tab ? undefined : handleClick}
+					onMouseDown={handleMouseDown}
 					onClick={handleClick}
 					onAuxClick={(ev) => {
 						if (ev.defaultPrevented || ev.button !== 1) {
 							return;
 						}
 						ev.preventDefault();
-						if (isActivePage) {
-							return;
-						}
 						chrome.tabs.remove(tabId);
 					}}
-					className={cx('DisplayTab', tab.status, { discarded: tab.discarded, active: isActivePage, pinned: tab.pinned })}
+					className={cx('DisplayTab', tab.status, {
+						active: isActiveTab,
+						dragging: snapshot.isDragging,
+						pinned: tab.pinned,
+						discarded: tab.discarded,
+					})}
 				>
-					<Icon className='favicon' loading={tab.status === 'loading' && !isNTP} favIconUrl={tab.favIconUrl} url={tab.url} />
+					<Icon className='favicon' loading={tab.status === 'loading' && tab.url !== self} favIconUrl={tab.favIconUrl} url={tab.url} />
 					{(tab.audible || muted) && (
 						<div
 							style={{ display: 'flex', padding: 2, margin: -2 }}
@@ -88,22 +92,12 @@ export const Tab = React.memo(({ store, tabId, index, active, windowId, activeWi
 								chrome.tabs.update(tabId, { muted: !muted });
 							}}
 						>
-							<svg viewBox={'0 0 12 12'} width={12} height={12} fill='currentColor'>
-								{muted
-									? (
-										// https://github.com/mozilla/gecko-dev/blob/master/browser/themes/shared/tabbrowser/tab-audio-muted-small.svg
-										<path d='m2.791 3.581 1.347-2.294C4.654.408 6 .774 6 1.793v8.413c0 1.02-1.346 1.386-1.862.507L2.791 8.419c-.031-.053-.051-.111-.071-.169H1a1 1 0 0 1-1-1v-2.5a1 1 0 0 1 1-1h1.72a.93.93 0 0 1 .071-.169zm8.325-.081L9.5 5.116 7.884 3.5 7 4.384 8.616 6 7 7.616l.884.884L9.5 6.884 11.116 8.5 12 7.616 10.384 6 12 4.384l-.884-.884z' />
-									)
-									: (
-										// https://github.com/mozilla/gecko-dev/blob/master/browser/themes/shared/tabbrowser/tab-audio-playing-small.svg
-										<path d='M7.5 1.881V.595A5.499 5.499 0 0 1 12 6a5.499 5.499 0 0 1-4.5 5.405v-1.286C9.36 9.666 10.75 7.997 10.75 6c0-1.997-1.39-3.666-3.25-4.119zm-3.362-.594L2.791 3.581c-.031.053-.051.111-.071.169H1a1 1 0 0 0-1 1v2.5a1 1 0 0 0 1 1h1.72a.93.93 0 0 0 .071.169l1.347 2.294c.516.879 1.862.513 1.862-.507V1.793C6 .774 4.654.408 4.138 1.287z M7.5 3.193v5.613c1.161-.413 2-1.504 2-2.807s-.839-2.393-2-2.806z' />
-									)}
-							</svg>
+							{muted ? <MutedIcon /> : <AudibleIcon />}
 						</div>
 					)}
-					<div className='title'>
-						{tab.pinned ? null : (showTabId ? tabId : (tab.title || (tab.status === 'loading' ? 'Loading...' : 'Untitled')))}
-					</div>
+					<span className='ellipsis'>
+						{tab.title}
+					</span>
 				</a>
 			)}
 		</Draggable>
@@ -113,13 +107,7 @@ export const Tab = React.memo(({ store, tabId, index, active, windowId, activeWi
 const Icon = ({ loading, favIconUrl, url, ...props }: { loading: boolean; favIconUrl: string | undefined; url: string; className?: string }) => {
 	const [error, setError] = React.useState(false);
 	if (error) {
-		// chrome://global/skin/icons/defaultFavicon.svg
-		// https://github.com/mozilla/gecko-dev/blob/8d67fee56f0e8d736369bd7c970da61950a011be/toolkit/themes/shared/icons/defaultFavicon.svg
-		return (
-			<svg {...props} viewBox='0 0 16 16' fill='currentColor'>
-				<path d='M8.5 1a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zm2.447 1.75a6.255 6.255 0 0 1 3.756 5.125l-2.229 0A9.426 9.426 0 0 0 10.54 2.75l.407 0zm-2.049 0a8.211 8.211 0 0 1 2.321 5.125l-5.438 0A8.211 8.211 0 0 1 8.102 2.75l.796 0zm-2.846 0 .408 0a9.434 9.434 0 0 0-1.934 5.125l-2.229 0A6.254 6.254 0 0 1 6.052 2.75zm0 11.5a6.252 6.252 0 0 1-3.755-5.125l2.229 0A9.426 9.426 0 0 0 6.46 14.25l-.408 0zm2.05 0a8.211 8.211 0 0 1-2.321-5.125l5.437 0a8.211 8.211 0 0 1-2.321 5.125l-.795 0zm2.846 0-.409 0a9.418 9.418 0 0 0 1.934-5.125l2.229 0a6.253 6.253 0 0 1-3.754 5.125z' />
-			</svg>
-		);
+		return <DefaultIcon {...props} />;
 	}
 	if (loading) {
 		// chrome://global/skin/icons/loading.svg

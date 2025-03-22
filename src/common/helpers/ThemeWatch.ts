@@ -28,7 +28,12 @@ export class ThemeWatch {
 		this.listeners.forEach(l => l());
 	}
 
-	getColors(): Record<keyof Colors, string | null> {
+	/**
+	 * Light/Dark default colors
+	 * https://github.com/mozilla/gecko-dev/blob/183fbe6a6510d460b00429db65dbfa2bf538106e/browser/themes/addons/light/manifest.json
+	 * https://github.com/mozilla/gecko-dev/blob/183fbe6a6510d460b00429db65dbfa2bf538106e/browser/themes/addons/dark/manifest.json
+	 */
+	getColors() {
 		const { colors } = this;
 		return {
 			accentcolor: null,
@@ -39,7 +44,7 @@ export class ThemeWatch {
 			frame: color(colors.frame),
 			icons_attention: color(colors.icons_attention),
 			icons: color(colors.icons),
-			ntp_background: color(colors.ntp_background),
+			ntp_background: color(colors.ntp_background) ?? 'light-dark(#f9f9fb, #2b2a32)',
 			ntp_card_background: color(colors.ntp_card_background),
 			ntp_text: color(colors.ntp_text),
 			popup_border: color(colors.popup_border),
@@ -73,7 +78,7 @@ export class ThemeWatch {
 			toolbar_top_separator: color(colors.toolbar_top_separator),
 			toolbar_vertical_separator: color(colors.toolbar_vertical_separator),
 			toolbar: color(colors.toolbar),
-		};
+		} satisfies Record<keyof Colors, unknown>;
 	}
 
 	/**

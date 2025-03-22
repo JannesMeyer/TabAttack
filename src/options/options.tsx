@@ -5,7 +5,6 @@ import getString from '../lib/browser/getString';
 import { isFirefox } from '../lib/browser/runtime';
 import { aceThemes } from '../lib/getAceThemes';
 import { syncPrefs } from '../prefs';
-import { BrowserAction } from '../types';
 import DomainBlacklist from './DomainBlacklist';
 
 function Options() {
@@ -16,7 +15,6 @@ function Options() {
 	const [format, setFormat] = syncPrefs.use('format');
 	const [editorTheme, setEditorTheme] = syncPrefs.use('editorTheme');
 	const [editorThemeDarkMode, setEditorThemeDarkMode] = syncPrefs.use('editorThemeDarkMode');
-	const [action, setAction] = syncPrefs.use('action');
 	const [iconColor, setIconColor] = syncPrefs.use('chromiumIconColor');
 	const [showCopyLinkAsMarkdown, setShowCopyLinkAsMarkdown] = syncPrefs.use('showCopyLinkAsMarkdown');
 	const [showCopyPageAsMarkdown, setShowCopyPageAsMarkdown] = syncPrefs.use('showCopyPageAsMarkdown');
@@ -37,21 +35,6 @@ function Options() {
 	}
 	return (
 		<>
-			<h3>Toolbar button</h3>
-
-			<label className='row'>
-				<span>Action</span>
-				<select
-					value={action}
-					onChange={ev => setAction(ev.target.value as BrowserAction)}
-					style={{ width: 203 }}
-				>
-					<option value={BrowserAction.Dropdown}>Toggle dropdown</option>
-					{isFirefox && <option value={BrowserAction.Sidebar}>Toggle sidebar</option>}
-					<option value={BrowserAction.ExportTabs}>Export tabs</option>
-				</select>
-			</label>
-
 			{!isFirefox && (
 				<label className='row'>
 					<span>Icon color</span>
