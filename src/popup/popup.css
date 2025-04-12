@@ -86,6 +86,9 @@ html, body, main, .WindowList {
 	&.discarded {
 		opacity: 0.5;
 	}
+	&.attention {
+		outline: 1px solid red;
+	}
 	.favicon {
 		flex-shrink: 0;
 		display: block;

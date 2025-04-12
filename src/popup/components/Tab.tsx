@@ -27,52 +27,60 @@ export const Tab = React.memo(({ store, tabId, index, activeTabId, windowId, act
 	const isActiveTab = tabId === activeTabId && isActiveWindow;
 	const activate = () => {
 		chrome.tabs.update(tabId, { active: true });
-		if (!isActiveWindow) {
-			chrome.windows.update(windowId, { focused: true });
-		}
-	};
-	const handleMouseDown = (ev: React.MouseEvent) => {
-		if (type === BrowserAction.Tab || ev.button !== 0) {
-			return;
-		}
-		ev.preventDefault();
-		activate();
-	};
-	const handleClick = (ev: React.MouseEvent) => {
-		ev.preventDefault();
-		if (type === BrowserAction.Tab) {
-			activate();
-		}
-		if (type === BrowserAction.Dropdown) {
-			window.close();
-		}
-		if (type === BrowserAction.Tab && isActiveWindow) {
-			window.close();
-		}
 	};
 	return (
 		<Draggable index={index} draggableId={`${tabId} tab`}>
 			{({ draggableProps, dragHandleProps, innerRef }, snapshot) => (
 				<a
-					{...draggableProps}
-					{...dragHandleProps}
-					style={snapshot.isDropAnimating ? { ...draggableProps.style, transitionDuration: '0.001s' } : draggableProps.style}
-					ref={innerRef}
-					href={tab.url}
-					onMouseDown={handleMouseDown}
-					onClick={handleClick}
-					onAuxClick={(ev) => {
-						if (ev.defaultPrevented || ev.button !== 1) {
+					onPointerDown={(ev) => {
+						ev.currentTarget.setPointerCapture(ev.pointerId);
+						if (type !== BrowserAction.Tab && ev.button === 0) {
+							ev.preventDefault();
+							activate();
+						}
+					}}
+					onPointerUp={ev => {
+						if (!visualViewport) {
 							return;
 						}
-						ev.preventDefault();
-						chrome.tabs.remove(tabId);
+						const { clientX: x, clientY: y } = ev;
+						const { offsetLeft: left, offsetTop: top, width, height } = visualViewport;
+						if (x < left || y < top || x > (left + width) || y > (top + height)) {
+							chrome.windows.create({ tabId });
+						}
 					}}
+					onClick={(ev) => {
+						ev.preventDefault();
+						if (type === BrowserAction.Tab) {
+							activate();
+							if (isActiveWindow) {
+								window.close();
+							} else {
+								chrome.windows.update(windowId, { focused: true });
+							}
+						}
+					}}
+					onDoubleClick={(ev) => {
+						ev.preventDefault();
+						window.close();
+					}}
+					onAuxClick={(ev) => {
+						if (ev.button === 1) {
+							ev.preventDefault();
+							chrome.tabs.remove(tabId);
+						}
+					}}
+					{...draggableProps}
+					{...dragHandleProps}
+					ref={innerRef}
+					href={tab.url}
+					style={snapshot.isDropAnimating ? { ...draggableProps.style, transitionDuration: '0.001s' } : draggableProps.style}
 					className={cx('DisplayTab', tab.status, {
 						active: isActiveTab,
 						dragging: snapshot.isDragging,
 						pinned: tab.pinned,
 						discarded: tab.discarded,
+						attention: tab.attention,
 					})}
 				>
 					<Icon className='favicon' loading={tab.status === 'loading' && tab.url !== self} favIconUrl={tab.favIconUrl} url={tab.url} />

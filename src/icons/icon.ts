@@ -1,44 +1,29 @@
+import { Theme } from '../common/helpers/Theme';
 import { throwError } from '../lib/throwError';
 
 const size = 16;
 
 export default class Icon {
-	readonly canvas: OffscreenCanvas;
+	private canvas: OffscreenCanvas;
 	private ctx: OffscreenCanvasRenderingContext2D;
 
-	public textColor?: string;
-
-	constructor(private scale: number) {
+	constructor(private scale: number, private theme: Theme) {
 		const w = Math.floor(size * scale);
 		this.canvas = new OffscreenCanvas(w, w);
-		this.setScale(scale);
 		this.ctx = this.canvas.getContext('2d', { willReadFrequently: true }) ?? throwError();
 	}
 
-	setScale(scale: number) {
-		this.scale = scale;
-		let { canvas } = this;
-		let w = Math.floor(size * scale);
-		if (canvas.width !== w) canvas.width = w;
-		if (canvas.height !== w) canvas.height = w;
-		return this;
-	}
-
-	render(text: string) {
-		let { canvas, scale, ctx } = this;
-
-		// Clear everything
+	render(count: number, active: number) {
+		const { canvas, scale, ctx, theme } = this;
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-		// Draw the text
-		ctx.font = `${scale * 11}px Roboto` + (text.length > 2 ? ' Condensed' : '');
-		ctx.textAlign = 'center';
-		ctx.fillStyle = this.textColor ?? '#f0f';
-		ctx.fillText(text, canvas.width / 2, 12 * scale);
-		return this;
-	}
-
-	getImageData() {
-		return this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+		const a = 4 * scale;
+		const gap = 2 * scale;
+		for (let i = 0; i < Math.min(16, count); i++) {
+			const col = i % 4;
+			const row = Math.floor(i / 4);
+			ctx.fillStyle = i === active ? theme.toolbar_text : `color-mix(in srgb, ${theme.toolbar_text} 15%, transparent)`;
+			ctx.fillRect(col * a, row * (a + gap), a, a);
+		}
+		return ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
 	}
 }

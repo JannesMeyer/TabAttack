@@ -1,6 +1,6 @@
 type Colors = browser._manifest._ThemeTypeColors;
 
-export class ThemeWatch {
+export class Theme {
 	private light = true;
 	private colors: Colors = {};
 	readonly listeners = new Set<() => void>();

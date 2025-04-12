@@ -22,6 +22,7 @@ export type TTab = Readonly<{
 	audible: boolean | undefined;
 	favIconUrl: string | undefined;
 	pinned: boolean;
+	attention: boolean | undefined;
 	cookieStoreId: string | undefined;
 }>;
 
@@ -29,8 +30,8 @@ export class TabStore {
 	public affinity: { tabId?: number; windowId?: number } = {};
 
 	private windows = new Map<number, TWindow>();
-	private windowList: TWindow[] = [];
-	private windowListeners = new Set<() => void>();
+	public windowList: TWindow[] = [];
+	readonly windowListeners = new Set<() => void>();
 	private windowSubscribe = (onChange: () => void) => {
 		this.windowListeners.add(onChange);
 		return () => this.windowListeners.delete(onChange);
@@ -234,6 +235,7 @@ function createTab(tab: chrome.tabs.Tab): TTab {
 		audible: tab.audible,
 		favIconUrl: tab.favIconUrl,
 		pinned: tab.pinned,
+		attention: (tab as browser.tabs.Tab).attention,
 		cookieStoreId: (tab as browser.tabs.Tab).cookieStoreId,
 	};
 }
