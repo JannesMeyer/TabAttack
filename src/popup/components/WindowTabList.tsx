@@ -1,6 +1,6 @@
 import { Droppable } from '@hello-pangea/dnd';
 import React from 'react';
-import { TabStore, TWindow } from '../TabStore';
+import { TabStore, type TWindow } from '../TabStore';
 import { Tab } from './Tab';
 
 type Props = {

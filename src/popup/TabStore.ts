@@ -27,6 +27,7 @@ export type TTab = Readonly<{
 }>;
 
 export class TabStore {
+	public readonly type: BrowserAction;
 	public affinity: { tabId?: number; windowId?: number } = {};
 
 	private windows = new Map<number, TWindow>();
@@ -40,7 +41,8 @@ export class TabStore {
 	private tabs = new Map<number, TTab>();
 	private tabListeners = new Set<(tabId: number) => void>();
 
-	constructor(readonly type: BrowserAction) {
+	constructor(type: BrowserAction) {
+		this.type = type;
 		chrome.windows.onCreated.addListener((w) => {
 			this.saveWindow(w);
 			this.notifyWindows();

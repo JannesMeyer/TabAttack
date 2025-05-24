@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default class Preferences<T extends Record<string, any>> {
+	private area: chrome.storage.StorageArea;
 	private value: T;
 	private listeners = new Map<keyof T, Set<(newValue: any) => void>>();
 
@@ -14,8 +15,9 @@ export default class Preferences<T extends Record<string, any>> {
 		}
 	};
 
-	constructor(defaults: T, private area: chrome.storage.StorageArea = chrome.storage.sync) {
+	constructor(defaults: T, area: chrome.storage.StorageArea = chrome.storage.sync) {
 		this.value = defaults;
+		this.area = area;
 		this.area.get(defaults, v => {
 			this.value = v as T;
 			for (const [key, callbacks] of this.listeners) {

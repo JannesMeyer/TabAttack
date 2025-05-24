@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "resolveJsonModule": true,
     "jsx": "react",
     "skipLibCheck": true,
 
@@ -10,6 +9,8 @@
     "noEmit": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
 
     // Lint
     "strict": true,

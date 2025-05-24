@@ -6,11 +6,15 @@ const size = 16;
 export default class Icon {
 	private canvas: OffscreenCanvas;
 	private ctx: OffscreenCanvasRenderingContext2D;
+	private readonly scale: number;
+	private readonly theme: Theme;
 
-	constructor(private scale: number, private theme: Theme) {
+	constructor(scale: number, theme: Theme) {
 		const w = Math.floor(size * scale);
 		this.canvas = new OffscreenCanvas(w, w);
 		this.ctx = this.canvas.getContext('2d', { willReadFrequently: true }) ?? throwError();
+		this.scale = scale;
+		this.theme = theme;
 	}
 
 	render(count: number, active: number) {

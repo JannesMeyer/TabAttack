@@ -23,13 +23,21 @@ export default class FileLoader {
 		bottom: 9px;
 		border: 7px dashed #1f68e0;
 	}`;
+	private onFile: (contents: string, type: string, bytes: number, name: string) => void;
+	private fileInput?: HTMLInputElement | null;
+	private dragTarget?: HTMLElement | null;
+	private maxMB?: number;
 
 	constructor(
-		private onFile: (contents: string, type: string, bytes: number, name: string) => void,
-		private fileInput?: HTMLInputElement | null,
-		private dragTarget?: HTMLElement | null,
-		private maxMB?: number,
+		onFile: (contents: string, type: string, bytes: number, name: string) => void,
+		fileInput?: HTMLInputElement | null,
+		dragTarget?: HTMLElement | null,
+		maxMB?: number,
 	) {
+		this.onFile = onFile;
+		this.fileInput = fileInput;
+		this.dragTarget = dragTarget;
+		this.maxMB = maxMB;
 		fileInput?.addEventListener('change', this.handleFileChange);
 		dragTarget?.addEventListener('dragover', this.handleDragOver);
 		dragTarget?.addEventListener('dragleave', this.handleDragLeave);

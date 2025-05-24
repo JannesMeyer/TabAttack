@@ -10,11 +10,11 @@ import css from '../lib/css';
 import getIsoDate from '../lib/date/getIsoDate';
 import FileLoader from '../lib/files/FileLoader';
 import { saveTextFile } from '../lib/files/saveTextFile';
-import { AceTheme } from '../lib/getAceThemes';
+import type { AceTheme } from '../lib/getAceThemes';
 import { throwError } from '../lib/throwError';
 import buildDocument from './buildDocument';
 import ActionButton from './components/ActionButton';
-import Editor, { Doc } from './components/Editor';
+import Editor, { type Doc } from './components/Editor';
 
 interface P {
 	isImport: boolean | undefined;

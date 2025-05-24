@@ -1,5 +1,5 @@
 import 'ace-builds/src-noconflict/ace';
-import { Theme, themes } from 'ace-builds/src-noconflict/ext-themelist';
+import { type Theme, themes } from 'ace-builds/src-noconflict/ext-themelist';
 
 export interface AceTheme extends Theme {
 	cssClass: string;
