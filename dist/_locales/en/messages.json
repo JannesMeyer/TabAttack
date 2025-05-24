@@ -1,0 +1,133 @@
+{
+	"ext_name": {
+		"message": "TabAttack"
+	},
+	"ext_description": {
+		"message": "Exports your tabs as easily archivable Markdown."
+	},
+
+	"context_menu_export_current_window": {
+		"message": "Only current window"
+	},
+	"context_menu_copy_page": {
+		"message": "Copy Page As Markdown Link…"
+	},
+	"context_menu_copy_link": {
+		"message": "Copy Link As Markdown…"
+	},
+	"prompt_title_change": {
+		"message": "Edit the title of the link:\n\n$title$",
+		"placeholders": { "title": { "content": "$1" } }
+	},
+
+	"icon_tooltip": {
+		"message": "Open Tab List"
+	},
+	"confirm_unload": {
+		"message": "You have unsaved changes."
+	},
+	"action_save": {
+		"message": "Save File"
+	},
+	"action_close_tabs": {
+		"message": "Close All Tabs"
+	},
+	"action_load_file": {
+		"message": "Load File"
+	},
+	"action_open_links": {
+		"message": "Open Links"
+	},
+	"toast_no_tabs": {
+		"message": "No tabs to export"
+	},
+	"toast_highlighted_tabs": {
+		"message": "Highlighted tabs exported"
+	},
+	"toast_loading_tab_one": {
+		"message": "$num$ tab is still loading, its [Title] might be wrong",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+	"toast_loading_tab": {
+		"message": "$num$ tabs are still loading, their [Title] might be wrong",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+	"toast_copied_document": {
+		"message": "Copied the whole document"
+	},
+	"headline_window_one": {
+		"message": "$num$ tab",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+	"headline_window": {
+		"message": "$num$ tabs",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+	"headline_incognito_window_one": {
+		"message": "$num$ tab – Incognito",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+	"headline_incognito_window": {
+		"message": "$num$ tabs – Incognito",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+
+	"options": {
+		"message": "Options"
+	},
+	"options_export": {
+		"message": "Export"
+	},
+	"options_export_format": {
+		"message": "Format"
+	},
+	"options_export_ignore_domains": {
+		"message": "Ignore these domains"
+	},
+	"options_export_add_domain": {
+		"message": "Add a domain"
+	},
+	"options_export_ignore_pinned": {
+		"message": "Ignore pinned tabs"
+	},
+	"options_editor": {
+		"message": "Editor"
+	},
+	"options_editor_theme": {
+		"message": "Color scheme"
+	},
+	"options_context_menu": {
+		"message": "Context menu items"
+	},
+	"options_show_copy_link": {
+		"message": "Copy Link as Markdown"
+	},
+	"options_show_copy_page": {
+		"message": "Copy Page as Markdown Link"
+	},
+
+	"shortcut_copy_tab_as_markdown": {
+		"message": "Copy tab as Markdown link"
+	},
+	"shortcut_pin_tab": {
+		"message": "Pin tab"
+	},
+	"shortcut_duplicate_tab": {
+		"message": "Duplicate tab"
+	},
+	"shortcut_move_tab_left": {
+		"message": "Move tab left"
+	},
+	"shortcut_move_tab_right": {
+		"message": "Move tab right"
+	},
+
+	"window_with_tab_one": {
+		"message": "Window with $num$ tab",
+		"placeholders": { "num": { "content": "$1" } }
+	},
+	"window_with_tab": {
+		"message": "Window with $num$ tabs",
+		"placeholders": { "num": { "content": "$1" } }
+	}
+}
