@@ -18,17 +18,17 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
-    "ace-builds": "^1.39.1",
-    "marked": "^15.0.8",
+    "ace-builds": "^1.41.0",
+    "marked": "^15.0.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.9",
+    "@types/bun": "^1.2.14",
     "@types/chrome": "^0.0.306",
     "@types/firefox-webext-browser": "^120.0.4",
-    "@types/react": "^19.1.1",
-    "@types/react-dom": "^19.1.2",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
     "dprint": "^0.49.1",
     "typescript": "^5.8.3"
   },
