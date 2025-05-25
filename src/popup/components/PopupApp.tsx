@@ -1,5 +1,5 @@
-import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import React from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { cx } from '../../lib/css';
 import { BrowserAction } from '../../types';
 import { TabStore } from '../TabStore';

@@ -1,5 +1,5 @@
-import { Droppable } from '@hello-pangea/dnd';
 import React from 'react';
+import { Droppable } from 'react-beautiful-dnd';
 import { TabStore, type TWindow } from '../TabStore';
 import { Tab } from './Tab';
 

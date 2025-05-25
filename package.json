@@ -17,10 +17,11 @@
     "up": "bun update && dprint config update"
   },
   "dependencies": {
-    "@hello-pangea/dnd": "^18.0.1",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "ace-builds": "^1.41.0",
     "marked": "^15.0.12",
     "react": "^19.1.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {

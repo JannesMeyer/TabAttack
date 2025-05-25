@@ -1,5 +1,5 @@
-import { Draggable } from '@hello-pangea/dnd';
 import * as React from 'react';
+import { Draggable } from 'react-beautiful-dnd';
 import { isFirefox } from '../../lib/browser/runtime';
 import { cx } from '../../lib/css';
 import { BrowserAction } from '../../types';
