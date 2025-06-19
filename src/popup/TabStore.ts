@@ -31,6 +31,7 @@ export class TabStore {
 	public affinity: { tabId?: number; windowId?: number } = {};
 
 	private windows = new Map<number, TWindow>();
+	// private windowIdOffset = 0;
 	public windowList: TWindow[] = [];
 	readonly windowListeners = new Set<() => void>();
 	private windowSubscribe = (onChange: () => void) => {
@@ -43,6 +44,13 @@ export class TabStore {
 
 	constructor(type: BrowserAction) {
 		this.type = type;
+
+		addEventListener('storage', (event: StorageEvent) => {
+			if (event.key === 'windows') {
+				this.notifyWindows();
+			}
+		});
+
 		chrome.windows.onCreated.addListener((w) => {
 			this.saveWindow(w);
 			this.notifyWindows();
@@ -133,6 +141,7 @@ export class TabStore {
 		const windows = await chrome.windows.getAll({ populate: true });
 		this.windows.clear();
 		this.tabs.clear();
+		// this.windowIdOffset = Math.min(...windows.map(w => w.id).filter(isDefined));
 		for (const w of windows) {
 			this.saveWindow(w);
 			const tabs = w.tabs ?? throwError('missing tabs');
@@ -168,7 +177,11 @@ export class TabStore {
 	}
 
 	private notifyWindows() {
-		this.windowList = this.windows.values().filter(w => w.type === 'normal').toArray();
+		const order = localStorage.getItem('windows')?.split(',').map(Number) ?? [];
+		this.windowList = this.windows.values().filter(w => w.type === 'normal').toArray().sort((a, b) =>
+			((order.indexOf(a.id) + 1) || Number.MAX_SAFE_INTEGER)
+			- ((order.indexOf(b.id) + 1) || Number.MAX_SAFE_INTEGER)
+		);
 		this.windowListeners.forEach(listener => listener());
 	}
 
@@ -176,13 +189,19 @@ export class TabStore {
 		this.tabListeners.forEach(listener => listener(tabId));
 	}
 
-	moveTab(data: { tabId: number; sourceWindowId: number; targetWindowId: number; reverse: boolean; sourceIndex: number; targetIndex: number }) {
+	moveWindow({ sourceIndex, targetIndex }: { sourceIndex: number; targetIndex: number }) {
+		const { windowList } = this;
+		windowList.splice(targetIndex, 0, ...windowList.splice(sourceIndex, 1));
+		localStorage['windows'] = windowList.map(w => w.id).toString();
+	}
+
+	moveTab(data: { tabId: number; sourceWindowId: number; targetWindowId: number; sourceIndex: number; targetIndex: number }) {
 		const source = this.getWindow(data.sourceWindowId);
-		const sourceIndex = data.reverse ? getTabs(source).length - 1 - data.sourceIndex : data.sourceIndex;
+		const sourceIndex = getTabs(source).length - 1 - data.sourceIndex;
 		this.setWindow({ ...source, tabsOverlay: getTabs(source).toSpliced(sourceIndex, 1) });
 
 		const target = this.getWindow(data.targetWindowId);
-		const targetIndex = data.reverse ? getTabs(target).length - data.targetIndex : data.targetIndex;
+		const targetIndex = getTabs(target).length - data.targetIndex;
 		this.setWindow({ ...target, tabsOverlay: getTabs(target).toSpliced(targetIndex, 0, data.tabId) });
 		this.notifyWindows();
 

@@ -18,8 +18,9 @@ const manifest: chrome.runtime.ManifestV3 = {
 	action: {
 		default_icon: 'icons/transparent.png',
 		default_title: '__MSG_ext_name__',
+		default_popup: `newtab.html?t=${BrowserAction.Dropdown}`,
 	},
-	chrome_settings_overrides: { homepage: 'newtab.html' },
+	chrome_settings_overrides: isFirefox ? { homepage: 'newtab.html' } : undefined,
 	chrome_url_overrides: { newtab: 'newtab.html' },
 	permissions: ['tabs', 'storage', 'clipboardWrite', 'contextMenus', 'activeTab'],
 	icons: {
@@ -38,9 +39,11 @@ const manifest: chrome.runtime.ManifestV3 = {
 	commands: {
 		_execute_action: {
 			suggested_key: { default: 'Ctrl+Shift+E' },
+			description: 'Show popup',
 		},
 		_execute_sidebar_action: {
 			suggested_key: { default: 'MacCtrl+T' },
+			description: 'Show sidebar',
 		},
 		copy_tab_as_markdown: {
 			description: '__MSG_shortcut_copy_tab_as_markdown__',

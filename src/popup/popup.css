@@ -21,6 +21,10 @@ body {
 html, body, main, .WindowList {
 	height: 100%;
 }
+.text-center {
+	text-align: center;
+}
+
 :root.dropdown body {
 	width: var(--width);
 }
@@ -62,8 +66,8 @@ html, body, main, .WindowList {
 		padding: 6px;
 	}
 }
-.Window:not(.active) {
-	opacity: 0.4;
+.Window.active .mainTabs {
+	outline: 1px solid var(--shadow);
 }
 
 .DisplayTab {
@@ -85,7 +89,7 @@ html, body, main, .WindowList {
 		border-color: var(--color1);
 	}
 	&.discarded {
-		opacity: 0.5;
+		color: color-mix(in srgb, currentColor 50%, transparent);
 	}
 	&.attention {
 		outline: 1px solid red;

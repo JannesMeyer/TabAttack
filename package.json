@@ -16,7 +16,6 @@
     "up": "bun update && dprint config update"
   },
   "dependencies": {
-    "@types/react-beautiful-dnd": "^13.1.8",
     "ace-builds": "^1.42.0",
     "marked": "^15.0.12",
     "react": "^19.1.0",
@@ -28,6 +27,7 @@
     "@types/chrome": "^0.0.306",
     "@types/firefox-webext-browser": "^120.0.4",
     "@types/react": "^19.1.8",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^19.1.6",
     "dprint": "^0.49.1",
     "typescript": "^5.8.3"

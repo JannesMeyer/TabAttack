@@ -6,8 +6,6 @@ import { TabStore } from '../TabStore';
 import { WindowTabList } from './WindowTabList';
 import { WindowTitle } from './WindowTitle';
 
-const reverse = true;
-
 export function PopupApp({ store }: { store: TabStore }) {
 	const windows = store.useWindows();
 	const activeWindowId = store.getActiveWindowId();
@@ -19,7 +17,7 @@ export function PopupApp({ store }: { store: TabStore }) {
 				}
 				const id = parseInt(draggableId);
 				if (type === 'WINDOW') {
-					console.log(source, destination, id);
+					store.moveWindow({ sourceIndex: source.index, targetIndex: destination.index });
 					return;
 				}
 				if (type === 'TAB') {
@@ -27,7 +25,6 @@ export function PopupApp({ store }: { store: TabStore }) {
 						tabId: id,
 						sourceWindowId: parseInt(source.droppableId),
 						targetWindowId: parseInt(destination.droppableId),
-						reverse,
 						sourceIndex: source.index,
 						targetIndex: destination.index,
 					});
@@ -45,8 +42,8 @@ export function PopupApp({ store }: { store: TabStore }) {
 									<Draggable key={w.id} draggableId={`${w.id} :window`} index={index}>
 										{provided => (
 											<div {...provided.draggableProps} ref={provided.innerRef} className={cx('Window', { active: w.id === activeWindowId })}>
-												<WindowTitle {...provided.dragHandleProps} index={index} />
-												<WindowTabList window={w} activeWindowId={activeWindowId} reverse={reverse} store={store} />
+												<WindowTitle {...provided.dragHandleProps} id={w.id} incognito={w.incognito} store={store} />
+												<WindowTabList window={w} activeWindowId={activeWindowId} store={store} />
 											</div>
 										)}
 									</Draggable>
@@ -57,7 +54,6 @@ export function PopupApp({ store }: { store: TabStore }) {
 									<WindowTabList
 										window={windows.find(w => w.id === activeWindowId)}
 										activeWindowId={activeWindowId}
-										reverse={reverse}
 										store={store}
 									/>
 								</div>

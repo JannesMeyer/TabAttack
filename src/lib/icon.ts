@@ -17,17 +17,21 @@ export default class Icon {
 		this.theme = theme;
 	}
 
-	render(count: number, active: number) {
+	render(total: number, index: number) {
 		const { canvas, scale, ctx, theme } = this;
+		const bars = Math.min(3, total);
+		const isTop = index >= total - 1;
+		const isBottom = index === 0;
+
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		const a = 4 * scale;
-		const gap = 2 * scale;
-		for (let i = 0; i < Math.min(16, count); i++) {
-			const col = i % 4;
-			const row = Math.floor(i / 4);
-			ctx.fillStyle = i === active ? theme.toolbar_text : `color-mix(in srgb, ${theme.toolbar_text} 15%, transparent)`;
-			ctx.fillRect(col * a, row * (a + gap), a, a);
+		for (let i = 0; i < bars; i++) {
+			if (i === 0 && isTop || i === 1 && !isTop && !isBottom || i === 2 && isBottom) {
+				ctx.fillStyle = theme.toolbar_text;
+			} else {
+				ctx.fillStyle = `color-mix(in srgb, ${theme.toolbar_text} 15%, transparent)`;
+			}
+			ctx.fillRect(0, i * 6 * scale, canvas.width, 4 * scale);
 		}
-		return ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+		return ctx.getImageData(0, 0, canvas.width, canvas.height);
 	}
 }

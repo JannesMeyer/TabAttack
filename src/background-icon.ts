@@ -13,7 +13,7 @@ theme.listeners.add(render);
 function render() {
 	for (const { id, tabs, activeTabId } of store.windowList) {
 		const index = tabs.findIndex(id => id === activeTabId);
-		const data = icon.render(tabs.length, index);
+		const data = icon.render(tabs.length, index < 0 ? tabs.length : index);
 		browser.action.setIcon({ windowId: id, imageData: { [data.width]: data } });
 	}
 }
