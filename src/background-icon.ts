@@ -1,5 +1,5 @@
 import { Theme } from './common/helpers/Theme';
-import Icon from './icons/icon';
+import Icon from './lib/icon';
 import { TabStore } from './popup/TabStore';
 import { BrowserAction } from './types';
 

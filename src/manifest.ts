@@ -1,12 +1,7 @@
-import { unlink, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { version } from '../package.json';
-import icon48 from './icons/icon-48.png';
-import icon96 from './icons/icon-96.png';
-import transparent from './icons/transparent.png';
-import newtab from './newtab.html';
-import options from './options.html';
 import { BrowserAction } from './types';
 
 const isFirefox = process.env.TARGET === 'firefox';
@@ -19,23 +14,23 @@ const manifest: chrome.runtime.ManifestV3 = {
 	background: isFirefox
 		? ({ scripts: ['background.js'] } satisfies chrome.runtime.ManifestV2['background'] as any)
 		: { service_worker: 'background.js' },
-	options_ui: { page: options },
+	options_ui: { page: 'options.html' },
 	action: {
-		default_icon: transparent,
+		default_icon: 'icons/transparent.png',
 		default_title: '__MSG_ext_name__',
 	},
-	chrome_settings_overrides: { homepage: newtab },
-	chrome_url_overrides: { newtab },
+	chrome_settings_overrides: { homepage: 'newtab.html' },
+	chrome_url_overrides: { newtab: 'newtab.html' },
 	permissions: ['tabs', 'storage', 'clipboardWrite', 'contextMenus', 'activeTab'],
 	icons: {
-		48: icon48,
-		96: icon96,
+		48: 'icons/icon-48.png',
+		96: 'icons/icon-96.png',
 	},
 	sidebar_action: isFirefox
 		? {
 			default_icon: 'icons/firefox/tab.svg',
 			default_title: 'Tabs',
-			default_panel: `${newtab}?t=${BrowserAction.Sidebar}`,
+			default_panel: `newtab.html?t=${BrowserAction.Sidebar}`,
 			browser_style: false,
 			open_at_install: false,
 		}
@@ -75,5 +70,4 @@ const manifest: chrome.runtime.ManifestV3 = {
 		: undefined,
 };
 
-writeFile(path.join(import.meta.dir, 'manifest.json'), JSON.stringify(manifest, undefined, 2));
-unlink(path.join(import.meta.dir, 'manifest.js'));
+writeFile(path.join(import.meta.dir, '../dist/manifest.json'), JSON.stringify(manifest, undefined, 2));

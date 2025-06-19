@@ -3,6 +3,7 @@
 	--color1: light-dark(#a600ff, #b977f7);
 	--bg: light-dark(#fff, #2b2a32);
 	--shadow: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.15));
+	color-scheme: light dark;
 }
 
 html {
