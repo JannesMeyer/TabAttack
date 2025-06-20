@@ -14,7 +14,7 @@ export const WindowTitle = ({ id, incognito, store, ...props }: WindowTitleProps
 	return (
 		<div {...props}>
 			<div className={'text-center'}>{id}</div>
-			<Editable className={'windowTitle'} value={value ?? (incognito ? 'Private' : 'Untitled')} onChange={setValue} />
+			<Editable className={'windowTitle'} value={value || (incognito ? 'Private' : 'Untitled')} onChange={setValue} />
 		</div>
 	);
 };
