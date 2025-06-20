@@ -1,6 +1,6 @@
 {
   "name": "tabattack",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "license": "AGPL-3.0-only",
   "author": "Jannes Meyer <jannes.meyer@gmail.com>",
@@ -11,7 +11,7 @@
     "fmt": "dprint fmt",
     "bundle": "bun build --chunk-naming=[name].[ext] --external=chrome: --outdir=dist src/*.html src/background.ts",
     "start": "bun run bundle --watch",
-    "build:firefox": "NODE_ENV=production bun run bundle && TARGET=firefox bun src/manifest.js",
+    "build:firefox": "NODE_ENV=production bun run bundle && TARGET=firefox bun src/manifest.js && rm -f firefox.xpi && cd dist && bestzip ../firefox.xpi *",
     "build:chrome": "NODE_ENV=production bun run bundle && TARGET=chrome bun src/manifest.js",
     "up": "bun update && dprint config update"
   },
@@ -29,6 +29,7 @@
     "@types/react": "^19.1.8",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^19.1.6",
+    "bestzip": "^2.2.1",
     "dprint": "^0.49.1",
     "typescript": "^5.8.3"
   },

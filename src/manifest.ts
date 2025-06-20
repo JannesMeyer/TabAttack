@@ -29,7 +29,7 @@ const manifest: chrome.runtime.ManifestV3 = {
 	},
 	sidebar_action: isFirefox
 		? {
-			default_icon: 'icons/firefox/tab.svg',
+			default_icon: 'icons/transparent.png',
 			default_title: 'Tabs',
 			default_panel: `newtab.html?t=${BrowserAction.Sidebar}`,
 			browser_style: false,

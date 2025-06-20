@@ -30,7 +30,9 @@ export default class Icon {
 			} else {
 				ctx.fillStyle = `color-mix(in srgb, ${theme.toolbar_text} 15%, transparent)`;
 			}
-			ctx.fillRect(0, i * 6 * scale, canvas.width, 4 * scale);
+			ctx.beginPath();
+			ctx.roundRect(0, i * 6 * scale, canvas.width, 4 * scale, scale);
+			ctx.fill();
 		}
 		return ctx.getImageData(0, 0, canvas.width, canvas.height);
 	}

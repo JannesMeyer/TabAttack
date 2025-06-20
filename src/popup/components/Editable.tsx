@@ -4,15 +4,13 @@ import css, { cx } from '../../lib/css';
 type Props = {
 	value: string;
 	onChange: (value: string) => void;
-	ref?: React.Ref<HTMLInputElement>;
 	className?: string;
 };
 
-export const Editable = ({ value, onChange, ...props }: Props) => {
+export const Editable = ({ value, onChange, className }: Props) => {
 	const [editing, setEditing] = React.useState(false);
-	const className = cx(editable, props.className);
 	if (!editing) {
-		return <div {...props} className={className} onDoubleClick={() => setEditing(true)}>{value}</div>;
+		return <div className={cx(editable, className)} onDoubleClick={() => setEditing(true)}>{value}</div>;
 	}
 	const submit = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		const nextValue = ev.currentTarget.value.trim();
@@ -23,8 +21,7 @@ export const Editable = ({ value, onChange, ...props }: Props) => {
 	};
 	return (
 		<input
-			{...props}
-			className={className}
+			className={cx(editable, className)}
 			autoFocus
 			onFocus={ev => ev.currentTarget.select()}
 			defaultValue={value}

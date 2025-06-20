@@ -10,11 +10,10 @@ type WindowTitleProps = {
 };
 
 export const WindowTitle = ({ id, incognito, store, ...props }: WindowTitleProps) => {
-	const [value, setValue] = usePref(`windowTitle-${id}`, '');
+	const [value, setValue] = usePref(`windowTitle:${id}`, '');
 	return (
 		<div {...props}>
-			<div className={'text-center'}>{id}</div>
-			<Editable className={'windowTitle'} value={value ?? (incognito ? 'Private' : 'Untitled')} onChange={setValue} />
+			<Editable className={'windowTitle'} value={value || (incognito ? 'Private' : 'Untitled')} onChange={setValue} />
 		</div>
 	);
 };
