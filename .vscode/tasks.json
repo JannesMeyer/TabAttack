@@ -10,7 +10,7 @@
       "runOptions": { "runOn": "folderOpen" }
     },
     {
-      "label": "Bundle (watch)",
+      "label": "Start",
       "type": "npm",
       "script": "start",
       "isBackground": true,
