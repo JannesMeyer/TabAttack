@@ -1,24 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "rootDir": "src",
     "jsx": "react",
-    "skipLibCheck": true,
-
-    // Bundling
     "noEmit": true,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true,
+    "types": ["chrome", "firefox-webext-browser", "node", "bun"],
 
     // Lint
-    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
-    "noFallthroughCasesInSwitch": true,
-
-    "types": ["chrome", "firefox-webext-browser", "node", "bun"]
   }
 }
