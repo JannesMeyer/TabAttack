@@ -6,9 +6,11 @@ export class Theme {
 	readonly listeners = new Set<() => void>();
 
 	constructor() {
-		const query = matchMedia('(prefers-color-scheme: dark)');
-		query.addEventListener('change', ev => this.setDark(ev.matches));
-		this.setDark(query.matches);
+		if (typeof window !== 'undefined') {
+			const query = matchMedia('(prefers-color-scheme: dark)');
+			query.addEventListener('change', ev => this.setDark(ev.matches));
+			this.setDark(query.matches);
+		}
 
 		try {
 			browser.theme.onUpdated.addListener(({ theme }) => this.setTheme(theme));
