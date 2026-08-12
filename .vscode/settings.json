@@ -1,11 +1,4 @@
 {
-	"files.exclude": {
-		"node_modules": true,
-		"dist": true,
-		"dist/**/*": true
-	},
-	"editor.tabSize": 2,
-	"editor.insertSpaces": false,
-	"editor.detectIndentation": false,
-	"typescript.tsdk": "node_modules\\typescript\\lib"
+  "editor.defaultFormatter": "dprint.dprint",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

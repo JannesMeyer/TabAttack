@@ -1,5 +1,5 @@
-.DS_Store
 *.log
 *.zip
-/node_modules
-/dist
+*.xpi
+node_modules
+dist

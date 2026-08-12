@@ -1,0 +1,47 @@
+:root {
+	--background-color-box: light-dark(#ffffff, #23222b);
+	--in-content-page-color: light-dark(rgb(21, 20, 26), rgb(251, 251, 254));
+	--link-color: light-dark(#0060df, #00ddff);
+	--link-color-active: light-dark(#054096, #aaf2ff);
+	--link-color-hover: light-dark(#0250bb, #80ebff);
+}
+html {
+	font: menu;
+}
+body {
+	background: var(--background-color-box);
+	color: var(--in-content-page-color);
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+h3 {
+	font-size: 1rem;
+	font-weight: bold;
+	margin-top: 16px;
+	margin-bottom: 8px;
+}
+.row {
+	display: block;
+	min-height: 1.8rem;
+}
+.row span {
+	display: inline-block;
+	width: 160px;
+	vertical-align: top;
+	margin-top: 4px;
+}
+input[type='checkbox'] {
+	margin: 0 4px 0 0;
+}
+a {
+	color: var(--link-color);
+}
+a:hover {
+	color: var(--link-color-hover);
+}
+a:active {
+	color: var(--link-color-active);
+	text-decoration: none;
+}
