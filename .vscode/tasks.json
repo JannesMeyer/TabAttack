@@ -6,16 +6,18 @@
       "type": "typescript",
       "tsconfig": "tsconfig.json",
       "option": "watch",
-      "presentation": { "reveal": "never" },
+      "presentation": { "reveal": "silent" },
       "runOptions": { "runOn": "folderOpen" }
     },
     {
-      "label": "Start",
+      "label": "Build",
       "type": "npm",
       "script": "start",
+      "group": "build",
       "isBackground": true,
       "presentation": { "reveal": "silent" },
-      "runOptions": { "runOn": "folderOpen" }
+      "runOptions": { "runOn": "folderOpen" },
+      "problemMatcher": []
     }
   ]
 }
