@@ -115,9 +115,8 @@ export class TabStore {
 						}
 					}
 				}
-			}).catch(console.error);
-
-			chrome.windows.getCurrent().then(({ id }) => this.state.initialWindowId = id).catch(console.error);
+			});
+			chrome.windows.getCurrent().then(({ id }) => this.state.initialWindowId = id);
 		}
 	}
 }
