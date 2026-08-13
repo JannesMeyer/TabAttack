@@ -6,13 +6,8 @@ import { cx } from '../../lib/cx';
 import { useTabStore } from '../../lib/TabStoreContext';
 import { Tab } from './Tab';
 
-type Props = {
-	id: number;
-	searchQuery: string;
-};
-
-export { memo as Window };
-const memo = React.memo(function Window({ id: windowId, searchQuery }: Props) {
+export { d as Window };
+const d = React.memo(function Window({ id: windowId }: { id: number }) {
 	const store = useTabStore();
 	const { initialWindowId, tabOrder } = useSnapshot(store.state);
 	const { ref } = useDroppable({
@@ -28,7 +23,6 @@ const memo = React.memo(function Window({ id: windowId, searchQuery }: Props) {
 					tabId={tabId}
 					index={index}
 					windowId={windowId}
-					searchQuery={searchQuery}
 				/>
 			))}
 		</div>

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useSnapshot } from 'valtio';
 import { cx } from '../../lib/cx';
 import { useTabStore } from '../../lib/TabStoreContext';
+import { actionType } from '../popup';
 import { AudibleIcon } from './icons/AudibleIcon';
 import { MutedIcon } from './icons/MutedIcon';
 import { TabIcon } from './TabIcon';
@@ -10,33 +11,27 @@ import { TabIcon } from './TabIcon';
 const self = location.href;
 
 type Props = {
-	tabId: number | undefined;
-	index: number;
 	windowId: number;
-	searchQuery?: string;
+	tabId: number | undefined;
+	index?: number;
+	helpText?: string;
 };
 
-export { memo as Tab };
-const memo = React.memo(function Tab({ tabId = chrome.tabs.TAB_ID_NONE, index, windowId, searchQuery }: Props) {
+export { d as Tab };
+const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, index, helpText }: Props) {
 	const store = useTabStore();
 	const snap = useSnapshot(store.state);
 	const tab = snap.tabs.get(tabId);
 	const { ref, isDragging } = useSortable({
 		id: tabId,
-		index,
+		index: index ?? NaN,
+		disabled: index == null,
 		type: 'tab',
 		accept: 'tab',
 		group: windowId,
-		disabled: !!searchQuery,
 	});
 	if (!tab) {
 		return <div>ERROR: {tabId} not found</div>;
-	}
-	if (searchQuery) {
-		const q = searchQuery.toLowerCase();
-		if (!tab.title.toLowerCase().includes(q) && !tab.url.toLowerCase().includes(q)) {
-			return null;
-		}
 	}
 	return (
 		<a
@@ -56,6 +51,13 @@ const memo = React.memo(function Tab({ tabId = chrome.tabs.TAB_ID_NONE, index, w
 				ev.preventDefault();
 				chrome.tabs.update(tabId, { active: true });
 				chrome.windows.update(windowId, { focused: true });
+				if (actionType === 'popup') {
+					close();
+				}
+				if (actionType === 'default') {
+					// TODO: only when tab in same window
+					close();
+				}
 			}}
 			onAuxClick={(ev) => {
 				if (ev.button === 1) {
@@ -86,6 +88,7 @@ const memo = React.memo(function Tab({ tabId = chrome.tabs.TAB_ID_NONE, index, w
 				</div>
 			)}
 			<span className={'title'}>{tab.title}</span>
+			{helpText && <span style={{ opacity: 0.5 }}>{helpText}</span>}
 		</a>
 	);
 });

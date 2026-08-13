@@ -5,12 +5,12 @@ import React from 'react';
 import { useSnapshot } from 'valtio';
 import { useTabStore } from '../../lib/TabStoreContext';
 import { throwError } from '../../lib/throwError';
+import { SearchResults } from './SearchResults';
 import { Window } from './Window';
 
-export function PopupApp() {
+export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 	const store = useTabStore();
-	const snap = useSnapshot(store.state);
-	const { initialWindowId } = snap;
+	const { initialWindowId, windows } = useSnapshot(store.state);
 	const [searchQuery, setSearchQuery] = React.useState('');
 	const searchRef = React.useRef<HTMLInputElement>(null);
 	React.useEffect(() => {
@@ -18,6 +18,11 @@ export function PopupApp() {
 		addEventListener('focus', focus);
 		setTimeout(() => removeEventListener('focus', focus), 500);
 	}, []);
+	const sortedWindows = React.useMemo(() =>
+		Array.from(windows.values())
+			.filter(w => w.type === 'normal')
+			.map(w => w.id)
+			.sort((a, b) => Number(b === initialWindowId) - Number(a === initialWindowId) || b - a), [windows, initialWindowId]);
 	return (
 		<>
 			<input
@@ -29,11 +34,7 @@ export function PopupApp() {
 				onChange={ev => setSearchQuery(ev.target.value)}
 				onKeyDown={ev => {
 					if (ev.key === 'Enter') {
-						const el = document.querySelector<HTMLElement>('.tab');
-						if (el) {
-							el.click();
-							setSearchQuery('');
-						}
+						document.querySelector<HTMLElement>('.tab')?.click();
 					}
 					if (ev.key === 'Escape') {
 						setSearchQuery('');
@@ -41,27 +42,27 @@ export function PopupApp() {
 				}}
 			/>
 			<div className={'windows'}>
-				<DragDropProvider
-					onDragEnd={ev => {
-						if (ev.canceled) return;
-						const { source } = ev.operation;
-						if (!isSortable(source)) {
-							return;
-						}
-						if (source.type === 'tab') {
-							const windowId = ensureNumber(source.group);
-							const index = store.state.tabOrder.get(windowId)!.length - (source.group !== source.initialGroup ? 0 : 1) - source.index;
-							chrome.tabs.move(ensureNumber(source.id), { index, windowId });
-							return;
-						}
-					}}
-				>
-					{Array.from(snap.windows.entries())
-						.filter(([, w]) => w.type === 'normal')
-						.sort(([a], [b]) => Number(b === initialWindowId) - Number(a === initialWindowId) || b - a).map(([id]) =>
-							store.isSingleWindow && id !== initialWindowId ? null : <Window key={id} id={id} searchQuery={searchQuery} />
-						)}
-				</DragDropProvider>
+				{searchQuery
+					? <SearchResults windows={sortedWindows} query={searchQuery} />
+					: (
+						<DragDropProvider
+							onDragEnd={ev => {
+								if (ev.canceled) return;
+								const { source } = ev.operation;
+								if (!isSortable(source)) {
+									return;
+								}
+								if (source.type === 'tab') {
+									const windowId = ensureNumber(source.group);
+									const index = store.state.tabOrder.get(windowId)!.length - (source.group !== source.initialGroup ? 0 : 1) - source.index;
+									chrome.tabs.move(ensureNumber(source.id), { index, windowId });
+									return;
+								}
+							}}
+						>
+							{sortedWindows.map(id => singleWindow && id !== initialWindowId ? null : <Window key={id} id={id} />)}
+						</DragDropProvider>
+					)}
 			</div>
 		</>
 	);

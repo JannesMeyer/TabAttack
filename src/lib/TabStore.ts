@@ -2,7 +2,7 @@ import { proxy } from 'valtio';
 import { proxyMap } from 'valtio/utils';
 import { throwError } from '../lib/throwError';
 
-type Window = Required<Pick<chrome.windows.Window, 'type' | 'incognito'>>;
+type Window = Required<Pick<chrome.windows.Window, 'id' | 'type' | 'incognito'>>;
 type Tab = ReturnType<typeof createTab>;
 
 const properties = [
@@ -32,8 +32,6 @@ function createTab(tab: Pick<browser.tabs.Tab, (typeof properties)[number]>) {
 }
 
 export class TabStore {
-	readonly isSingleWindow: boolean;
-
 	state = proxy({
 		initialWindowId: undefined as number | undefined,
 		windows: proxyMap<number, Window>(),
@@ -42,13 +40,11 @@ export class TabStore {
 		activeTabs: proxyMap<number, number>(),
 	});
 
-	constructor(isSingleWindow = false) {
-		this.isSingleWindow = isSingleWindow;
-
+	constructor() {
 		if (typeof chrome !== 'undefined') {
 			chrome.windows.onCreated.addListener(({ id = throwError(), type = throwError(), incognito, tabs }) => {
 				// console.debug('window created', id);
-				this.state.windows.set(id, { type, incognito });
+				this.state.windows.set(id, { id, type, incognito });
 				if (tabs) {
 					this.state.tabOrder.set(id, tabs.map(t => t.id));
 				}
@@ -108,7 +104,7 @@ export class TabStore {
 
 			chrome.windows.getAll({ populate: true }).then((windows) => {
 				for (const { id = throwError(), type = throwError(), incognito, tabs = [] } of windows) {
-					this.state.windows.set(id, { type, incognito });
+					this.state.windows.set(id, { id, type, incognito });
 					this.state.tabOrder.set(id, tabs.map(t => t.id));
 					for (const t of tabs) {
 						const tabId = t.id ?? throwError();
@@ -126,7 +122,7 @@ export class TabStore {
 	}
 }
 
-// Native getOrInsert is supported by valtio yet
+// Native getOrInsert is not supported by valtio yet
 function getOrInsert<K, V>(map: Map<K, V>, key: K, defaultValue: V) {
 	let value = map.get(key);
 	if (value == null) {

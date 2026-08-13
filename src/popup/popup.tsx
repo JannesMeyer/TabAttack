@@ -6,23 +6,24 @@ import { Theme } from '../lib/Theme';
 import { PopupApp } from './components/PopupApp';
 
 export type ActionType = 'sidebar' | 'popup' | 'default';
+export const actionType = new URLSearchParams(location.search).get('t') as ActionType || 'default';
 
-const type = new URLSearchParams(location.search).get('t') as ActionType || 'default';
 const html = document.documentElement;
-html.classList.add(type);
-// TODO: Custom CSS from localStorage
+html.classList.add(actionType);
 
-const store = new TabStore(type === 'popup' || type === 'sidebar');
+const store = new TabStore();
 
 addEventListener('DOMContentLoaded', () => {
 	createRoot(document.body.appendChild(document.createElement('main'))).render(
 		<StrictMode>
 			<TabStoreProvider value={store}>
-				<PopupApp />
+				<PopupApp singleWindow={actionType === 'popup' || actionType === 'sidebar'} />
 			</TabStoreProvider>
 		</StrictMode>,
 	);
 });
+
+// TODO: Load custom CSS from localStorage
 const theme = new Theme();
 theme.listeners.add(() => {
 	const colors = theme.getColors();
