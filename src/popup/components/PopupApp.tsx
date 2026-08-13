@@ -1,5 +1,5 @@
 import './PopupApp.css';
-import { DragDropProvider } from '@dnd-kit/react';
+import { DragDropProvider, PointerSensor } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
 import React from 'react';
 import { useSnapshot } from 'valtio';
@@ -7,6 +7,8 @@ import { useTabStore } from '../../lib/TabStoreContext';
 import { throwError } from '../../lib/throwError';
 import { SearchResults } from './SearchResults';
 import { Window } from './Window';
+
+const SENSORS = [PointerSensor];
 
 export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 	const store = useTabStore();
@@ -65,6 +67,7 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 					? <SearchResults windows={sortedWindows} query={searchQuery} />
 					: (
 						<DragDropProvider
+							sensors={SENSORS}
 							onDragStart={ev => dragParentRef.current = ev.operation.source?.element?.parentElement}
 							onDragEnd={ev => {
 								const dragParent = dragParentRef.current;

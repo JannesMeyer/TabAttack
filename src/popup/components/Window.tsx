@@ -16,7 +16,7 @@ const d = React.memo(function Window({ id: windowId }: { id: number }) {
 		collisionPriority: CollisionPriority.Low,
 	});
 	return (
-		<div ref={ref} className={cx('window', initialWindowId === windowId && 'active')}>
+		<div ref={ref} tabIndex={-1} className={cx('window', initialWindowId === windowId && 'active')}>
 			{tabOrder.get(windowId)?.toReversed().map((tabId, index) => (
 				<Tab
 					key={tabId}
