@@ -21,6 +21,10 @@ Build for Firefox:
 bun build:firefox
 ```
 
+## Firefox keyboard shortcuts
+
+To override builtin Firefox shortcuts such as ⌘S or ⌘P you have to clear them via `about:keyboard` first.
+
 ## Acknowledgments
 
 Icon shape based on [Diamond by Catia Marsh Mallow from the Noun Project](https://thenounproject.com/term/star/28082/)

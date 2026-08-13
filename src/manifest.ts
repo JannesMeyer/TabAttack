@@ -40,26 +40,28 @@ const manifest = {
 		: undefined,
 	commands: {
 		_execute_action: {
-			suggested_key: { default: 'Ctrl+Shift+E' },
 			description: 'Show popup',
+			suggested_key: { default: 'MacCtrl+E' },
 		},
 		_execute_sidebar_action: {
-			suggested_key: { default: 'MacCtrl+S' },
 			description: 'Show sidebar',
+			suggested_key: { default: 'MacCtrl+S' },
 		},
 		copy_tab_as_markdown: {
 			description: '__MSG_shortcut_copy_tab_as_markdown__',
+			suggested_key: { default: 'Ctrl+Shift+L' },
 		},
 		move_tab_left: {
-			suggested_key: { default: 'Ctrl+Shift+Comma' },
 			description: '__MSG_shortcut_move_tab_left__',
+			suggested_key: { default: 'MacCtrl+Shift+Comma' },
 		},
 		move_tab_right: {
-			suggested_key: { default: 'Ctrl+Shift+Period' },
 			description: '__MSG_shortcut_move_tab_right__',
+			suggested_key: { default: 'MacCtrl+Shift+Period' },
 		},
 		duplicate_tab: {
 			description: '__MSG_shortcut_duplicate_tab__',
+			suggested_key: { default: 'MacCtrl+D' },
 		},
 		pin_tab: {
 			description: '__MSG_shortcut_pin_tab__',
