@@ -19,6 +19,21 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 		addEventListener('focus', focus);
 		setTimeout(() => removeEventListener('focus', focus), 500);
 	}, []);
+
+	// Scroll into view
+	const loaded = initialWindowId != null && windows.size > 0;
+	React.useEffect(() => {
+		if (loaded) {
+			requestAnimationFrame(() =>
+				document.querySelector('.tab.active')?.scrollIntoView({
+					block: 'nearest',
+					behavior: 'instant',
+					container: 'nearest',
+				})
+			);
+		}
+	}, [loaded]);
+
 	const sortedWindows = React.useMemo(() =>
 		Array.from(windows.values())
 			.filter(w => w.type === 'normal')
