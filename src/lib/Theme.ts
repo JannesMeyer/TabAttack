@@ -86,7 +86,6 @@ export class Theme {
 			result.sidebar_highlight_text = 'SelectedItemText';
 		}
 		if (!result.sidebar) {
-			console.log(result.sidebar);
 			// https://github.com/mozilla-firefox/firefox/blob/50691777d300fffc7d1f7844b59769109bc76f3e/widget/cocoa/nsLookAndFeel.mm#L206-L208
 			result.sidebar = 'light-dark(#ffffff, #2d2d2d)';
 			// NSColor.controlTextColor

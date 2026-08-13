@@ -6,8 +6,9 @@
 	color-scheme: light dark;
 	background-color: var(--ntp-background);
 	color: var(--ntp-text);
-	/* --tab: light-dark(#fff, #5e5e5e); */
+	--tab: light-dark(#fff, #5e5e5e);
 	font: menu;
+	--space-medium: 0.75rem;
 
 	&.popup {
 		font: message-box;
@@ -22,8 +23,7 @@
 		color: var(--sidebar-text);
 		--tab: var(--sidebar-highlight);
 		--tabtext: var(--sidebar-highlight-text);
-		/* chrome://global/skin/tree/tree.css */
-		--tabhover: hsla(0, 0%, 50%, 0.15);
+		--tabhover: hsla(0, 0%, 50%, 0.15); /* chrome://global/skin/tree/tree.css */
 	}
 }
 
@@ -54,6 +54,35 @@ body {
 }
 
 main {
+	display: flex;
+	flex-direction: column;
+}
+
+/** SEARCH **/
+.search {
+	margin: var(--space-medium);
+	min-height: 32px;
+	color: light-dark(rgb(21, 20, 26), rgb(251, 251, 254));
+	border: none;
+	border-radius: 8px;
+	background-color: light-dark(#fff, #42414d);
+
+	padding-inline-start: calc(2 * var(--space-medium) + 12px);
+	background-size: 12px;
+	background-repeat: no-repeat;
+	background-position: var(--space-medium) center;
+	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' style='color-scheme: light dark; fill: light-dark(%235b5b66, %23fbfbfe);' viewBox='0 0 12 12'><path d='M11.354,10.646l-0.707.707L7.295,8A4.483,4.483,0,1,1,9,4.5,4.458,4.458,0,0,1,8,7.295ZM4.5,1A3.5,3.5,0,1,0,8,4.5,3.5,3.5,0,0,0,4.5,1Z'/></svg>");
+}
+
+:root.default .search {
+	margin: var(--margin);
+	margin-bottom: var(--space-medium);
+}
+
+/** WINDOWS CONTAINER **/
+.windows {
+	flex: 1;
+	min-height: 0;
 	display: grid;
 	grid-auto-flow: column;
 	grid-gap: calc(var(--margin) * 0.75);
@@ -61,13 +90,13 @@ main {
 	margin-right: var(--margin);
 }
 
-:root.default main {
+:root.default .windows {
 	grid-auto-columns: minmax(var(--minwidth), 40%);
 }
 
 /** WINDOW **/
 .window {
-	padding: var(--margin) 0;
+	padding-bottom: var(--margin);
 	overflow-y: auto;
 	overflow-x: hidden;
 

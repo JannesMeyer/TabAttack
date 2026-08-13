@@ -6,9 +6,12 @@ Browser extension for managing tabs. Targets both Chrome and Firefox.
 
 - **Package manager**: `bun` (not npm/npx). Use `bun add`, `bun remove`, `bun tsc`, `bun run <script>`.
 - **Bundler**: `bun build` (see `bundle` script in package.json)
-- **Formatter**: `dprint` (not prettier)
 - **Type checking**: `bun tsc`
 - **Dev server**: `bun run start`
+
+Do NOT run the formatter (`dprint` and/or `fmt`) because it will invalidate your file cache. Also don't run the `bundle` script, because I am running the dev server in the background.
+
+Do NOT commit to git. I do the commits.
 
 ## Code style
 

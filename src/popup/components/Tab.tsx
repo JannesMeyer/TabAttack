@@ -13,10 +13,11 @@ type Props = {
 	tabId: number | undefined;
 	index: number;
 	windowId: number;
+	searchQuery?: string;
 };
 
 export { memo as Tab };
-const memo = React.memo(function Tab({ tabId = chrome.tabs.TAB_ID_NONE, index, windowId }: Props) {
+const memo = React.memo(function Tab({ tabId = chrome.tabs.TAB_ID_NONE, index, windowId, searchQuery }: Props) {
 	const store = useTabStore();
 	const snap = useSnapshot(store.state);
 	const tab = snap.tabs.get(tabId);
@@ -26,13 +27,21 @@ const memo = React.memo(function Tab({ tabId = chrome.tabs.TAB_ID_NONE, index, w
 		type: 'tab',
 		accept: 'tab',
 		group: windowId,
+		disabled: !!searchQuery,
 	});
 	if (!tab) {
 		return <div>ERROR: {tabId} not found</div>;
 	}
+	if (searchQuery) {
+		const q = searchQuery.toLowerCase();
+		if (!tab.title.toLowerCase().includes(q) && !tab.url.toLowerCase().includes(q)) {
+			return null;
+		}
+	}
 	return (
 		<a
 			ref={ref}
+			draggable={false}
 			onPointerUp={ev => {
 				if (!visualViewport) {
 					return;
