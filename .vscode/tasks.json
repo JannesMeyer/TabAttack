@@ -3,9 +3,10 @@
   "tasks": [
     {
       "label": "TypeScript",
-      "type": "typescript",
-      "tsconfig": "tsconfig.json",
-      "option": "watch",
+      "type": "npm",
+      "script": "ts-watch",
+      "isBackground": true,
+      "problemMatcher": "$tsc-watch",
       "presentation": { "reveal": "silent" },
       "runOptions": { "runOn": "folderOpen" }
     },

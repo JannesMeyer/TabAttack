@@ -7,6 +7,7 @@
   "repository": "https://github.com/JannesMeyer/TabAttack",
   "type": "module",
   "scripts": {
+    "ts-watch": "tsc --watch",
     "check": "dprint check && tsc",
     "fmt": "dprint fmt",
     "bundle": "bun build --chunk-naming=[name].[ext] --external=chrome: --outdir=dist src/*.html src/background.ts",
