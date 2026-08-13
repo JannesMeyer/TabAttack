@@ -33,25 +33,25 @@ const commands: Record<Command, () => unknown> = {
 /**
  * Move all highlighted tabs in a window to the left or to the right
  */
-function moveHighlighted(delta: number) {
-	chrome.windows.getLastFocused({ populate: true }).then(({ tabs }) => {
-		if (!tabs) {
-			return;
+async function moveHighlighted(delta: number) {
+	const { tabs } = await chrome.windows.getLastFocused({ populate: true });
+	if (!tabs) {
+		return;
+	}
+	const highlighted = tabs.filter(t => t.highlighted || t.active);
+	if (delta > 0) {
+		highlighted[Symbol.iterator] = valuesReversed;
+	}
+	for (const tab of highlighted) {
+		if (tab.id == null || tab.id === chrome.tabs.TAB_ID_NONE) {
+			continue;
 		}
-		const highlighted = tabs.filter(t => t.highlighted || t.active);
-		if (delta > 0) {
-			highlighted[Symbol.iterator] = valuesReversed;
-		}
-		for (const tab of highlighted) {
-			let index = tab.index;
-			do {
-				index = (tabs.length + index + delta) % tabs.length;
-			} while (tab.pinned !== (tabs[index] ?? throwError()).pinned);
-			if (tab.id != null) {
-				chrome.tabs.move(tab.id, { index });
-			}
-		}
-	});
+		let index = tab.index;
+		do {
+			index = (tabs.length + index + delta) % tabs.length;
+		} while (tab.pinned !== (tabs[index] ?? throwError()).pinned);
+		chrome.tabs.move(tab.id, { index });
+	}
 }
 
 /** Iterate backwards over an array */

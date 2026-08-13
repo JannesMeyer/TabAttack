@@ -28,6 +28,13 @@ export function PopupApp() {
 				value={searchQuery}
 				onChange={ev => setSearchQuery(ev.target.value)}
 				onKeyDown={ev => {
+					if (ev.key === 'Enter') {
+						const el = document.querySelector<HTMLElement>('.tab');
+						if (el) {
+							el.click();
+							setSearchQuery('');
+						}
+					}
 					if (ev.key === 'Escape') {
 						setSearchQuery('');
 					}
