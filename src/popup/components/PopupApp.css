@@ -51,6 +51,7 @@ body {
 
 :root.popup body {
 	width: var(--minwidth);
+	/* hardcoded max-height of 600px */
 }
 
 main {
