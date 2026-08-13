@@ -3,6 +3,7 @@ import { proxyMap } from 'valtio/utils';
 import { throwError } from '../lib/throwError';
 
 type Window = Required<Pick<chrome.windows.Window, 'type' | 'incognito'>>;
+type Tab = ReturnType<typeof createTab>;
 
 const properties = [
 	'url',
@@ -16,9 +17,7 @@ const properties = [
 	'attention',
 ] satisfies (keyof browser.tabs.Tab)[];
 
-type Tab = Pick<browser.tabs.Tab, (typeof properties)[number]> & { url: string; status: string; title: string };
-
-function createTab(tab: Pick<browser.tabs.Tab, (typeof properties)[number]>): Tab {
+function createTab(tab: Pick<browser.tabs.Tab, (typeof properties)[number]>) {
 	return {
 		url: tab.url ?? throwError('missing url'),
 		status: tab.status ?? throwError('missing status'),
@@ -127,7 +126,7 @@ export class TabStore {
 	}
 }
 
-// Not supported by valtio yet
+// Native getOrInsert is supported by valtio yet
 function getOrInsert<K, V>(map: Map<K, V>, key: K, defaultValue: V) {
 	let value = map.get(key);
 	if (value == null) {
