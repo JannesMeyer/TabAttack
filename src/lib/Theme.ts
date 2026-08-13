@@ -81,15 +81,25 @@ export class Theme {
 			toolbar_vertical_separator: color(colors.toolbar_vertical_separator),
 			toolbar: color(colors.toolbar),
 		} satisfies Record<keyof Colors, unknown>;
+
+		// System colors:
+		// https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/system-color
 		if (!result.sidebar_highlight) {
 			result.sidebar_highlight = 'SelectedItem';
 			result.sidebar_highlight_text = 'SelectedItemText';
 		}
 		if (!result.sidebar) {
-			// https://github.com/mozilla-firefox/firefox/blob/50691777d300fffc7d1f7844b59769109bc76f3e/widget/cocoa/nsLookAndFeel.mm#L206-L208
-			result.sidebar = 'light-dark(#ffffff, #2d2d2d)';
-			// NSColor.controlTextColor
-			result.sidebar_text = 'light-dark(rgba(0, 0, 0, 0.85), rgba(255, 255, 255, 0.85))';
+			/** Whether `browser.theme.native-theme` is enabled */
+			const native = false;
+			if (native) {
+				// https://github.com/mozilla-firefox/firefox/blob/50691777d300fffc7d1f7844b59769109bc76f3e/widget/cocoa/nsLookAndFeel.mm#L206-L208
+				result.sidebar = 'light-dark(#ffffff, #2d2d2d)';
+				// NSColor.controlTextColor
+				result.sidebar_text = 'light-dark(rgba(0, 0, 0, 0.85), rgba(255, 255, 255, 0.85))';
+			} else {
+				result.sidebar = 'Canvas';
+				result.sidebar_text = 'light-dark(#15141a, #f9f9fa)'; // --color-gray-100 and --grey-10
+			}
 		}
 		return result;
 	}
