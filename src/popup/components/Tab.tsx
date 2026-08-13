@@ -22,10 +22,11 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 	const store = useTabStore();
 	const snap = useSnapshot(store.state);
 	const tab = snap.tabs.get(tabId);
+	const disabled = index == null;
 	const { ref, isDragging } = useSortable({
 		id: tabId,
 		index: index ?? NaN,
-		disabled: index == null,
+		disabled,
 		type: 'tab',
 		accept: 'tab',
 		group: windowId,
@@ -67,7 +68,7 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 			}}
 			href={tab.url}
 			className={cx('tab', {
-				active: snap.activeTabs.get(windowId) === tabId,
+				active: !disabled && snap.activeTabs.get(windowId) === tabId,
 				dragging: isDragging,
 				pinned: tab.pinned,
 				discarded: tab.discarded,

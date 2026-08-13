@@ -35,9 +35,12 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 				onKeyDown={ev => {
 					if (ev.key === 'Enter') {
 						document.querySelector<HTMLElement>('.tab')?.click();
+						setSearchQuery('');
+						return;
 					}
 					if (ev.key === 'Escape') {
 						setSearchQuery('');
+						return;
 					}
 				}}
 			/>
