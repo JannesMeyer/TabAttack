@@ -57,7 +57,7 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 				}
 				if (actionType === 'default') {
 					// TODO: only when tab in same window
-					close();
+					// close();
 				}
 			}}
 			onAuxClick={(ev) => {

@@ -12,6 +12,7 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 	const store = useTabStore();
 	const { initialWindowId, windows } = useSnapshot(store.state);
 	const [searchQuery, setSearchQuery] = React.useState('');
+	const dragParentRef = React.useRef<HTMLElement | undefined>(null);
 	const searchRef = React.useRef<HTMLInputElement>(null);
 	React.useEffect(() => {
 		const focus = () => searchRef.current?.focus();
@@ -49,15 +50,24 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 					? <SearchResults windows={sortedWindows} query={searchQuery} />
 					: (
 						<DragDropProvider
+							onDragStart={ev => dragParentRef.current = ev.operation.source?.element?.parentElement}
 							onDragEnd={ev => {
-								if (ev.canceled) return;
+								const dragParent = dragParentRef.current;
+								dragParentRef.current = undefined;
+								if (ev.canceled) {
+									return;
+								}
 								const { source } = ev.operation;
 								if (!isSortable(source)) {
 									return;
 								}
+								const isCrossGroup = source.group !== source.initialGroup;
+								if (isCrossGroup) {
+									dragParent?.appendChild(source.element ?? throwError());
+								}
 								if (source.type === 'tab') {
 									const windowId = ensureNumber(source.group);
-									const index = store.state.tabOrder.get(windowId)!.length - (source.group !== source.initialGroup ? 0 : 1) - source.index;
+									const index = store.state.tabOrder.get(windowId)!.length - (isCrossGroup ? 0 : 1) - source.index;
 									chrome.tabs.move(ensureNumber(source.id), { index, windowId });
 									return;
 								}

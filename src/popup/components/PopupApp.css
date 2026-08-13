@@ -99,10 +99,6 @@ main {
 	padding-bottom: var(--margin);
 	overflow-y: auto;
 	overflow-x: hidden;
-
-	&:not(.active) {
-		opacity: 0.55;
-	}
 }
 
 /** TAB **/
@@ -126,7 +122,7 @@ main {
 		color: var(--tabtext);
 	}
 	&.discarded {
-		color: color-mix(in srgb, currentColor 50%, transparent);
+		color: color-mix(in srgb, currentColor 60%, transparent);
 	}
 	&.attention {
 		background-color: red;
