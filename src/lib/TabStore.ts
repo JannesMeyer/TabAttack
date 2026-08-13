@@ -48,7 +48,7 @@ export class TabStore {
 
 		if (typeof chrome !== 'undefined') {
 			chrome.windows.onCreated.addListener(({ id = throwError(), type = throwError(), incognito, tabs }) => {
-				console.debug('window created', id);
+				// console.debug('window created', id);
 				this.state.windows.set(id, { type, incognito });
 				if (tabs) {
 					this.state.tabOrder.set(id, tabs.map(t => t.id));
@@ -56,20 +56,20 @@ export class TabStore {
 			});
 
 			chrome.windows.onRemoved.addListener(id => {
-				console.debug('window removed', id);
+				// console.debug('window removed', id);
 				this.state.windows.delete(id);
 				this.state.tabOrder.delete(id);
 			});
 
 			chrome.tabs.onCreated.addListener(tab => {
 				const id = tab.id ?? throwError();
-				console.debug('tab created', id);
+				// console.debug('tab created', id);
 				this.state.tabs.set(id, createTab(tab));
 				getOrInsert(this.state.tabOrder, tab.windowId, []).splice(tab.index, 0, id);
 			});
 
 			chrome.tabs.onRemoved.addListener((tabId, info) => {
-				console.debug('tab removed', tabId, info);
+				// console.debug('tab removed', tabId, info);
 				this.state.tabs.delete(tabId);
 				const tabOrder = this.state.tabOrder.get(info.windowId);
 				if (!info.isWindowClosing && tabOrder) {
@@ -78,19 +78,19 @@ export class TabStore {
 			});
 
 			chrome.tabs.onDetached.addListener((tabId, info) => {
-				console.debug('[TabStore] tab detached', tabId, info);
+				// console.debug('tab detached', tabId, info);
 				const tabOrder = this.state.tabOrder.get(info.oldWindowId) ?? throwError();
 				this.state.tabOrder.set(info.oldWindowId, tabOrder.filter(id => id !== tabId));
 			});
 
 			chrome.tabs.onAttached.addListener((tabId, info) => {
-				console.debug('[TabStore] tab attached', tabId, info);
+				// console.debug('tab attached', tabId, info);
 				const tabOrder = this.state.tabOrder.get(info.newWindowId) ?? [];
 				this.state.tabOrder.set(info.newWindowId, tabOrder.toSpliced(info.newPosition, 0, tabId));
 			});
 
-			chrome.tabs.onMoved.addListener((tabId, info) => {
-				console.debug('[TabStore] tab moved', tabId, info);
+			chrome.tabs.onMoved.addListener((_, info) => {
+				// console.debug('tab moved', _, info);
 				this.state.tabOrder.set(info.windowId, moveItem(this.state.tabOrder.get(info.windowId) ?? throwError(), info.fromIndex, info.toIndex));
 			});
 

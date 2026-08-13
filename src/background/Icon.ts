@@ -1,5 +1,5 @@
+import { Theme } from '../lib/Theme';
 import { throwError } from '../lib/throwError';
-import { Theme } from './Theme';
 
 const size = 16;
 

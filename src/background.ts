@@ -1,7 +1,9 @@
 import { subscribe } from 'valtio';
-import Icon from './lib/icon';
+import Icon from './background/Icon';
 import { TabStore } from './lib/TabStore';
 import { Theme } from './lib/Theme';
+
+import './background/commands';
 
 // Firefox only: per-window icon
 if (typeof browser !== 'undefined') {

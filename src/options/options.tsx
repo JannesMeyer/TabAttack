@@ -3,7 +3,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import getString from '../lib/getString';
 import { isFirefox } from '../lib/isFirefox';
-import { syncPrefs } from '../lib/prefs';
+import { syncPrefs } from '../prefs';
 
 function Options() {
 	const [iconColor, setIconColor] = syncPrefs.use('chromiumIconColor');

@@ -1,4 +1,4 @@
-import Preferences from './Preferences';
+import Preferences from './lib/Preferences';
 
 export const syncPrefs = new Preferences({
 	chromiumIconColor: '#000000',

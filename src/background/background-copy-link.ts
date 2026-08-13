@@ -1,16 +1,8 @@
-import ContextMenuItem from './lib/ContextMenuItem';
-import markdownLink from './lib/markdownLink';
-import onCommand from './lib/onCommand';
-import { syncPrefs } from './lib/prefs';
-import { throwError } from './lib/throwError';
-import writeClipboard from './lib/writeClipboard';
-
-/** Global shortcut: Copy active tab as a Markdown link */
-onCommand('copy_tab_as_markdown', () => {
-	chrome.tabs.query({ lastFocusedWindow: true, active: true }).then(([t = throwError()]) => {
-		copyLink(t.title, t.url ?? throwError());
-	});
-});
+import ContextMenuItem from '../lib/ContextMenuItem';
+import markdownLink from '../lib/markdownLink';
+import { throwError } from '../lib/throwError';
+import writeClipboard from '../lib/writeClipboard';
+import { syncPrefs } from '../prefs';
 
 // Context menu: Copy link as Markdown
 const copyLinkCmi = new ContextMenuItem({
@@ -53,9 +45,6 @@ const copyPageCmi = new ContextMenuItem({
 
 syncPrefs.watch('showCopyPageAsMarkdown', value => copyPageCmi.setVisible(value));
 
-/**
- * Copy the title and URL as a Markdown link
- */
 function copyLink(title: string | undefined, url: string) {
 	writeClipboard(markdownLink(title, url));
 }
