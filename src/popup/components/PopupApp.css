@@ -11,7 +11,6 @@
 	--space-medium: 0.75rem;
 
 	&.popup {
-		font: message-box;
 		background-color: var(--popup);
 		color: var(--popup-text);
 		--tab: color-mix(in srgb, currentColor 30%, transparent);
@@ -99,7 +98,7 @@ main {
 .window {
 	padding-bottom: var(--margin);
 	overflow-y: auto;
-	overflow-x: hidden;
+	overflow-x: clip;
 }
 
 /** TAB **/

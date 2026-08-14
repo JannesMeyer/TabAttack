@@ -1,4 +1,5 @@
 import './PopupApp.css';
+import { AutoScroller, PointerActivationConstraints } from '@dnd-kit/dom';
 import { DragDropProvider, PointerSensor } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
 import React from 'react';
@@ -9,7 +10,13 @@ import { useGlobalShortcut } from '../../lib/useGlobalShortcut';
 import { SearchResults } from './SearchResults';
 import { Window } from './Window';
 
-const SENSORS = [PointerSensor];
+const SENSORS = [
+	PointerSensor.configure({
+		activationConstraints: [
+			new PointerActivationConstraints.Distance({ value: 5 }),
+		],
+	}),
+];
 
 export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 	const store = useTabStore();
@@ -83,6 +90,12 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 					? <SearchResults windows={sortedWindows} query={searchQuery} />
 					: (
 						<DragDropProvider
+							plugins={defaults =>
+								defaults.map(plugin =>
+									plugin === AutoScroller
+										? AutoScroller.configure({ threshold: { x: 0, y: 0.2 } })
+										: plugin
+								)}
 							sensors={SENSORS}
 							onDragStart={ev => dragParentRef.current = ev.operation.source?.element?.parentElement}
 							onDragEnd={ev => {

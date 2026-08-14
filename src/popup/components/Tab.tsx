@@ -37,6 +37,8 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 	return (
 		<a
 			ref={ref}
+			data-tab={tabId}
+			data-window={windowId}
 			draggable={false}
 			onPointerUp={ev => {
 				if (!visualViewport) {
