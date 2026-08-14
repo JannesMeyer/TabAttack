@@ -1,17 +1,22 @@
 import { subscribe } from 'valtio';
 import Icon from './background/Icon';
+import { setupNativeMessaging } from './background/native-messaging';
 import { TabStore } from './lib/TabStore';
 import { Theme } from './lib/Theme';
 
 import './background/commands';
 
-// Firefox only: per-window icon
+// Firefox only: per-window icon and native messaging
 if (typeof browser !== 'undefined') {
 	const store = new TabStore();
 	const theme = new Theme();
 	const icon = new Icon(devicePixelRatio * 2, theme);
+	const nativeMessaging = setupNativeMessaging();
 
-	subscribe(store.state, render);
+	subscribe(store.state, () => {
+		render();
+		nativeMessaging?.sendTabs();
+	});
 	theme.listeners.add(render);
 
 	function render() {
@@ -25,3 +30,4 @@ if (typeof browser !== 'undefined') {
 		}
 	}
 }
+
