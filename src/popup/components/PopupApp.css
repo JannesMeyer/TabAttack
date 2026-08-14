@@ -110,9 +110,14 @@ main {
 	padding: 7px;
 	padding-left: 9px;
 	cursor: default;
+	outline-offset: -3px;
 	/* transition: background-color 100ms; */
 	:root.default & {
 		border-radius: 4px;
+		outline-offset: -2px;
+	}
+	&:focus-visible {
+		outline: 2px auto;
 	}
 	&:hover, &.dragging {
 		background-color: var(--tabhover);

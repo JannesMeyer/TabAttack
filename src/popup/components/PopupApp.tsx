@@ -5,6 +5,7 @@ import React from 'react';
 import { useSnapshot } from 'valtio';
 import { useTabStore } from '../../lib/TabStoreContext';
 import { throwError } from '../../lib/throwError';
+import { useGlobalShortcut } from '../../lib/useGlobalShortcut';
 import { SearchResults } from './SearchResults';
 import { Window } from './Window';
 
@@ -19,8 +20,21 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 	React.useEffect(() => {
 		const focus = () => searchRef.current?.focus();
 		addEventListener('focus', focus);
-		setTimeout(() => removeEventListener('focus', focus), 500);
+		setTimeout(() => removeEventListener('focus', focus), 1000);
 	}, []);
+
+	// Keyboard focus navigation
+	useGlobalShortcut((k, { target, ctrlKey }) => {
+		if (k === 'Escape' || (k === '/' && !isInteractive(target))) {
+			return moveFocus(0, { absolute: true });
+		}
+		if (k === 'ArrowDown' || (k === 'n' && ctrlKey)) {
+			return moveFocus(+1);
+		}
+		if (k === 'ArrowUp' || (k === 'p' && ctrlKey)) {
+			return moveFocus(-1);
+		}
+	});
 
 	// Scroll into view
 	const loaded = initialWindowId != null && windows.size > 0;
@@ -54,10 +68,12 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 					if (ev.key === 'Enter') {
 						document.querySelector<HTMLElement>('.tab')?.click();
 						setSearchQuery('');
+						ev.preventDefault();
 						return;
 					}
 					if (ev.key === 'Escape') {
 						setSearchQuery('');
+						ev.preventDefault();
 						return;
 					}
 				}}
@@ -97,6 +113,26 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 			</div>
 		</>
 	);
+}
+
+function isInteractive(target: EventTarget | null) {
+	if (!target) {
+		return false;
+	}
+	const { tagName, isContentEditable } = target as HTMLElement;
+	return tagName === 'INPUT' || tagName === 'TEXTAREA' || isContentEditable;
+}
+
+function moveFocus(to: number, opts?: { absolute?: boolean }) {
+	const focusable = document.querySelectorAll<HTMLElement>('input, a[href]');
+	const { activeElement } = document;
+	const i = activeElement ? Array.prototype.indexOf.call(focusable, activeElement) : -1;
+	const next = focusable[opts?.absolute ? to : ((focusable.length + i + to) % focusable.length)];
+	if (!next) {
+		return false;
+	}
+	next.focus();
+	return true;
 }
 
 function ensureNumber(value: number | string | undefined): number {

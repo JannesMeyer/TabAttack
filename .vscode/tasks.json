@@ -7,7 +7,7 @@
       "script": "ts-watch",
       "isBackground": true,
       "problemMatcher": "$tsc-watch",
-      "presentation": { "reveal": "silent" },
+      "presentation": { "reveal": "never" },
       "runOptions": { "runOn": "folderOpen" }
     },
     {
