@@ -1,5 +1,5 @@
 import { proxy } from 'valtio';
-import { proxyMap } from 'valtio/utils';
+import { proxyMap, proxySet } from 'valtio/utils';
 import { throwError } from '../lib/throwError';
 
 type Window = Required<Pick<chrome.windows.Window, 'id' | 'type' | 'incognito'>>;
@@ -38,7 +38,62 @@ export class TabStore {
 		tabs: proxyMap<number, Tab>(),
 		tabOrder: proxyMap<number, (number | undefined)[]>(),
 		activeTabs: proxyMap<number, number>(),
+		selectedTabIds: proxySet<number>(),
+		lastSelectedTabId: undefined as number | undefined,
 	});
+
+	toggleTabSelection(tabId: number, isSelected?: boolean) {
+		const willSelect = isSelected ?? !this.state.selectedTabIds.has(tabId);
+		if (willSelect) {
+			this.state.selectedTabIds.add(tabId);
+			this.state.lastSelectedTabId = tabId;
+		} else {
+			this.state.selectedTabIds.delete(tabId);
+			if (this.state.lastSelectedTabId === tabId) {
+				this.state.lastSelectedTabId = undefined;
+			}
+		}
+	}
+
+	selectTabRange(windowId: number, toTabId: number) {
+		const order = this.state.tabOrder.get(windowId);
+		if (!order || order.length === 0) {
+			return;
+		}
+		const toIndex = order.indexOf(toTabId);
+		if (toIndex === -1) {
+			return;
+		}
+		const fromId = this.state.lastSelectedTabId;
+		const fromIndex = fromId != null ? order.indexOf(fromId) : -1;
+		const startIndex = fromIndex !== -1 ? Math.min(fromIndex, toIndex) : toIndex;
+		const endIndex = fromIndex !== -1 ? Math.max(fromIndex, toIndex) : toIndex;
+
+		for (let i = startIndex; i <= endIndex; i++) {
+			const id = order[i];
+			if (typeof id === 'number') {
+				this.state.selectedTabIds.add(id);
+			}
+		}
+		this.state.lastSelectedTabId = toTabId;
+	}
+
+	selectAllTabs(windowId: number) {
+		const order = this.state.tabOrder.get(windowId);
+		if (!order) {
+			return;
+		}
+		for (const id of order) {
+			if (typeof id === 'number') {
+				this.state.selectedTabIds.add(id);
+			}
+		}
+	}
+
+	clearSelection() {
+		this.state.selectedTabIds.clear();
+		this.state.lastSelectedTabId = undefined;
+	}
 
 	constructor() {
 		if (typeof chrome !== 'undefined') {
@@ -66,6 +121,10 @@ export class TabStore {
 			chrome.tabs.onRemoved.addListener((tabId, info) => {
 				// console.debug('tab removed', tabId, info);
 				this.state.tabs.delete(tabId);
+				this.state.selectedTabIds.delete(tabId);
+				if (this.state.lastSelectedTabId === tabId) {
+					this.state.lastSelectedTabId = undefined;
+				}
 				const tabOrder = this.state.tabOrder.get(info.windowId);
 				if (!info.isWindowClosing && tabOrder) {
 					tabOrder.splice(tabOrder.indexOf(tabId), 1);

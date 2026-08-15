@@ -1,6 +1,7 @@
 import Fuse from 'fuse.js';
 import React from 'react';
 import { useSnapshot } from 'valtio';
+import { cx } from '../../lib/cx';
 import { useTabStore } from '../../lib/TabStoreContext';
 import { Tab } from './Tab';
 
@@ -11,12 +12,12 @@ export const SearchResults = ({ windows, query }: { windows: number[]; query: st
 		new Fuse(
 			windows.flatMap(windowId =>
 				tabOrder.get(windowId)?.map(tabId => {
-					const { title, url } = (tabId != null ? tabs.get(tabId) : undefined) ?? {};
-					return { windowId, tabId, title, url };
+					const { title, url, audible } = (tabId != null ? tabs.get(tabId) : undefined) ?? {};
+					return { windowId, tabId, title, url, keywords: cx({ audible }) };
 				}).reverse() ?? []
 			),
 			{
-				keys: ['title', 'url'],
+				keys: ['title', 'url', 'keywords'],
 				shouldSort: false,
 				useTokenSearch: true,
 				tokenMatch: 'all',
@@ -24,7 +25,7 @@ export const SearchResults = ({ windows, query }: { windows: number[]; query: st
 			},
 		), [windows, tabOrder, tabs]);
 	return (
-		<div className={'window active'}>
+		<div className={'active-window'}>
 			{fuse.search(query).map(({ item: { tabId, windowId } }) => <Tab key={tabId} tabId={tabId} windowId={windowId} />)}
 		</div>
 	);

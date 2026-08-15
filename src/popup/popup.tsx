@@ -17,7 +17,7 @@ addEventListener('DOMContentLoaded', () => {
 	createRoot(document.body.appendChild(document.createElement('main'))).render(
 		<StrictMode>
 			<TabStoreProvider value={store}>
-				<PopupApp singleWindow={actionType === 'popup' || actionType === 'sidebar'} />
+				<PopupApp />
 			</TabStoreProvider>
 		</StrictMode>,
 	);

@@ -19,18 +19,15 @@ Do NOT commit to git. I do the commits.
 - TypeScript strict mode with `noUnusedLocals`, `noUnusedParameters`, `noUncheckedIndexedAccess`
 - Use `type` imports (`import type { ... }`) due to `verbatimModuleSyntax`
 
-## Drag and drop (`@dnd-kit/react`)
+## Drag and drop (Native HTML5 Drag and Drop)
 
-Uses the **latest** `@dnd-kit/react` + `@dnd-kit/dom` (not the legacy `@dnd-kit/core`/`@dnd-kit/sortable`).
-Docs: https://dndkit.com/react/quickstart/
+Uses native HTML5 Drag and Drop APIs (`draggable`, `dataTransfer`, `onDragOver`, `onDrop`) for seamless single-window and cross-window drag and drop.
 
 ### Architecture
 
-Two independent sortable scopes, separated by `type`/`accept`:
-
-- **Windows** (`type: 'window'`)
-- **Tabs** (`type: 'tab'`, `group: windowId`): vertically sortable within each window, and draggable across windows via the `group` prop. Each `Tab` uses `useSortable`. Each `Window` uses `useDroppable` with `CollisionPriority.Low` so tabs can be dropped into empty windows.
-- Tab lists are rendered reversed (`.toReversed()`). We flip the indices internally to account for this.
+- **Tabs**: draggable with MIME type `application/x-tabattack-tabs` transferring `{ tabIds, sourceWindowId }`. Single-tab and multi-selected tabs are bundled together.
+- **Active Window**: Each `Tab` renders drop indicators (top/bottom) and computes the target insertion index accounting for reversed list rendering. Empty window container handles drop at index 0.
+- **Cross-Window**: Full support for dragging tabs across separate extension windows/pages via `dataTransfer`.
 
 ### State management
 

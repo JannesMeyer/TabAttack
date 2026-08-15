@@ -17,8 +17,6 @@
     "up": "bun update && dprint config update"
   },
   "dependencies": {
-    "@dnd-kit/helpers": "0.5.0",
-    "@dnd-kit/react": "0.5.0",
     "fuse.js": "7.5.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",

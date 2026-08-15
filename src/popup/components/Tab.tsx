@@ -1,9 +1,10 @@
-import { useSortable } from '@dnd-kit/react/sortable';
 import * as React from 'react';
 import { useSnapshot } from 'valtio';
 import { cx } from '../../lib/cx';
+import { useDndManager, useDraggable, useDroppable } from '../../lib/dnd';
 import { useTabStore } from '../../lib/TabStoreContext';
 import { actionType } from '../popup';
+import { calculateDropIndex } from '../util/calculateDropIndex';
 import { AudibleIcon } from './icons/AudibleIcon';
 import { MutedIcon } from './icons/MutedIcon';
 import { TabIcon } from './TabIcon';
@@ -22,56 +23,134 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 	const store = useTabStore();
 	const snap = useSnapshot(store.state);
 	const tab = snap.tabs.get(tabId);
-	const disabled = index == null;
-	const { ref, isDragging } = useSortable({
+	const dndDisabled = index == null;
+	const isSelected = snap.selectedTabIds.has(tabId);
+	const isMultiDrag = isSelected && snap.selectedTabIds.size > 1;
+	const active = !dndDisabled && snap.activeTabs.get(windowId) === tabId;
+
+	const {
+		draggable,
+		onDragStart,
+		onDragEnd,
+	} = useDraggable({
 		id: tabId,
-		index: index ?? NaN,
-		disabled,
-		type: 'tab',
-		accept: 'tab',
-		group: windowId,
+		windowId,
+		url: tab?.url,
+		disabled: dndDisabled,
+		isSelected,
+		getDragTabIds: () => {
+			const order = snap.tabOrder.get(windowId) ?? [];
+			return isMultiDrag
+				? order.filter((id): id is number => typeof id === 'number' && snap.selectedTabIds.has(id))
+				: [tabId];
+		},
+		onDragStart: () => {
+			if (!isSelected || !isMultiDrag) {
+				store.clearSelection();
+				store.state.selectedTabIds.add(tabId);
+				store.state.lastSelectedTabId = tabId;
+			}
+		},
+		onTearOff: tabIds => {
+			if (tabIds.length > 0) {
+				chrome.windows.create({ tabId: tabIds[0] }).then(newWin => {
+					if (newWin?.id && tabIds.length > 1) {
+						chrome.tabs.move(tabIds.slice(1), { windowId: newWin.id, index: -1 });
+					}
+				});
+				store.clearSelection();
+			}
+		},
 	});
+
+	const manager = useDndManager();
+
+	const {
+		onDragOver,
+		onDragLeave,
+		onDrop,
+	} = useDroppable({
+		id: tabId,
+		windowId,
+		disabled: dndDisabled,
+		calculatePosition: true,
+		onDrop: (payload, position) => {
+			const order = store.state.tabOrder.get(windowId) ?? [];
+			const targetIndex = calculateDropIndex({
+				order,
+				targetId: tabId,
+				sourceWindowId: payload.sourceWindowId,
+				targetWindowId: windowId,
+				draggedIds: payload.tabIds,
+				position,
+			});
+
+			if (targetIndex !== -1) {
+				const isSameWindow = payload.sourceWindowId === windowId;
+				const isNoOp = isSameWindow && payload.tabIds.every((id, idx) => order[targetIndex + idx] === id);
+				if (isNoOp) {
+					manager.cleanupOnDrop();
+				} else {
+					chrome.tabs.move(payload.tabIds, { windowId, index: targetIndex });
+				}
+				store.clearSelection();
+			}
+		},
+	});
+
 	if (!tab) {
 		return <div>ERROR: {tabId} not found</div>;
 	}
+
 	return (
 		<a
-			ref={ref}
+			tabIndex={active ? 1 : 0}
 			data-tab={tabId}
 			data-window={windowId}
-			draggable={false}
-			onPointerUp={ev => {
-				if (!visualViewport) {
+			draggable={draggable}
+			onDragStart={onDragStart}
+			onDragEnd={onDragEnd}
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+			onDrop={onDrop}
+			onClick={(ev) => {
+				ev.preventDefault();
+				if (active) {
 					return;
 				}
-				const { clientX: x, clientY: y } = ev;
-				const { offsetLeft: left, offsetTop: top, width, height } = visualViewport;
-				if (x < left || y < top || x > (left + width) || y > (top + height)) {
-					chrome.windows.create({ tabId });
+				if (ev.shiftKey) {
+					store.selectTabRange(windowId, tabId);
+					return;
 				}
-			}}
-			onClick={ev => {
-				ev.preventDefault();
+				if (ev.ctrlKey || ev.metaKey) {
+					store.toggleTabSelection(tabId);
+					return;
+				}
+				if (isSelected && isMultiDrag) {
+					store.clearSelection();
+				}
 				chrome.tabs.update(tabId, { active: true });
 				chrome.windows.update(windowId, { focused: true });
-				if (actionType === 'popup') {
+				if (actionType === 'default' || actionType === 'popup') {
 					close();
-				}
-				if (actionType === 'default') {
-					// TODO: only when tab in same window
-					// close();
 				}
 			}}
 			onAuxClick={(ev) => {
 				if (ev.button === 1) {
 					ev.preventDefault();
-					chrome.tabs.remove(tabId);
+					if (isMultiDrag) {
+						const currentOrder = snap.tabOrder.get(windowId) ?? [];
+						const tabsToRemove = currentOrder.filter((id): id is number => typeof id === 'number' && snap.selectedTabIds.has(id));
+						chrome.tabs.remove(tabsToRemove);
+					} else {
+						chrome.tabs.remove(tabId);
+					}
 				}
 			}}
 			href={tab.url}
 			className={cx('tab', {
-				active: !disabled && snap.activeTabs.get(windowId) === tabId,
-				dragging: isDragging,
+				active: active && actionType !== 'default',
+				selected: isSelected,
 				pinned: tab.pinned,
 				discarded: tab.discarded,
 				attention: tab.attention,

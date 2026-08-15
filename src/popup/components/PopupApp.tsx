@@ -1,28 +1,16 @@
 import './PopupApp.css';
-import { AutoScroller, PointerActivationConstraints } from '@dnd-kit/dom';
-import { DragDropProvider, PointerSensor } from '@dnd-kit/react';
-import { isSortable } from '@dnd-kit/react/sortable';
 import React from 'react';
 import { useSnapshot } from 'valtio';
+import { DndProvider } from '../../lib/dnd';
 import { useTabStore } from '../../lib/TabStoreContext';
-import { throwError } from '../../lib/throwError';
 import { useGlobalShortcut } from '../../lib/useGlobalShortcut';
 import { SearchResults } from './SearchResults';
 import { Window } from './Window';
 
-const SENSORS = [
-	PointerSensor.configure({
-		activationConstraints: [
-			new PointerActivationConstraints.Distance({ value: 5 }),
-		],
-	}),
-];
-
-export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
+export function PopupApp() {
 	const store = useTabStore();
 	const { initialWindowId, windows } = useSnapshot(store.state);
 	const [searchQuery, setSearchQuery] = React.useState('');
-	const dragParentRef = React.useRef<HTMLElement | undefined>(null);
 	const searchRef = React.useRef<HTMLInputElement>(null);
 	React.useEffect(() => {
 		const focus = () => searchRef.current?.focus();
@@ -31,9 +19,22 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 	}, []);
 
 	// Keyboard focus navigation
-	useGlobalShortcut((k, { target, ctrlKey }) => {
-		if (k === 'Escape' || (k === '/' && !isInteractive(target))) {
+	useGlobalShortcut((k, { target, ctrlKey, metaKey }) => {
+		if (k === 'Escape') {
+			if (store.state.selectedTabIds.size > 0) {
+				store.clearSelection();
+				return true;
+			}
 			return moveFocus(0, { absolute: true });
+		}
+		if (k === '/' && !isInteractive(target)) {
+			return moveFocus(0, { absolute: true });
+		}
+		if (k === 'a' && (ctrlKey || metaKey) && !isInteractive(target)) {
+			if (sortedWindows[0] != null) {
+				store.selectAllTabs(sortedWindows[0]);
+				return true;
+			}
 		}
 		if (k === 'ArrowDown' || (k === 'n' && ctrlKey)) {
 			return moveFocus(+1);
@@ -66,6 +67,7 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 		<>
 			<input
 				ref={searchRef}
+				tabIndex={1}
 				className={'search'}
 				type={'search'}
 				placeholder={'Search'}
@@ -86,43 +88,11 @@ export function PopupApp({ singleWindow }: { singleWindow: boolean }) {
 				}}
 			/>
 			<div className={'windows'}>
-				{searchQuery
-					? <SearchResults windows={sortedWindows} query={searchQuery} />
-					: (
-						<DragDropProvider
-							plugins={defaults =>
-								defaults.map(plugin =>
-									plugin === AutoScroller
-										? AutoScroller.configure({ threshold: { x: 0, y: 0.2 } })
-										: plugin
-								)}
-							sensors={SENSORS}
-							onDragStart={ev => dragParentRef.current = ev.operation.source?.element?.parentElement}
-							onDragEnd={ev => {
-								const dragParent = dragParentRef.current;
-								dragParentRef.current = undefined;
-								if (ev.canceled) {
-									return;
-								}
-								const { source } = ev.operation;
-								if (!isSortable(source)) {
-									return;
-								}
-								const isCrossGroup = source.group !== source.initialGroup;
-								if (isCrossGroup) {
-									dragParent?.appendChild(source.element ?? throwError());
-								}
-								if (source.type === 'tab') {
-									const windowId = ensureNumber(source.group);
-									const index = store.state.tabOrder.get(windowId)!.length - (isCrossGroup ? 0 : 1) - source.index;
-									chrome.tabs.move(ensureNumber(source.id), { index, windowId });
-									return;
-								}
-							}}
-						>
-							{sortedWindows.map(id => singleWindow && id !== initialWindowId ? null : <Window key={id} id={id} />)}
-						</DragDropProvider>
-					)}
+				<DndProvider>
+					{searchQuery
+						? <SearchResults windows={sortedWindows} query={searchQuery} />
+						: <Window id={initialWindowId ?? -1} />}
+				</DndProvider>
 			</div>
 		</>
 	);
@@ -146,8 +116,4 @@ function moveFocus(to: number, opts?: { absolute?: boolean }) {
 	}
 	next.focus();
 	return true;
-}
-
-function ensureNumber(value: number | string | undefined): number {
-	return typeof value === 'number' ? value : throwError();
 }

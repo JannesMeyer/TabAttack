@@ -83,26 +83,27 @@ main {
 .windows {
 	flex: 1;
 	min-height: 0;
-	display: grid;
-	grid-auto-flow: column;
-	grid-gap: calc(var(--margin) * 0.75);
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--margin) * 0.75);
 	margin-left: var(--margin);
 	margin-right: var(--margin);
 }
 
-:root.default .windows {
-	grid-auto-columns: minmax(var(--minwidth), 40%);
-}
-
-/** WINDOW **/
-.window {
+/** ACTIVE WINDOW **/
+.active-window {
+	flex: 1;
+	min-height: 0;
+	min-width: 0;
 	padding-bottom: var(--margin);
 	overflow-y: auto;
 	overflow-x: clip;
+	contain: layout;
 }
 
 /** TAB **/
 .tab {
+	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -110,7 +111,29 @@ main {
 	padding-left: 9px;
 	cursor: default;
 	outline-offset: -3px;
-	/* transition: background-color 100ms; */
+	transform: translate3d(0, 0, 0);
+	transition: transform 120ms cubic-bezier(0.2, 0, 0, 1);
+	will-change: transform;
+	backface-visibility: hidden;
+
+	&.no-transition,
+	&[data-no-transition='true'] {
+		transition: none !important;
+	}
+
+	&.shift-up,
+	&[data-shift='up'] {
+		transform: translate3d(0, -30px, 0);
+	}
+	&.shift-down,
+	&[data-shift='down'] {
+		transform: translate3d(0, 30px, 0);
+	}
+
+	> * {
+		pointer-events: none;
+	}
+
 	:root.default & {
 		border-radius: 4px;
 		outline-offset: -2px;
@@ -118,16 +141,40 @@ main {
 	&:focus-visible {
 		outline: 2px auto;
 	}
-	&:hover, &.dragging {
+	&:hover {
 		background-color: var(--tabhover);
 		color: var(--tabhover-text);
+	}
+	&.ghost,
+	&.dragging,
+	&[data-dragging='true'] {
+		background-color: transparent !important;
+		color: transparent !important;
+		outline: none !important;
+		box-shadow: none !important;
+		transition: none !important;
+
+		> * {
+			visibility: hidden;
+		}
+	}
+	&.selected {
+		background-color: color-mix(in srgb, var(--tab) 65%, transparent);
+		color: var(--tabtext, inherit);
+	}
+	&.selected:hover {
+		background-color: color-mix(in srgb, var(--tab) 85%, transparent);
+	}
+	&.active.selected {
+		background-color: var(--tab);
+		color: var(--tabtext);
 	}
 	&.active {
 		background-color: var(--tab);
 		color: var(--tabtext);
 	}
 	&.discarded {
-		color: color-mix(in srgb, currentColor 60%, transparent);
+		color: color-mix(in srgb, currentColor 80%, transparent);
 	}
 	&.attention {
 		background-color: red;
@@ -142,5 +189,41 @@ main {
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+	.selection-count {
+		font-size: 11px;
+		font-weight: 600;
+		line-height: 1;
+		padding: 2px 6px;
+		border-radius: 10px;
+		background-color: light-dark(#0060df, #3880ff);
+		color: #ffffff;
+		margin-left: auto;
+		flex-shrink: 0;
+	}
+}
+
+/** CUSTOM DRAG GHOST **/
+.tab-drag-ghost {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 10px;
+	background-color: var(--tab, #333333);
+	color: var(--tabtext, #ffffff);
+	border-radius: 8px;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+	border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+	position: fixed;
+	top: -9999px;
+	left: -9999px;
+	pointer-events: none;
+	z-index: 99999;
+
+	.favicon {
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
+		display: block;
 	}
 }
