@@ -17,6 +17,7 @@
     "up": "bun update && dprint config update"
   },
   "dependencies": {
+    "@material/material-color-utilities": "0.4.0",
     "fuse.js": "7.5.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",

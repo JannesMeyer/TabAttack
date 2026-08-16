@@ -5,6 +5,7 @@
     "": {
       "name": "tabattack",
       "dependencies": {
+        "@material/material-color-utilities": "0.4.0",
         "fuse.js": "7.5.0",
         "react": "19.2.8",
         "react-dom": "19.2.8",
@@ -52,6 +53,8 @@
     "@dprint/win32-arm64": ["@dprint/win32-arm64@0.55.2", "", { "os": "win32", "cpu": "arm64" }, "sha512-dxDdxU4a6wQ4K0omdAxW7o0mUdOI03z0/Ah3N6O9Ja7wAMQI5sbfzq7DOJ739UVXtHSB4zBTtYuk1MrBOIyVQQ=="],
 
     "@dprint/win32-x64": ["@dprint/win32-x64@0.55.2", "", { "os": "win32", "cpu": "x64" }, "sha512-UTiDSShHbrkx+z719/MffgwGYD8PaypdVmG4vVJVjmF5Hoin6EfugHhSoBf8+G6U9rF+uDIIl0idZq+6Bifzwg=="],
+
+    "@material/material-color-utilities": ["@material/material-color-utilities@0.4.0", "", {}, "sha512-dlq6VExJReb8dhjj3a/yTigr3ncNwoFmL5Iy2ENtbDX03EmNeOEdZ+vsaGrj7RTuO+mB7L58II4LCsl4NpM8uw=="],
 
     "@types/bun": ["@types/bun@1.3.14", "", { "dependencies": { "bun-types": "1.3.14" } }, "sha512-h1hFqFVcvAvD9j9K7ZW7vd82aSA+rTdznZa+5bwvCwqSB1jmmfLcbIWhOLx1/+boy/xmjgCs/OMUL8hRJSmnPw=="],
 

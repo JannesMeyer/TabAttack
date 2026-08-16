@@ -53,11 +53,9 @@ const manifest = {
 		},
 		move_tab_left: {
 			description: '__MSG_shortcut_move_tab_left__',
-			suggested_key: { default: 'MacCtrl+Shift+Comma' },
 		},
 		move_tab_right: {
 			description: '__MSG_shortcut_move_tab_right__',
-			suggested_key: { default: 'MacCtrl+Shift+Period' },
 		},
 		duplicate_tab: {
 			description: '__MSG_shortcut_duplicate_tab__',

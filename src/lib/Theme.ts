@@ -15,9 +15,7 @@ export class Theme {
 		try {
 			browser.theme.onUpdated.addListener(({ theme }) => this.setTheme(theme));
 			browser.theme.getCurrent().then(theme => this.setTheme(theme));
-		} catch {
-			// syncPrefs.watch('iconColor', value => {}});
-		}
+		} catch {}
 	}
 
 	private setDark(dark: boolean) {

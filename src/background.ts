@@ -6,7 +6,7 @@ import { Theme } from './lib/Theme';
 import './background/commands';
 
 // Firefox only: per-window icon
-if (typeof browser !== 'undefined') {
+if (typeof devicePixelRatio !== 'undefined') {
 	const store = new TabStore();
 	const theme = new Theme();
 	const icon = new Icon(devicePixelRatio * 2, theme);

@@ -2,26 +2,18 @@ import './options.css';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import getString from '../lib/getString';
-import { isFirefox } from '../lib/isFirefox';
 import { syncPrefs } from '../prefs';
 
+import { ThemePicker } from './components/ThemePicker';
+
 function Options() {
-	const [iconColor, setIconColor] = syncPrefs.use('chromiumIconColor');
 	const [showCopyLinkAsMarkdown, setShowCopyLinkAsMarkdown] = syncPrefs.use('showCopyLinkAsMarkdown');
 	const [showCopyPageAsMarkdown, setShowCopyPageAsMarkdown] = syncPrefs.use('showCopyPageAsMarkdown');
 
 	return (
 		<>
-			{!isFirefox && (
-				<label className='row'>
-					<span>Icon color</span>
-					<input
-						type='color'
-						value={iconColor}
-						onChange={ev => setIconColor(ev.target.value)}
-					/>
-				</label>
-			)}
+			<h3>{getString('options_editor_theme')}</h3>
+			<ThemePicker />
 
 			<h3>Context menu</h3>
 

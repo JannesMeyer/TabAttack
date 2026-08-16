@@ -1,7 +1,7 @@
 import Preferences from './lib/Preferences';
 
 export const syncPrefs = new Preferences({
-	chromiumIconColor: '#000000',
+	theme: 0,
 	showCopyLinkAsMarkdown: true,
 	showCopyPageAsMarkdown: false,
 });

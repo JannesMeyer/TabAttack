@@ -26,7 +26,7 @@ const memo = React.memo(function TabIcon({ loading, favIconUrl, url, ...props }:
 			</svg>
 		);
 	}
-	if (favIconUrl === 'chrome://mozapps/skin/extensions/extension.svg') {
+	if (favIconUrl === 'chrome://mozapps/skin/extensions/extension.svg' || url.startsWith('chrome://extensions/')) {
 		return (
 			<svg {...props} viewBox={'0 0 16 16'} fill='currentColor'>
 				<path d='m13.375 16-9.75 0A1.626 1.626 0 0 1 2 14.375L2 11.5a.75.75 0 0 1 .75-.75l1.75 0c.689 0 1.25-.561 1.25-1.25S5.189 8.25 4.5 8.25l-1.75 0A.75.75 0 0 1 2 7.5l0-1.875C2 4.728 2.728 4 3.625 4L6 4l0-1.352C6 1.341 6.938.147 8.238.014A2.502 2.502 0 0 1 11 2.5L11 4l2.375 0C14.272 4 15 4.728 15 5.625l0 8.75c0 .897-.728 1.625-1.625 1.625zM3.25 12l0 2.15.6.6 9.3 0 .6-.6 0-8.3-.6-.6-2.65 0a.75.75 0 0 1-.75-.75l0-2c0-.689-.561-1.25-1.25-1.25s-1.25.561-1.25 1.25l0 2a.75.75 0 0 1-.75.75l-2.75 0-.5.6 0 1.15 1.103 0c1.308 0 2.502.939 2.634 2.24A2.503 2.503 0 0 1 4.5 12l-1.25 0z' />
@@ -38,6 +38,9 @@ const memo = React.memo(function TabIcon({ loading, favIconUrl, url, ...props }:
 	}
 	if (isFirefox) {
 		return <div {...props} />;
+	}
+	if (url.startsWith('chrome://')) {
+		return <DefaultIcon {...props} />;
 	}
 	return <img {...props} src={'chrome://favicon/size/16@' + devicePixelRatio + 'x/' + url} onError={() => setError(true)} />;
 });
