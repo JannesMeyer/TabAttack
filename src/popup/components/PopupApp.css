@@ -201,6 +201,13 @@ main {
 		margin-left: auto;
 		flex-shrink: 0;
 	}
+	.window-indicator {
+		margin-left: auto;
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		opacity: 0.35;
+	}
 }
 
 /** CUSTOM DRAG GHOST **/

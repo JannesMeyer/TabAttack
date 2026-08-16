@@ -7,6 +7,7 @@ import { actionType } from '../popup';
 import { calculateDropIndex } from '../util/calculateDropIndex';
 import { AudibleIcon } from './icons/AudibleIcon';
 import { MutedIcon } from './icons/MutedIcon';
+import { WindowIcon } from './icons/WindowIcon';
 import { TabIcon } from './TabIcon';
 
 const self = location.href;
@@ -27,6 +28,7 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 	const isSelected = snap.selectedTabIds.has(tabId);
 	const isMultiDrag = isSelected && snap.selectedTabIds.size > 1;
 	const active = !dndDisabled && snap.activeTabs.get(windowId) === tabId;
+	const isOtherWindow = snap.initialWindowId != null && windowId !== snap.initialWindowId;
 
 	const {
 		draggable,
@@ -170,6 +172,11 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 				</div>
 			)}
 			<span className={'title'}>{tab.title}</span>
+			{isOtherWindow && (
+				<span className={'window-indicator'}>
+					<WindowIcon />
+				</span>
+			)}
 			{helpText && <span style={{ opacity: 0.5 }}>{helpText}</span>}
 		</a>
 	);
