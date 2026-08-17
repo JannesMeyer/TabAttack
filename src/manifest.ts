@@ -19,7 +19,7 @@ const manifest = {
 		: { service_worker: 'background.js', type: 'module' },
 	options_ui: { page: 'options.html' },
 	action: {
-		default_icon: 'icons/' + firefox ? 'transparent.png' : 'icon-48.png',
+		default_icon: 'icons/' + (firefox ? 'transparent.png' : 'icon-48.png'),
 		default_title: '__MSG_ext_name__',
 		default_popup: `newtab.html?t=${'popup' satisfies ActionType}`,
 	},
