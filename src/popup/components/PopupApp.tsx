@@ -4,6 +4,7 @@ import { useSnapshot } from 'valtio';
 import { DndProvider } from '../../lib/dnd';
 import { useTabStore } from '../../lib/TabStoreContext';
 import { useGlobalShortcut } from '../../lib/useGlobalShortcut';
+import { actionType } from '../popup';
 import { SearchResults } from './SearchResults';
 import { Window } from './Window';
 
@@ -82,7 +83,11 @@ export function PopupApp() {
 						return;
 					}
 					if (ev.key === 'Escape') {
-						setSearchQuery('');
+						if (actionType === 'popup') {
+							close();
+						} else {
+							setSearchQuery('');
+						}
 						ev.preventDefault();
 						return;
 					}
