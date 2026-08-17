@@ -67,6 +67,7 @@ export function PopupApp() {
 		<>
 			<input
 				ref={searchRef}
+				autoFocus
 				tabIndex={1}
 				className={'search'}
 				type={'search'}
