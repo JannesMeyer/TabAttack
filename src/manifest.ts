@@ -24,7 +24,7 @@ const manifest = {
 	},
 	chrome_settings_overrides: firefox ? { homepage: 'newtab.html' } : undefined,
 	chrome_url_overrides: { newtab: 'newtab.html' },
-	permissions: ['tabs', 'storage', 'clipboardWrite', 'contextMenus', 'activeTab'],
+	permissions: ['tabs', 'storage'],
 	icons: {
 		48: 'icons/icon-48.png',
 		96: 'icons/icon-96.png',
@@ -46,10 +46,6 @@ const manifest = {
 		_execute_sidebar_action: {
 			description: 'Show sidebar',
 			suggested_key: { default: 'MacCtrl+S' },
-		},
-		copy_tab_as_markdown: {
-			description: '__MSG_shortcut_copy_tab_as_markdown__',
-			suggested_key: { default: 'Ctrl+Shift+L' },
 		},
 		move_tab_left: {
 			description: '__MSG_shortcut_move_tab_left__',

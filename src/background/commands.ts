@@ -1,6 +1,4 @@
-import markdownLink from '../lib/markdownLink';
 import { throwError } from '../lib/throwError';
-import writeClipboard from '../lib/writeClipboard';
 import type { Command } from '../manifest';
 
 chrome.commands.onCommand.addListener(c => commands[c as Command]());
@@ -24,10 +22,6 @@ const commands: Record<Command, () => unknown> = {
 	},
 	move_tab_left: () => moveHighlighted(-1),
 	move_tab_right: () => moveHighlighted(+1),
-	copy_tab_as_markdown: async () => {
-		const [tab] = await chrome.tabs.query({ lastFocusedWindow: true, active: true });
-		writeClipboard(markdownLink(tab?.title, tab?.url ?? ''));
-	},
 };
 
 /**
