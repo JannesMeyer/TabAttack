@@ -7,6 +7,7 @@ import type { ActionType } from './popup/popup';
 export type Command = Exclude<keyof typeof manifest['commands'], `_${string}`>;
 
 const firefox = process.env.TARGET === 'firefox';
+const sidebar = `newtab.html?t=${'sidebar' satisfies ActionType}`;
 const manifest = {
 	manifest_version: 3,
 	version,
@@ -24,7 +25,7 @@ const manifest = {
 	},
 	chrome_settings_overrides: firefox ? { homepage: 'newtab.html' } : undefined,
 	chrome_url_overrides: { newtab: 'newtab.html' },
-	permissions: firefox ? ['tabs', 'storage'] : ['tabs', 'storage', 'favicon'],
+	permissions: firefox ? ['tabs', 'storage'] : ['tabs', 'storage', 'favicon', 'sidePanel'],
 	icons: {
 		48: 'icons/icon-48.png',
 		96: 'icons/icon-96.png',
@@ -33,11 +34,12 @@ const manifest = {
 		? {
 			default_icon: 'icons/transparent.png',
 			default_title: 'Tabs',
-			default_panel: `newtab.html?t=${'sidebar' satisfies ActionType}`,
+			default_panel: sidebar,
 			browser_style: false,
 			open_at_install: false,
-		}
+		} satisfies browser._manifest._WebExtensionManifestSidebarAction
 		: undefined,
+	side_panel: firefox ? undefined : { default_path: sidebar },
 	commands: {
 		_execute_action: {
 			description: 'Show popup',
