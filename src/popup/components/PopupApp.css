@@ -1,7 +1,10 @@
 :root {
 	&.default {
 		--margin-y: 30px;
-		--margin-x: calc(108px + 9%);
+		--margin-x: 30px;
+		@media screen and (min-width: 600px) {
+			--margin-x: calc(108px + 9%);
+		}
 	}
 	color-scheme: light dark;
 	background-color: var(--ntp-background);
