@@ -24,7 +24,7 @@ const manifest = {
 	},
 	chrome_settings_overrides: firefox ? { homepage: 'newtab.html' } : undefined,
 	chrome_url_overrides: { newtab: 'newtab.html' },
-	permissions: ['tabs', 'storage'],
+	permissions: firefox ? ['tabs', 'storage'] : ['tabs', 'storage', 'favicon'],
 	icons: {
 		48: 'icons/icon-48.png',
 		96: 'icons/icon-96.png',

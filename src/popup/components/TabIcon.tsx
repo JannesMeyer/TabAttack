@@ -2,6 +2,8 @@ import React from 'react';
 import { isFirefox } from '../../lib/isFirefox';
 import { DefaultIcon } from './icons/DefaultIcon';
 
+const faviconBaseUrl = chrome.runtime.getURL('/_favicon/');
+
 type Props = {
 	loading: boolean;
 	favIconUrl: string | undefined;
@@ -42,5 +44,8 @@ const memo = React.memo(function TabIcon({ loading, favIconUrl, url, ...props }:
 	if (url.startsWith('chrome://')) {
 		return <DefaultIcon {...props} />;
 	}
-	return <img {...props} src={'chrome://favicon/size/16@' + devicePixelRatio + 'x/' + url} onError={() => setError(true)} />;
+	const u = new URL(faviconBaseUrl);
+	u.searchParams.set('pageUrl', url);
+	u.searchParams.set('size', '16');
+	return <img {...props} src={u.toString()} onError={() => setError(true)} />;
 });
