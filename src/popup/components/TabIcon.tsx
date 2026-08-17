@@ -35,10 +35,10 @@ const memo = React.memo(function TabIcon({ loading, favIconUrl, url, ...props }:
 			</svg>
 		);
 	}
-	if (favIconUrl) {
-		return <img {...props} src={favIconUrl} onError={() => setError(true)} />;
-	}
 	if (isFirefox) {
+		if (favIconUrl) {
+			return <img {...props} src={favIconUrl} onError={() => setError(true)} />;
+		}
 		return <div {...props} />;
 	}
 	if (url.startsWith('chrome://')) {
