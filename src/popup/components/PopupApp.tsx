@@ -69,7 +69,7 @@ export function PopupApp() {
 				ref={searchRef}
 				autoFocus
 				tabIndex={1}
-				className={'search'}
+				id={'search'}
 				type={'search'}
 				placeholder={'Search'}
 				value={searchQuery}
