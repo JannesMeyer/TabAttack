@@ -1,5 +1,4 @@
 :root {
-	--minwidth: 360px;
 	&.default {
 		--margin: 30px;
 	}
@@ -48,9 +47,12 @@ body {
 	user-select: none;
 }
 
-:root.popup body {
-	width: var(--minwidth);
-	/* hardcoded max-height of 600px */
+:root.popup {
+	/* max-height is 600px */
+	height: auto;
+	body {
+		width: 360px;
+	}
 }
 
 main {
