@@ -1,4 +1,7 @@
 :root {
+	color-scheme: light dark;
+	font: menu;
+
 	&.default {
 		--margin-y: 30px;
 		--margin-x: 30px;
@@ -6,27 +9,22 @@
 			--margin-x: calc(108px + 9%);
 		}
 	}
-	color-scheme: light dark;
+
+	--focus: light-dark(oklch(55% 0.24 260), oklch(76% 0.14 205));
+
+	/* chrome://global/skin/tree/tree.css */
+	--tab-hover-bg: hsla(0, 0%, 50%, 0.15);
+	--tab-selected-bg: var(--sidebar-highlight);
+	--tab-selected-text: var(--sidebar-highlight-text);
+
 	background-color: var(--ntp-background);
 	color: var(--ntp-text);
-	--tab: light-dark(#fff, #5e5e5e);
-	font: menu;
-	--space-medium: 0.75rem;
 
-	&.popup {
-		background-color: var(--popup);
-		color: var(--popup-text);
-		--tab: color-mix(in srgb, currentColor 30%, transparent);
-	}
+	/* background-color: var(--popup);
+	color: var(--popup-text); */
 
-	&.sidebar {
-		font: message-box;
-		background-color: var(--sidebar);
-		color: var(--sidebar-text);
-		--tab: var(--sidebar-highlight);
-		--tabtext: var(--sidebar-highlight-text);
-		--tabhover: hsla(0, 0%, 50%, 0.15); /* chrome://global/skin/tree/tree.css */
-	}
+	/* background-color: var(--sidebar);
+	color: var(--sidebar-text); */
 }
 
 html {
@@ -65,43 +63,36 @@ main {
 	margin-left: var(--margin-x);
 	margin-right: var(--margin-x);
 }
+input[type='search'] {
+	font: inherit;
+	color: inherit;
+	border: none;
+	border-radius: 8px;
+	background: none;
+	line-height: 2.5;
+	&:focus-visible {
+		outline: 2px solid var(--focus);
+	}
+}
 
 /** SEARCH **/
 #search {
-	min-height: 32px;
-	color: light-dark(rgb(21, 20, 26), rgb(251, 251, 254));
-	border: none;
-	border-radius: 8px;
-	background-color: light-dark(#fff, #42414d);
-
-	padding-inline-start: calc(2 * var(--space-medium) + 12px);
+	padding-inline-start: calc(2 * 10px + 12px);
 	background-size: 12px;
 	background-repeat: no-repeat;
-	background-position: var(--space-medium) center;
+	background-position: 10px center;
 	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' style='color-scheme: light dark; fill: light-dark(%235b5b66, %23fbfbfe);' viewBox='0 0 12 12'><path d='M11.354,10.646l-0.707.707L7.295,8A4.483,4.483,0,1,1,9,4.5,4.458,4.458,0,0,1,8,7.295ZM4.5,1A3.5,3.5,0,1,0,8,4.5,3.5,3.5,0,0,0,4.5,1Z'/></svg>");
 }
 :root.popup #search, :root.sidebar #search {
-	margin: var(--space-medium);
+	margin: 10px;
 }
 :root.default #search {
-	margin-top: var(--margin-y);
-	margin-bottom: var(--space-medium);
+	margin-top: 20px;
+	margin-bottom: 10px;
 }
 
-/** WINDOWS CONTAINER **/
-.windows {
-	flex: 1;
-	min-height: 0;
-	display: flex;
-	flex-direction: column;
-	gap: calc(var(--margin-y) * 0.75);
-}
-
-/** ACTIVE WINDOW **/
+/** WINDOW **/
 .active-window {
-	flex: 1;
-	min-height: 0;
-	min-width: 0;
 	padding-bottom: var(--margin-y);
 	overflow-y: auto;
 	overflow-x: clip;
@@ -149,7 +140,7 @@ main {
 		outline: 2px auto;
 	}
 	&:hover {
-		background-color: var(--tabhover);
+		background-color: var(--tab-hover-bg);
 		color: var(--tabhover-text);
 	}
 	&.ghost,
@@ -166,19 +157,27 @@ main {
 		}
 	}
 	&.selected {
-		background-color: color-mix(in srgb, var(--tab) 65%, transparent);
-		color: var(--tabtext, inherit);
+		background-color: color-mix(
+			in srgb,
+			var(--tab-selected-bg) 65%,
+			transparent
+		);
+		color: var(--tab-selected-text);
 	}
 	&.selected:hover {
-		background-color: color-mix(in srgb, var(--tab) 85%, transparent);
+		background-color: color-mix(
+			in srgb,
+			var(--tab-selected-bg) 85%,
+			transparent
+		);
 	}
 	&.active.selected {
-		background-color: var(--tab);
-		color: var(--tabtext);
+		background-color: var(--tab-selected-bg);
+		color: var(--tab-selected-text);
 	}
 	&.active {
-		background-color: var(--tab);
-		color: var(--tabtext);
+		background-color: var(--tab-selected-bg);
+		color: var(--tab-selected-text);
 	}
 	&.discarded {
 		color: color-mix(in srgb, currentColor 80%, transparent);
@@ -223,8 +222,8 @@ main {
 	align-items: center;
 	gap: 6px;
 	padding: 6px 10px;
-	background-color: var(--tab, #333333);
-	color: var(--tabtext, #ffffff);
+	background-color: var(--tab-selected-bg, #333333);
+	color: var(--tab-selected-text, #ffffff);
 	border-radius: 8px;
 	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 	border: 1px solid color-mix(in srgb, currentColor 15%, transparent);

@@ -93,13 +93,11 @@ export function PopupApp() {
 					}
 				}}
 			/>
-			<div className={'windows'}>
-				<DndProvider>
-					{searchQuery
-						? <SearchResults windows={sortedWindows} query={searchQuery} />
-						: <Window id={initialWindowId ?? -1} />}
-				</DndProvider>
-			</div>
+			<DndProvider>
+				{searchQuery
+					? <SearchResults windows={sortedWindows} query={searchQuery} />
+					: <Window id={initialWindowId ?? -1} />}
+			</DndProvider>
 		</>
 	);
 }
