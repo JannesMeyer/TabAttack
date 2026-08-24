@@ -5,6 +5,7 @@ import { DndProvider } from '../../lib/dnd';
 import { useTabStore } from '../../lib/TabStoreContext';
 import { useGlobalShortcut } from '../../lib/useGlobalShortcut';
 import { actionType } from '../popup';
+import { ScrollToActive } from './ScrollToActive';
 import { SearchResults } from './SearchResults';
 import { Window } from './Window';
 
@@ -12,12 +13,6 @@ export function PopupApp() {
 	const store = useTabStore();
 	const { initialWindowId, windows } = useSnapshot(store.state);
 	const [searchQuery, setSearchQuery] = React.useState('');
-	const searchRef = React.useRef<HTMLInputElement>(null);
-	React.useEffect(() => {
-		const focus = () => searchRef.current?.focus();
-		addEventListener('focus', focus);
-		setTimeout(() => removeEventListener('focus', focus), 1000);
-	}, []);
 
 	// Keyboard focus navigation
 	useGlobalShortcut((k, { target, ctrlKey, metaKey }) => {
@@ -45,20 +40,6 @@ export function PopupApp() {
 		}
 	});
 
-	// Scroll into view
-	const loaded = initialWindowId != null && windows.size > 0;
-	React.useEffect(() => {
-		if (loaded) {
-			requestAnimationFrame(() =>
-				document.querySelector('.tab.active')?.scrollIntoView({
-					block: 'nearest',
-					behavior: 'instant',
-					container: 'nearest',
-				})
-			);
-		}
-	}, [loaded]);
-
 	const sortedWindows = React.useMemo(() =>
 		Array.from(windows.values())
 			.filter(w => w.type === 'normal')
@@ -67,7 +48,6 @@ export function PopupApp() {
 	return (
 		<>
 			<input
-				ref={searchRef}
 				autoFocus
 				tabIndex={1}
 				id={'search'}
@@ -93,6 +73,7 @@ export function PopupApp() {
 					}
 				}}
 			/>
+			<ScrollToActive />
 			<DndProvider>
 				{searchQuery
 					? <SearchResults windows={sortedWindows} query={searchQuery} />

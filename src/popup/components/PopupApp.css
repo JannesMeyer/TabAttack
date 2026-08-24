@@ -57,15 +57,8 @@ body {
 main {
 	display: flex;
 	flex-direction: column;
-	@media screen and (min-width: 500px) {
-		margin-left: var(--margin-x);
-		margin-right: var(--margin-x);
-	}
-	@media screen and (min-width: 768px) {
-		width: max(700px, 40%);
-		margin-left: auto;
-		margin-right: auto;
-	}
+	width: min(100%, max(500px, 40%));
+	margin-inline: auto;
 }
 input[type='search'] {
 	font: inherit;
@@ -89,7 +82,6 @@ input[type='search'] {
 	margin: 10px;
 	@media screen and (min-width: 500px) {
 		margin-top: 20px;
-		margin-bottom: 10px;
 	}
 }
 
