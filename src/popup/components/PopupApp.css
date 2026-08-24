@@ -57,7 +57,7 @@ body {
 main {
 	display: flex;
 	flex-direction: column;
-	width: min(100%, max(500px, 40%));
+	width: min(100%, max(500px, 60%));
 	margin-inline: auto;
 }
 input[type='search'] {
