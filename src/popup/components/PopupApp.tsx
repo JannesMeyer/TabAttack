@@ -13,6 +13,19 @@ export function PopupApp() {
 	const store = useTabStore();
 	const { initialWindowId, windows } = useSnapshot(store.state);
 	const [searchQuery, setSearchQuery] = React.useState('');
+	const searchRef = React.useRef<HTMLInputElement>(null);
+	React.useEffect(() => {
+		const focus = () => searchRef.current?.focus({ preventScroll: true });
+		addEventListener('focus', focus, { once: true });
+		// On the new tab page we don't want clicking into the page to cause focus changes.
+		// Only "autofocus" or keyboard navigation should cause the focus to change.
+		addEventListener('mousedown', cleanup, { once: true });
+		return cleanup;
+		function cleanup() {
+			removeEventListener('focus', focus);
+			removeEventListener('mousedown', cleanup);
+		}
+	}, []);
 
 	// Keyboard focus navigation
 	useGlobalShortcut((k, { target, ctrlKey, metaKey }) => {
@@ -48,7 +61,7 @@ export function PopupApp() {
 	return (
 		<>
 			<input
-				autoFocus
+				ref={searchRef}
 				tabIndex={1}
 				id={'search'}
 				type={'search'}
