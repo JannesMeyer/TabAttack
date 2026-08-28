@@ -117,9 +117,6 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 			onDrop={onDrop}
 			onClick={(ev) => {
 				ev.preventDefault();
-				if (active) {
-					return;
-				}
 				if (ev.shiftKey) {
 					store.selectTabRange(windowId, tabId);
 					return;
