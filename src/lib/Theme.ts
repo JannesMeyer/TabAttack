@@ -1,123 +1,58 @@
-type Colors = browser._manifest._ThemeTypeColors;
+import { proxy } from 'valtio/vanilla';
+
+export type ActionType = 'default' | 'sidebar' | 'popup';
 
 export class Theme {
-	private light = true;
-	private colors: Colors = {};
-	readonly listeners = new Set<() => void>();
+	readonly colors = proxy({
+		main_background: '',
+		main_text: '',
+		/** Browser action icon color */
+		toolbar_text: '',
+	});
 
-	constructor() {
-		if (typeof window !== 'undefined') {
-			const query = matchMedia('(prefers-color-scheme: dark)');
-			query.addEventListener('change', ev => this.setDark(ev.matches));
-			this.setDark(query.matches);
-		}
+	constructor(type: ActionType = 'default') {
+		const handleFirefoxTheme = (theme: browser._manifest.ThemeType) => {
+			const colors = theme.colors ?? {};
+			if (type === 'default') {
+				this.colors.main_background = color(colors.ntp_background, 'light-dark(#f9f9fb, #2b2a32)');
+				this.colors.main_text = color(colors.ntp_text);
+			}
+			if (type === 'popup') {
+				this.colors.main_background = color(colors.popup, 'light-dark(#f9f9fb, #2b2a32)');
+				this.colors.main_text = color(colors.popup_text);
+			}
+			if (type === 'sidebar') {
+				this.colors.main_background = color(colors.sidebar, 'light-dark(#f9f9fb, #2b2a32)');
+				this.colors.main_text = color(colors.sidebar_text);
+			}
+
+			// browser.theme doesn't expose `dark_theme`:
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=1542044
+			this.colors.toolbar_text = color(colors.icons ?? colors.toolbar_text, 'light-dark(rgb(91, 91, 102), rgb(251, 251, 254))');
+
+			// Alpenglow
+			if (theme.images?.additional_backgrounds?.[0]?.startsWith('moz-extension://89194f83-69d3-4f3d-9136-4ffb29c94195/')) {
+				// resource://builtin-themes/alpenglow/manifest.json
+				this.colors.toolbar_text = `light-dark(${this.colors.toolbar_text}, hsla(271, 100%, 77%, 1))`;
+			}
+		};
 
 		try {
-			browser.theme.onUpdated.addListener(({ theme }) => this.setTheme(theme));
-			browser.theme.getCurrent().then(theme => this.setTheme(theme));
-		} catch {}
-	}
-
-	private setDark(dark: boolean) {
-		this.light = !dark;
-		this.listeners.forEach(l => l());
-	}
-
-	private setTheme(theme: browser._manifest.ThemeType) {
-		this.colors = theme.colors ?? {};
-		this.listeners.forEach(l => l());
-	}
-
-	/**
-	 * Light/Dark default colors
-	 * https://github.com/mozilla/gecko-dev/blob/183fbe6a6510d460b00429db65dbfa2bf538106e/browser/themes/addons/light/manifest.json
-	 * https://github.com/mozilla/gecko-dev/blob/183fbe6a6510d460b00429db65dbfa2bf538106e/browser/themes/addons/dark/manifest.json
-	 */
-	getColors() {
-		const { colors } = this;
-		const result = {
-			accentcolor: null,
-			bookmark_text: color(colors.bookmark_text),
-			button_background_active: color(colors.button_background_active),
-			button_background_hover: color(colors.button_background_hover),
-			frame_inactive: color(colors.frame_inactive),
-			frame: color(colors.frame),
-			icons_attention: color(colors.icons_attention),
-			icons: color(colors.icons),
-			ntp_background: color(colors.ntp_background) ?? 'light-dark(#f9f9fb, #2b2a32)',
-			ntp_card_background: color(colors.ntp_card_background),
-			ntp_text: color(colors.ntp_text),
-			popup_border: color(colors.popup_border),
-			popup_highlight_text: color(colors.popup_highlight_text),
-			popup_highlight: color(colors.popup_highlight),
-			popup_text: color(colors.popup_text),
-			popup: color(colors.popup),
-			sidebar_border: color(colors.sidebar_border),
-			sidebar_highlight_text: color(colors.sidebar_highlight_text),
-			sidebar_highlight: color(colors.sidebar_highlight),
-			sidebar_text: color(colors.sidebar_text),
-			sidebar: color(colors.sidebar),
-			tab_background_separator: color(colors.tab_background_separator),
-			tab_background_text: color(colors.tab_background_text),
-			tab_line: color(colors.tab_line),
-			tab_loading: color(colors.tab_loading),
-			tab_selected: color(colors.tab_selected),
-			tab_text: color(colors.tab_text),
-			textcolor: null,
-			toolbar_bottom_separator: color(colors.toolbar_bottom_separator),
-			toolbar_field_border_focus: color(colors.toolbar_field_border_focus),
-			toolbar_field_border: color(colors.toolbar_field_border),
-			toolbar_field_focus: color(colors.toolbar_field_focus),
-			toolbar_field_highlight_text: color(colors.toolbar_field_highlight_text),
-			toolbar_field_highlight: color(colors.toolbar_field_highlight),
-			toolbar_field_separator: null,
-			toolbar_field_text_focus: color(colors.toolbar_field_text_focus),
-			toolbar_field_text: color(colors.toolbar_field_text),
-			toolbar_field: color(colors.toolbar_field),
-			toolbar_text: color(colors.toolbar_text),
-			toolbar_top_separator: color(colors.toolbar_top_separator),
-			toolbar_vertical_separator: color(colors.toolbar_vertical_separator),
-			toolbar: color(colors.toolbar),
-		} satisfies Record<keyof Colors, unknown>;
-
-		// System colors:
-		// https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/system-color
-		if (!result.sidebar_highlight) {
-			result.sidebar_highlight = 'SelectedItem';
-			result.sidebar_highlight_text = 'SelectedItemText';
+			browser.theme.onUpdated.addListener(({ theme }) => handleFirefoxTheme(theme));
+			browser.theme.getCurrent().then(theme => handleFirefoxTheme(theme));
+		} catch {
+			// Chrome fallback
 		}
-		if (!result.sidebar) {
-			/** Whether `browser.theme.native-theme` is enabled */
-			const native = false;
-			if (native) {
-				// https://github.com/mozilla-firefox/firefox/blob/50691777d300fffc7d1f7844b59769109bc76f3e/widget/cocoa/nsLookAndFeel.mm#L206-L208
-				result.sidebar = 'light-dark(#ffffff, #2d2d2d)';
-				// NSColor.controlTextColor
-				result.sidebar_text = 'light-dark(rgba(0, 0, 0, 0.85), rgba(255, 255, 255, 0.85))';
-			} else {
-				result.sidebar = 'Canvas';
-				result.sidebar_text = 'light-dark(#15141a, #f9f9fa)'; // --color-gray-100 and --grey-10
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * --toolbarbutton-icon-fill
-	 * @see https://github.com/mozilla/gecko-dev/blob/2684272ea75417c74de526f3e1ee809bd7ac9931/browser/themes/shared/browser-colors.css#L123
-	 */
-	get toolbar_text() {
-		return color(this.colors.toolbar_text) ?? (this.light ? 'rgb(91, 91, 102)' : 'rgb(251, 251, 254)');
 	}
 }
 
-function color(color: browser._manifest.ThemeColor | undefined | null) {
-	if (color == null) {
-		return null;
+function color(color: browser._manifest.ThemeColor | undefined | null, fallback = ''): string {
+	if (!color) {
+		return fallback;
 	}
-	if (typeof color === 'string') {
-		return color;
+	if (Array.isArray(color)) {
+		const [r, g, b, a = 1] = color;
+		return `rgba(${r}, ${g}, ${b}, ${a})`;
 	}
-	const [r, g, b, a = 1] = color;
-	return `rgba(${r}, ${g}, ${b}, ${a})`;
+	return color;
 }

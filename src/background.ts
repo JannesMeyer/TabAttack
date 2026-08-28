@@ -1,18 +1,20 @@
-import { subscribe } from 'valtio';
+import { subscribe } from 'valtio/vanilla';
 import Icon from './background/Icon';
 import { TabStore } from './lib/TabStore';
 import { Theme } from './lib/Theme';
 
 import './background/commands';
+import { prefersDark } from './lib/resolveLightDark';
 
-// Firefox only: per-window icon
+// Firefox/Safari: per-window icon
 if (typeof devicePixelRatio !== 'undefined') {
 	const store = new TabStore();
 	const theme = new Theme();
 	const icon = new Icon(devicePixelRatio * 2, theme);
 
 	subscribe(store.state, render);
-	theme.listeners.add(render);
+	subscribe(theme.colors, render);
+	prefersDark?.addEventListener('change', render);
 
 	function render() {
 		for (const [id, { type }] of store.state.windows.entries()) {

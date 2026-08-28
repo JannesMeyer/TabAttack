@@ -106,7 +106,6 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 
 	return (
 		<a
-			tabIndex={active ? 1 : 0}
 			data-tab={tabId}
 			data-window={windowId}
 			draggable={draggable}
@@ -153,6 +152,7 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 				pinned: tab.pinned,
 				discarded: tab.discarded,
 				attention: tab.attention,
+				audible: tab.audible,
 			})}
 		>
 			<TabIcon className={'favicon'} loading={tab.status === 'loading' && tab.url !== self} favIconUrl={tab.favIconUrl} url={tab.url} />

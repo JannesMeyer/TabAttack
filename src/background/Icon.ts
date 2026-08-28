@@ -1,3 +1,4 @@
+import { resolveLightDark } from '../lib/resolveLightDark';
 import { Theme } from '../lib/Theme';
 import { throwError } from '../lib/throwError';
 
@@ -22,13 +23,14 @@ export default class Icon {
 		const bars = Math.min(3, total);
 		const isTop = index >= total - 1;
 		const isBottom = index === 0;
+		const color = resolveLightDark(theme.colors.toolbar_text);
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		for (let i = 0; i < bars; i++) {
 			if (i === 0 && isTop || i === 1 && !isTop && !isBottom || i === 2 && isBottom) {
-				ctx.fillStyle = theme.toolbar_text;
+				ctx.fillStyle = color;
 			} else {
-				ctx.fillStyle = `color-mix(in srgb, ${theme.toolbar_text} 15%, transparent)`;
+				ctx.fillStyle = `color-mix(in srgb, ${color} 15%, transparent)`;
 			}
 			ctx.beginPath();
 			ctx.roundRect(0, i * 6 * scale, canvas.width, 4 * scale, scale);

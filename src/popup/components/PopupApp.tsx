@@ -13,9 +13,8 @@ export function PopupApp() {
 	const store = useTabStore();
 	const { initialWindowId, windows } = useSnapshot(store.state);
 	const [searchQuery, setSearchQuery] = React.useState('');
-	const searchRef = React.useRef<HTMLInputElement>(null);
 	React.useEffect(() => {
-		const focus = () => searchRef.current?.focus({ preventScroll: true });
+		const focus = () => document.querySelector<HTMLElement>('.tab.active')?.focus({ preventScroll: true });
 		addEventListener('focus', focus, { once: true });
 		// On the new tab page we don't want clicking into the page to cause focus changes.
 		// Only "autofocus" or keyboard navigation should cause the focus to change.
@@ -34,22 +33,28 @@ export function PopupApp() {
 				store.clearSelection();
 				return true;
 			}
-			return moveFocus(0, { absolute: true });
+			return focus('input');
 		}
-		if (k === '/' && !isInteractive(target)) {
-			return moveFocus(0, { absolute: true });
+		if (isInteractive(target)) {
+			return;
 		}
-		if (k === 'a' && (ctrlKey || metaKey) && !isInteractive(target)) {
+		if ((k === '/' || k === 'f' || k === 'i')) {
+			return focus('input');
+		}
+		if (k === 'a' && (ctrlKey || metaKey)) {
 			if (sortedWindows[0] != null) {
 				store.selectAllTabs(sortedWindows[0]);
 				return true;
 			}
 		}
-		if (k === 'ArrowDown' || (k === 'n' && ctrlKey)) {
+		if (k === 'ArrowDown' || k === 'j') {
 			return moveFocus(+1);
 		}
-		if (k === 'ArrowUp' || (k === 'p' && ctrlKey)) {
+		if (k === 'ArrowUp' || k === 'k') {
 			return moveFocus(-1);
+		}
+		if (k === 'a') {
+			return focus('.tab.audible');
 		}
 	});
 
@@ -61,7 +66,6 @@ export function PopupApp() {
 	return (
 		<>
 			<input
-				ref={searchRef}
 				tabIndex={1}
 				id={'search'}
 				type={'search'}
@@ -104,8 +108,17 @@ function isInteractive(target: EventTarget | null) {
 	return tagName === 'INPUT' || tagName === 'TEXTAREA' || isContentEditable;
 }
 
+function focus(selector: string) {
+	const el = document.querySelector<HTMLElement>(selector);
+	if (!el) {
+		return false;
+	}
+	el.focus();
+	return true;
+}
+
 function moveFocus(to: number, opts?: { absolute?: boolean }) {
-	const focusable = document.querySelectorAll<HTMLElement>('input, a[href]');
+	const focusable = document.querySelectorAll<HTMLElement>('a[href]');
 	const { activeElement } = document;
 	const i = activeElement ? Array.prototype.indexOf.call(focusable, activeElement) : -1;
 	const next = focusable[opts?.absolute ? to : ((focusable.length + i + to) % focusable.length)];

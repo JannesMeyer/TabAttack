@@ -2,7 +2,7 @@ import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { version } from '../package.json';
-import type { ActionType } from './popup/popup';
+import type { ActionType } from './lib/Theme';
 
 export type Command = Exclude<keyof typeof manifest['commands'], `_${string}`>;
 
