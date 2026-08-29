@@ -14,6 +14,7 @@
     "start": "bun run bundle --watch",
     "build:firefox": "rm -rf firefox.xpi dist && git restore dist && NODE_ENV=production bun run bundle && TARGET=firefox bun src/manifest.ts && cd dist && bestzip ../firefox.xpi *",
     "build:chrome": "rm -rf chrome.zip dist && git restore dist && NODE_ENV=production bun run bundle && TARGET=chrome bun src/manifest.ts && cd dist && bestzip ../chrome.zip *",
+    "build:safari": "rm -rf safari.zip dist && git restore dist && NODE_ENV=production bun run bundle && TARGET=safari bun src/manifest.ts && cd dist && bestzip ../safari.zip *",
     "up": "bun update && dprint config update"
   },
   "dependencies": {

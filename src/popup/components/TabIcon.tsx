@@ -1,5 +1,5 @@
 import React from 'react';
-import { isFirefox } from '../../lib/isFirefox';
+import { isFirefox, isSafari } from '../../lib/isFirefox';
 import { DefaultIcon } from './icons/DefaultIcon';
 
 const faviconBaseUrl = chrome.runtime.getURL('/_favicon/');
@@ -14,7 +14,7 @@ type Props = {
 export { memo as TabIcon };
 const memo = React.memo(function TabIcon({ loading, favIconUrl, url, ...props }: Props) {
 	const [error, setError] = React.useState(false);
-	if (error) {
+	if (error || isSafari) {
 		return <DefaultIcon {...props} />;
 	}
 	if (loading) {
