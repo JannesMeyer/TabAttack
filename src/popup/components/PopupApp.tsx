@@ -53,6 +53,15 @@ export function PopupApp() {
 		if (k === 'ArrowUp' || k === 'k') {
 			return moveFocus(-1);
 		}
+		if (k === 'd') {
+			const id = getTabId(document.activeElement);
+			if (id != null) {
+				moveFocus(1);
+				chrome.tabs.remove(id);
+				return true;
+			}
+			return;
+		}
 		if (k === 'a') {
 			return focus('.tab.audible');
 		}
@@ -106,6 +115,12 @@ function isInteractive(target: EventTarget | null) {
 	}
 	const { tagName, isContentEditable } = target as HTMLElement;
 	return tagName === 'INPUT' || tagName === 'TEXTAREA' || isContentEditable;
+}
+
+function getTabId(el: Element | null) {
+	const tab = (el as HTMLElement | null)?.dataset.tab;
+	const id = typeof tab === 'string' ? Number.parseInt(tab, 10) : undefined;
+	return id == null || Number.isNaN(id) ? undefined : id;
 }
 
 function focus(selector: string) {
