@@ -126,7 +126,10 @@ export class TabStore {
 					this.state.lastSelectedTabId = undefined;
 				}
 				const tabOrder = this.state.tabOrder.get(info.windowId);
-				if (!info.isWindowClosing && tabOrder) {
+				if (info.isWindowClosing) {
+					this.state.windows.delete(info.windowId);
+					this.state.tabOrder.delete(info.windowId);
+				} else if (tabOrder) {
 					tabOrder.splice(tabOrder.indexOf(tabId), 1);
 				}
 			});

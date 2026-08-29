@@ -1,41 +1,76 @@
 import { resolveLightDark } from '../lib/resolveLightDark';
-import { Theme } from '../lib/Theme';
+import type { Theme } from '../lib/Theme';
 import { throwError } from '../lib/throwError';
-
-const size = 16;
 
 export default class Icon {
 	private canvas: OffscreenCanvas;
 	private ctx: OffscreenCanvasRenderingContext2D;
-	private readonly scale: number;
+	private readonly pixelSize: number;
 	private readonly theme: Theme;
 
-	constructor(scale: number, theme: Theme) {
-		const w = Math.floor(size * scale);
-		this.canvas = new OffscreenCanvas(w, w);
+	constructor(pixelSize: number, theme: Theme) {
+		this.canvas = new OffscreenCanvas(pixelSize, pixelSize);
 		this.ctx = this.canvas.getContext('2d', { willReadFrequently: true }) ?? throwError();
-		this.scale = scale;
+		this.ctx.imageSmoothingEnabled = false;
+		this.pixelSize = pixelSize;
 		this.theme = theme;
 	}
 
-	render(total: number, index: number) {
-		const { canvas, scale, ctx, theme } = this;
-		const bars = Math.min(3, total);
-		const isTop = index >= total - 1;
-		const isBottom = index === 0;
-		const color = resolveLightDark(theme.colors.toolbar_text);
-
+	render(total: number): ImageData {
+		const { canvas, pixelSize, ctx, theme } = this;
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		for (let i = 0; i < bars; i++) {
-			if (i === 0 && isTop || i === 1 && !isTop && !isBottom || i === 2 && isBottom) {
-				ctx.fillStyle = color;
-			} else {
-				ctx.fillStyle = `color-mix(in srgb, ${color} 15%, transparent)`;
-			}
-			ctx.beginPath();
-			ctx.roundRect(0, i * 6 * scale, canvas.width, 4 * scale, scale);
-			ctx.fill();
+		ctx.fillStyle = resolveLightDark(theme.colors.toolbar_text);
+
+		const W = canvas.width;
+		const H = canvas.height;
+		// Step unit ensures every 2x pixel block maps 1:1 to 1x physical pixels (1 for 16/19px, 2 for 32/38px)
+		const step = pixelSize >= 32 ? 2 : 1;
+		const gap = step;
+
+		// Determine optimal uniform grid (cols x rows)
+		const [cols, rows] = getGridDimensions(total);
+
+		// Compute step-aligned integer tab width and height
+		const availableW = W - (cols - 1) * gap;
+		const numStepsW = Math.floor(availableW / (cols * step));
+		const tabW = numStepsW * step;
+		const totalGridW = cols * tabW + (cols - 1) * gap;
+		const startX = Math.floor((W - totalGridW) / (2 * step)) * step;
+
+		const availableH = H - (rows - 1) * gap;
+		const numStepsH = Math.floor(availableH / (rows * step));
+		const tabH = numStepsH * step;
+		const totalGridH = rows * tabH + (rows - 1) * gap;
+		const startY = Math.floor((H - totalGridH) / (2 * step)) * step;
+
+		// Render exactly 'total' tabs with gravity (filling from bottom to top within each column)
+		const maxTabs = Math.min(total, cols * rows);
+		for (let i = 0; i < maxTabs; i++) {
+			const col = Math.floor(i / rows);
+			const row = (rows - 1) - (i % rows);
+
+			const x = startX + col * (tabW + gap);
+			const y = startY + row * (tabH + gap);
+
+			ctx.fillRect(x, y, tabW, tabH);
 		}
+
 		return ctx.getImageData(0, 0, canvas.width, canvas.height);
 	}
+}
+
+/**
+ * Returns optimal (cols, rows) for a given tab count
+ * ensuring rows and cols are strictly monotonically non-decreasing.
+ */
+function getGridDimensions(total: number): [cols: number, rows: number] {
+	if (total <= 1) return [1, 1];
+	if (total <= 2) return [1, 2];
+	if (total <= 3) return [1, 3];
+	if (total <= 4) return [1, 4];
+	if (total <= 8) return [2, 4];
+	if (total <= 12) return [3, 4];
+	if (total <= 16) return [4, 4];
+	if (total <= 20) return [4, 5];
+	return [5, 5];
 }

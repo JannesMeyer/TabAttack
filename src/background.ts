@@ -3,6 +3,8 @@ import Icon from './background/Icon';
 import { TabStore } from './lib/TabStore';
 import { Theme } from './lib/Theme';
 
+import { syncPrefs } from './prefs';
+
 import './background/commands';
 import { prefersDark } from './lib/resolveLightDark';
 
@@ -10,20 +12,40 @@ import { prefersDark } from './lib/resolveLightDark';
 if (typeof devicePixelRatio !== 'undefined') {
 	const store = new TabStore();
 	const theme = new Theme();
-	const icon = new Icon(devicePixelRatio * 2, theme);
+	const sizes = [16, 19, 32, 38];
+	const icons = sizes.map(size => ({ size, icon: new Icon(size, theme) }));
 
-	subscribe(store.state, render);
+	let unsubscribeStore: (() => void) | null = null;
+
+	function updateSubscription() {
+		const isDynamic = syncPrefs.get('dynamicIcon');
+		if (isDynamic && !unsubscribeStore) {
+			unsubscribeStore = subscribe(store.state, render);
+		} else if (!isDynamic && unsubscribeStore) {
+			unsubscribeStore();
+			unsubscribeStore = null;
+		}
+		render();
+	}
+
 	subscribe(theme.colors, render);
 	prefersDark?.addEventListener('change', render);
+	syncPrefs.watch('dynamicIcon', updateSubscription);
+	updateSubscription();
 
 	function render() {
+		const isDynamic = syncPrefs.get('dynamicIcon');
+
 		for (const [id, { type }] of store.state.windows.entries()) {
 			if (type !== 'normal') continue;
-			const tabs = store.state.tabOrder.get(id) ?? [];
-			const activeTabId = store.state.activeTabs.get(id);
-			const index = tabs.findIndex(id => id === activeTabId);
-			const data = icon.render(tabs.length, index < 0 ? tabs.length : index);
-			browser.action.setIcon({ windowId: id, imageData: { [data.width]: data } });
+			const tabs = isDynamic ? (store.state.tabOrder.get(id) ?? []) : [];
+			const count = isDynamic ? tabs.length : 3; // 3 bars for static brand icon
+
+			const imageData: Record<number, ImageData> = {};
+			for (const { size, icon } of icons) {
+				imageData[size] = icon.render(count);
+			}
+			browser.action.setIcon({ windowId: id, imageData });
 		}
 	}
 }

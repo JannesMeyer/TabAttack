@@ -8,6 +8,12 @@
 	"options_theme": {
 		"message": "Color scheme"
 	},
+	"options_dynamic_icon": {
+		"message": "Dynamic toolbar icon"
+	},
+	"options_dynamic_icon_description": {
+		"message": "Update the extension icon to show the current tab count"
+	},
 	"shortcut_pin_tab": {
 		"message": "Pin tab"
 	},
