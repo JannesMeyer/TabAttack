@@ -1,18 +1,19 @@
 import React from 'react';
+import { useSnapshot } from 'valtio';
 import { CHROME_THEMES, type ChromeTheme } from '../../lib/chromeThemes';
 import { syncPrefs } from '../../prefs';
 
 export function ThemePicker() {
-	const [themeId, setThemeId] = syncPrefs.use('theme');
+	const prefs = useSnapshot(syncPrefs.values);
 	return (
 		<div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
 			{CHROME_THEMES.map((theme, id) => {
-				const isSelected = themeId === id;
+				const isSelected = prefs.theme === id;
 				return (
 					<button
 						key={id}
 						type='button'
-						onClick={() => setThemeId(id)}
+						onClick={() => syncPrefs.values.theme = id}
 						style={{
 							position: 'relative',
 							borderRadius: 16,

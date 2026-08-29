@@ -18,7 +18,7 @@ if (typeof devicePixelRatio !== 'undefined') {
 	let unsubscribeStore: (() => void) | null = null;
 
 	function updateSubscription() {
-		const isDynamic = syncPrefs.get('dynamicIcon');
+		const isDynamic = syncPrefs.values.dynamicIcon;
 		if (isDynamic && !unsubscribeStore) {
 			unsubscribeStore = subscribe(store.state, render);
 		} else if (!isDynamic && unsubscribeStore) {
@@ -30,11 +30,11 @@ if (typeof devicePixelRatio !== 'undefined') {
 
 	subscribe(theme.colors, render);
 	prefersDark?.addEventListener('change', render);
-	syncPrefs.watch('dynamicIcon', updateSubscription);
+	subscribe(syncPrefs.values, updateSubscription);
 	updateSubscription();
 
 	function render() {
-		const isDynamic = syncPrefs.get('dynamicIcon');
+		const isDynamic = syncPrefs.values.dynamicIcon;
 
 		for (const [id, { type }] of store.state.windows.entries()) {
 			if (type !== 'normal') continue;
