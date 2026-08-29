@@ -16,7 +16,7 @@ export function PopupApp() {
 
 	// Autofocus the active tab
 	React.useEffect(() => {
-		const focus = () => document.querySelector<HTMLElement>('.tab.active')?.focus({ preventScroll: true });
+		const focus = () => document.querySelector<HTMLElement>('input')?.focus({ preventScroll: true });
 		addEventListener('focus', focus, { once: true });
 		// On the new tab page we don't want clicking into the page to cause focus changes.
 		// Only "autofocus" or keyboard navigation should cause the focus to change.
@@ -89,31 +89,32 @@ export function PopupApp() {
 			.sort((a, b) => Number(b === initialWindowId) - Number(a === initialWindowId) || b - a), [windows, initialWindowId]);
 	return (
 		<>
-			<input
-				tabIndex={1}
-				id={'search'}
-				type={'search'}
-				placeholder={'Search'}
-				value={searchQuery}
-				onChange={ev => setSearchQuery(ev.target.value)}
-				onKeyDown={ev => {
-					if (ev.key === 'Enter') {
-						document.querySelector<HTMLElement>('.tab')?.click();
-						setSearchQuery('');
-						ev.preventDefault();
-						return;
-					}
-					if (ev.key === 'Escape') {
-						if (actionType === 'popup') {
-							close();
-						} else {
+			<div id={'search'}>
+				<input
+					tabIndex={1}
+					type={'search'}
+					placeholder={'Search tabs'}
+					value={searchQuery}
+					onChange={ev => setSearchQuery(ev.target.value)}
+					onKeyDown={ev => {
+						if (ev.key === 'Enter') {
+							document.querySelector<HTMLElement>('.tab')?.click();
 							setSearchQuery('');
+							ev.preventDefault();
+							return;
 						}
-						ev.preventDefault();
-						return;
-					}
-				}}
-			/>
+						if (ev.key === 'Escape') {
+							if (actionType === 'popup') {
+								close();
+							} else {
+								setSearchQuery('');
+							}
+							ev.preventDefault();
+							return;
+						}
+					}}
+				/>
+			</div>
 			<ScrollToActive />
 			<DndProvider>
 				{searchQuery
