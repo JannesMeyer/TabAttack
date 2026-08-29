@@ -13,6 +13,8 @@ export function PopupApp() {
 	const store = useTabStore();
 	const { initialWindowId, windows } = useSnapshot(store.state);
 	const [searchQuery, setSearchQuery] = React.useState('');
+
+	// Autofocus the active tab
 	React.useEffect(() => {
 		const focus = () => document.querySelector<HTMLElement>('.tab.active')?.focus({ preventScroll: true });
 		addEventListener('focus', focus, { once: true });
@@ -29,15 +31,28 @@ export function PopupApp() {
 	// Keyboard focus navigation
 	useGlobalShortcut((k, { target, ctrlKey, metaKey }) => {
 		if (k === 'Escape') {
-			if (store.state.selectedTabIds.size > 0) {
-				store.clearSelection();
-				return true;
-			}
 			return focus('input');
 		}
+		if (k === 'ArrowDown') {
+			return moveFocus(+1);
+		}
+		if (k === 'ArrowUp') {
+			return moveFocus(-1);
+		}
+
+		// Everything below should not apply in interactive inputs
 		if (isInteractive(target)) {
 			return;
 		}
+
+		if (k === ' ') {
+			const id = asNumber(getData(document.activeElement)?.tab);
+			if (id != null) {
+				// TODO: Store highlighted state
+			}
+			return true;
+		}
+
 		if ((k === '/' || k === 'f' || k === 'i')) {
 			return focus('input');
 		}
@@ -47,14 +62,14 @@ export function PopupApp() {
 				return true;
 			}
 		}
-		if (k === 'ArrowDown' || k === 'j') {
+		if (k === 'j') {
 			return moveFocus(+1);
 		}
-		if (k === 'ArrowUp' || k === 'k') {
+		if (k === 'k') {
 			return moveFocus(-1);
 		}
 		if (k === 'd') {
-			const id = getTabId(document.activeElement);
+			const id = asNumber(getData(document.activeElement)?.tab);
 			if (id != null) {
 				moveFocus(1);
 				chrome.tabs.remove(id);
@@ -117,10 +132,13 @@ function isInteractive(target: EventTarget | null) {
 	return tagName === 'INPUT' || tagName === 'TEXTAREA' || isContentEditable;
 }
 
-function getTabId(el: Element | null) {
-	const tab = (el as HTMLElement | null)?.dataset.tab;
-	const id = typeof tab === 'string' ? Number.parseInt(tab, 10) : undefined;
-	return id == null || Number.isNaN(id) ? undefined : id;
+function getData(el: Element | null) {
+	return (el as HTMLElement | null)?.dataset;
+}
+
+function asNumber(str: string | undefined) {
+	const n = typeof str === 'string' ? Number.parseInt(str, 10) : undefined;
+	return n == null || Number.isNaN(n) ? undefined : n;
 }
 
 function focus(selector: string) {
@@ -133,7 +151,7 @@ function focus(selector: string) {
 }
 
 function moveFocus(to: number, opts?: { absolute?: boolean }) {
-	const focusable = document.querySelectorAll<HTMLElement>('a[href]');
+	const focusable = document.querySelectorAll<HTMLElement>('input, a[href]');
 	const { activeElement } = document;
 	const i = activeElement ? Array.prototype.indexOf.call(focusable, activeElement) : -1;
 	const next = focusable[opts?.absolute ? to : ((focusable.length + i + to) % focusable.length)];
