@@ -64,7 +64,6 @@ export default class Icon {
  * ensuring rows and cols are strictly monotonically non-decreasing.
  */
 function getGridDimensions(total: number): [cols: number, rows: number] {
-	if (total <= 1) return [1, 1];
 	if (total <= 2) return [1, 2];
 	if (total <= 3) return [1, 3];
 	if (total <= 4) return [1, 4];
