@@ -22,11 +22,19 @@ export const SearchResults = ({ windows, query }: { windows: number[]; query: st
 				useTokenSearch: true,
 				tokenMatch: 'all',
 				threshold: 0.2,
+				includeMatches: true,
 			},
 		), [windows, tabOrder, tabs]);
 	return (
 		<div className={'active-window'}>
-			{fuse.search(query).map(({ item: { tabId, windowId } }) => <Tab key={tabId} tabId={tabId} windowId={windowId} />)}
+			{fuse.search(query).map(({ item: { tabId, windowId }, matches }) => (
+				<Tab
+					key={tabId}
+					tabId={tabId}
+					windowId={windowId}
+					matchIndices={matches?.find(m => m.key === 'title')?.indices}
+				/>
+			))}
 		</div>
 	);
 };

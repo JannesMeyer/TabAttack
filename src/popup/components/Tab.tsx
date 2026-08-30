@@ -1,3 +1,4 @@
+import type { RangeTuple } from 'fuse.js';
 import * as React from 'react';
 import { useSnapshot } from 'valtio';
 import { cx } from '../../lib/cx';
@@ -17,10 +18,11 @@ type Props = {
 	tabId: number | undefined;
 	index?: number;
 	helpText?: string;
+	matchIndices?: readonly RangeTuple[];
 };
 
 export { d as Tab };
-const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, index, helpText }: Props) {
+const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, index, helpText, matchIndices: indices }: Props) {
 	const store = useTabStore();
 	const snap = useSnapshot(store.state);
 	const tab = snap.tabs.get(tabId);
@@ -168,7 +170,7 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 					{tab.mutedInfo?.muted ? <MutedIcon /> : <AudibleIcon />}
 				</div>
 			)}
-			<span className={'title'}>{tab.title}</span>
+			<span className={'title'}>{highlightMatches(tab.title, indices)}</span>
 			{isOtherWindow && (
 				<span className={'window-indicator'}>
 					<WindowIcon />
@@ -178,3 +180,36 @@ const d = React.memo(function Tab({ windowId, tabId = chrome.tabs.TAB_ID_NONE, i
 		</a>
 	);
 });
+
+function highlightMatches(text: string | undefined, indices?: readonly RangeTuple[]): React.ReactNode {
+	if (!text) {
+		return;
+	}
+	if (!indices || indices.length === 0) {
+		return text;
+	}
+
+	const elements: React.ReactNode[] = [];
+	let lastIndex = 0;
+
+	for (let i = 0; i < indices.length; i++) {
+		const range = indices[i];
+		if (!range) continue;
+		const [start, end] = range;
+		if (start > lastIndex) {
+			elements.push(text.slice(lastIndex, start));
+		}
+		const matchStart = Math.max(lastIndex, start);
+		const matchEnd = end + 1;
+		if (matchStart < matchEnd && matchStart < text.length) {
+			elements.push(<b key={i}>{text.slice(matchStart, matchEnd)}</b>);
+		}
+		lastIndex = Math.max(lastIndex, matchEnd);
+	}
+
+	if (lastIndex < text.length) {
+		elements.push(text.slice(lastIndex));
+	}
+
+	return elements;
+}
