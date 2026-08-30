@@ -39,7 +39,6 @@ const manifest = {
 			default_icon: 'icons/transparent.png',
 			default_title: 'Tabs',
 			default_panel: sidebar,
-			browser_style: false,
 			open_at_install: false,
 		} satisfies browser._manifest._WebExtensionManifestSidebarAction
 		: undefined,
@@ -47,7 +46,7 @@ const manifest = {
 	commands: {
 		_execute_action: {
 			description: 'Show popup',
-			suggested_key: { default: 'MacCtrl+E' },
+			suggested_key: { default: 'MacCtrl+P' },
 		},
 		_execute_sidebar_action: {
 			description: 'Show sidebar',
@@ -61,7 +60,6 @@ const manifest = {
 		},
 		duplicate_tab: {
 			description: '__MSG_shortcut_duplicate_tab__',
-			suggested_key: { default: 'MacCtrl+D' },
 		},
 		pin_tab: {
 			description: '__MSG_shortcut_pin_tab__',
