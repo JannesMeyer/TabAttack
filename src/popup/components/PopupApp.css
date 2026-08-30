@@ -55,29 +55,36 @@ main {
 input[type='search'] {
 	font: inherit;
 	color: inherit;
-	border: none;
-	border-radius: 8px;
 	background: none;
-	line-height: 2.5;
+	border: none;
 }
 
 /** SEARCH **/
+#search {
+	position: relative;
+	@media (min-width: 500px) {
+		margin-top: 20px;
+	}
+}
 #search input {
 	width: 100%;
-	padding-inline-start: 32px;
+	padding-left: 32px;
 	outline: none;
-	@media screen and (min-width: 500px) {
+	line-height: 3.5;
+	@media (min-width: 500px) {
+		line-height: 2.5;
+		border-radius: 8px;
 		&:focus-visible {
 			outline: 1px solid var(--focus);
 		}
-		margin-top: 20px;
 	}
 }
 #search input::placeholder {
 	color: color-mix(in srgb, currentColor 54%, transparent);
 }
 #search::after {
-	content: ' ';
+	pointer-events: none;
+	content: '';
 	background: color-mix(in srgb, currentColor 54%, transparent);
 	display: block;
 	mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M11.354,10.646l-0.707.707L7.295,8A4.483,4.483,0,1,1,9,4.5,4.458,4.458,0,0,1,8,7.295ZM4.5,1A3.5,3.5,0,1,0,8,4.5,3.5,3.5,0,0,0,4.5,1Z'/></svg>")
@@ -85,8 +92,8 @@ input[type='search'] {
 	width: 12px;
 	height: 12px;
 	position: absolute;
-	transform: translate(12px, -22px);
-	pointer-events: none;
+	top: 50%;
+	transform: translate(12px, -50%);
 }
 
 /** WINDOW **/
