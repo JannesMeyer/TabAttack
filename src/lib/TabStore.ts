@@ -1,5 +1,5 @@
-import { proxy } from 'valtio';
-import { proxyMap, proxySet } from 'valtio/utils';
+import { proxy } from 'valtio/vanilla';
+import { proxyMap, proxySet } from 'valtio/vanilla/utils';
 import { throwError } from '../lib/throwError';
 
 type Window = Required<Pick<chrome.windows.Window, 'id' | 'type' | 'incognito'>>;
@@ -156,7 +156,10 @@ export class TabStore {
 			});
 
 			chrome.tabs.onUpdated.addListener((tabId, info) => {
-				const tab = this.state.tabs.get(tabId) ?? throwError();
+				const tab = this.state.tabs.get(tabId);
+				if (!tab) {
+					return;
+				}
 				for (const [key, value] of Object.entries(info)) {
 					if (Object.hasOwn(tab, key)) {
 						(tab as any)[key] = value;
