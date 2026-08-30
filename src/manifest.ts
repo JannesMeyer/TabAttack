@@ -25,6 +25,10 @@ const manifest = {
 	},
 	chrome_settings_overrides: target === 'firefox' ? { homepage: 'newtab.html' } : undefined,
 	chrome_url_overrides: { newtab: 'newtab.html' },
+	// Temporarily allow React DevTols
+	// content_security_policy: {
+	// 	extension_pages: "script-src 'self' http://localhost:8097; connect-src 'self' http://localhost:8097 ws://localhost:8097; object-src 'self'",
+	// },
 	permissions: target === 'firefox' ? ['tabs', 'storage'] : ['tabs', 'storage', 'favicon', 'sidePanel'],
 	icons: {
 		48: 'icons/icon-48.png',
