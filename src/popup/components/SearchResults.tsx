@@ -25,16 +25,19 @@ export const SearchResults = ({ windows, query }: { windows: number[]; query: st
 				includeMatches: true,
 			},
 		), [windows, tabOrder, tabs]);
+	const results = fuse.search(query);
 	return (
 		<div className={'active-window'}>
-			{fuse.search(query).map(({ item: { tabId, windowId }, matches }) => (
-				<Tab
-					key={tabId}
-					tabId={tabId}
-					windowId={windowId}
-					matchIndices={matches?.find(m => m.key === 'title')?.indices}
-				/>
-			))}
+			{results.length === 0 ? <div className={'no-results'}>No results</div> : (
+				results.map(({ item: { tabId, windowId }, matches }) => (
+					<Tab
+						key={tabId}
+						tabId={tabId}
+						windowId={windowId}
+						matchIndices={matches?.find(m => m.key === 'title')?.indices}
+					/>
+				))
+			)}
 		</div>
 	);
 };

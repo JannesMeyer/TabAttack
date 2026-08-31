@@ -110,6 +110,14 @@ input[type='search'] {
 	contain: layout;
 }
 
+.no-results {
+	color: color-mix(in srgb, currentColor 40%, transparent);
+	text-align: center;
+	font-size: 1.539rem;
+	line-height: 2;
+	padding-bottom: 9px;
+}
+
 /** TAB **/
 .tab {
 	position: relative;
