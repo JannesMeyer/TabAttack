@@ -1,3 +1,12 @@
+/*
+The following variables need to be defined by JavaScript:
+
+--main-background
+--main-text
+--accent-color
+--accent-color-text
+
+*/
 :root {
 	color-scheme: light dark;
 	font: menu;
@@ -9,11 +18,8 @@
 		--margin-x: 30px;
 	}
 
-	--focus: AccentColor;
-	/* chrome://global/skin/tree/tree.css */
-	--tab-hover-bg: hsla(0, 0%, 50%, 0.15);
-	--tab-selected-bg: var(--sidebar-highlight);
-	--tab-selected-text: var(--sidebar-highlight-text);
+	--accent-color: AccentColor;
+	--accent-color-text: AccentColorText;
 }
 
 html {
@@ -75,7 +81,7 @@ input[type='search'] {
 		line-height: 2.5;
 		border-radius: 8px;
 		&:focus-visible {
-			outline: 1px solid var(--focus);
+			outline: 1px solid var(--accent-color);
 		}
 	}
 }
@@ -137,16 +143,12 @@ input[type='search'] {
 		pointer-events: none;
 	}
 
-	@media screen and (min-width: 500px) {
+	@media (min-width: 500px) {
 		border-radius: 4px;
 		outline-offset: -2px;
 	}
 	&:focus-visible {
-		outline: 1px solid var(--focus);
-	}
-	&:hover {
-		background-color: var(--tab-hover-bg);
-		color: var(--tabhover-text);
+		outline: 1px solid var(--accent-color);
 	}
 	&.ghost,
 	&.dragging,
@@ -161,7 +163,7 @@ input[type='search'] {
 			visibility: hidden;
 		}
 	}
-	&.selected {
+	/* &.selected {
 		background-color: color-mix(
 			in srgb,
 			var(--tab-selected-bg) 65%,
@@ -175,14 +177,21 @@ input[type='search'] {
 			var(--tab-selected-bg) 85%,
 			transparent
 		);
-	}
-	&.active.selected {
+	} */
+	/* &.active.selected {
 		background-color: var(--tab-selected-bg);
 		color: var(--tab-selected-text);
+	} */
+	&:hover {
+		/* chrome://global/skin/tree/tree.css */
+		background-color: hsla(0, 0%, 50%, 0.15);
 	}
 	&.active {
-		background-color: var(--tab-selected-bg);
-		color: var(--tab-selected-text);
+		background-color: var(--accent-color);
+		color: var(--accent-color-text);
+	}
+	&.active:focus-visible {
+		outline-color: var(--accent-color-text);
 	}
 	&.discarded {
 		color: color-mix(in srgb, currentColor 80%, transparent);
@@ -227,8 +236,8 @@ input[type='search'] {
 	align-items: center;
 	gap: 6px;
 	padding: 6px 10px;
-	background-color: var(--tab-selected-bg, #333333);
-	color: var(--tab-selected-text, #ffffff);
+	background-color: var(--accent-color, #333333);
+	color: var(--accent-color-text, #ffffff);
 	border-radius: 8px;
 	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 	border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
