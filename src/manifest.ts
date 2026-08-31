@@ -65,7 +65,6 @@ const manifest = {
 			description: '__MSG_shortcut_pin_tab__',
 		},
 	},
-	key: target === 'firefox' ? undefined : 'TODO',
 	browser_specific_settings: target === 'firefox' ? { gecko: { id: 'tabattack@jannesmeyer.com' } } : undefined,
 } satisfies chrome.runtime.ManifestV3;
 
