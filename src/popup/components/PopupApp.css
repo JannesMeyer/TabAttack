@@ -182,7 +182,7 @@ input[type='search'] {
 		background-color: hsla(0, 0%, 50%, 0.15);
 	}
 	&.active {
-		background-color: hsla(0, 0%, 50%, 0.25);
+		background-color: hsla(0, 0%, 50%, 0.2);
 	}
 	&.active:focus-visible {
 		outline-color: var(--accent-color-text);
