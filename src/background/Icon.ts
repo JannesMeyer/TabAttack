@@ -65,7 +65,6 @@ export default class Icon {
  */
 function getGridDimensions(total: number): [cols: number, rows: number] {
 	if (total <= 2) return [1, 2];
-	if (total <= 3) return [1, 3];
 	if (total <= 4) return [1, 4];
 	if (total <= 8) return [2, 4];
 	if (total <= 12) return [3, 4];
