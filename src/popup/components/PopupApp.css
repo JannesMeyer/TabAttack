@@ -10,8 +10,8 @@ The following variables need to be defined by JavaScript:
 :root {
 	color-scheme: light dark;
 	font: menu;
-	background-color: var(--main-background);
-	color: var(--main-text);
+	background-color: var(--main-background, initial);
+	color: var(--main-text, initial);
 
 	&.default {
 		--margin-y: 30px;
