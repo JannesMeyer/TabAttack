@@ -119,11 +119,14 @@ input[type='search'] {
 	padding: 7px;
 	padding-left: 9px;
 	cursor: default;
-	border-radius: 4px;
 	transform: translate3d(0, 0, 0);
 	transition: transform 120ms cubic-bezier(0.2, 0, 0, 1);
 	will-change: transform;
 	backface-visibility: hidden;
+
+	@media (min-width: 500px) {
+		border-radius: 4px;
+	}
 
 	&.no-transition,
 	&[data-no-transition='true'] {
@@ -141,11 +144,6 @@ input[type='search'] {
 
 	> * {
 		pointer-events: none;
-	}
-
-	&:focus-visible {
-		outline: 1px solid var(--accent-color);
-		outline-offset: -2px;
 	}
 	&.ghost,
 	&.dragging,
@@ -184,8 +182,7 @@ input[type='search'] {
 		background-color: hsla(0, 0%, 50%, 0.15);
 	}
 	&.active {
-		background-color: var(--accent-color);
-		color: var(--accent-color-text);
+		background-color: hsla(0, 0%, 50%, 0.25);
 	}
 	&.active:focus-visible {
 		outline-color: var(--accent-color-text);
@@ -195,6 +192,11 @@ input[type='search'] {
 	}
 	&.attention {
 		background-color: red;
+	}
+	&:focus-visible {
+		background-color: var(--accent-color);
+		color: var(--accent-color-text);
+		outline: none;
 	}
 	.favicon {
 		flex-shrink: 0;
@@ -233,8 +235,8 @@ input[type='search'] {
 	align-items: center;
 	gap: 6px;
 	padding: 6px 10px;
-	background-color: var(--accent-color, #333333);
-	color: var(--accent-color-text, #ffffff);
+	background-color: var(--accent-color);
+	color: var(--accent-color-text);
 	border-radius: 8px;
 	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 	border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
