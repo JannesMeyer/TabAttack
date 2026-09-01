@@ -17,6 +17,10 @@ export function PopupApp() {
 	// Autofocus the active tab
 	React.useEffect(() => {
 		const focus = () => document.querySelector<HTMLElement>('input')?.focus({ preventScroll: true });
+		if (document.hasFocus()) {
+			focus();
+			return;
+		}
 		addEventListener('focus', focus, { once: true });
 		// On the new tab page we don't want clicking into the page to cause focus changes.
 		// Only "autofocus" or keyboard navigation should cause the focus to change.
@@ -29,56 +33,51 @@ export function PopupApp() {
 	}, []);
 
 	// Keyboard focus navigation
-	useGlobalShortcut((k, { target, ctrlKey, metaKey }) => {
-		if (k === 'Escape') {
-			return focus('input');
-		}
-		if (k === 'ArrowDown') {
-			return moveFocus(+1);
-		}
-		if (k === 'ArrowUp') {
-			return moveFocus(-1);
-		}
-
-		// Everything below should not apply in interactive inputs
-		if (isInteractive(target)) {
+	useGlobalShortcut((k, ev) => {
+		// Prevent browser dialogs for shortcuts that might be used to open the popup in the first place
+		if (actionType === 'popup' && (ev.ctrlKey || ev.metaKey) && (k === 'p' || k === 's')) {
+			focusTab(1);
+			ev.preventDefault();
 			return;
 		}
 
+		const { target, ctrlKey } = ev;
+		if (k === 'Escape') {
+			return focus('input');
+		}
+		const interactive = isInteractive(target);
+		if (k === 'ArrowDown' || (!interactive || ctrlKey) && k === 'j') {
+			return focusTab(+1);
+		}
+		if (k === 'ArrowUp' || (!interactive || ctrlKey) && k === 'k') {
+			return focusTab(-1);
+		}
+		if (k === 'ArrowRight' || (!interactive || ctrlKey) && k === 'l') {
+			getActionTab()?.click();
+			return true;
+		}
+
+		// Everything below should not apply in interactive inputs
+		if (interactive) {
+			return;
+		}
 		if (k === ' ') {
-			const id = asNumber(getData(document.activeElement)?.tab);
+			const id = asNumber(getData(getActionTab())?.tab);
 			if (id != null) {
 				// TODO: Store highlighted state
 			}
 			return true;
 		}
-
-		if ((k === '/' || k === 'f' || k === 'i')) {
+		if (k === '/' || k === 'f') {
 			return focus('input');
-		}
-		if (k === 'a' && (ctrlKey || metaKey)) {
-			if (sortedWindows[0] != null) {
-				store.selectAllTabs(sortedWindows[0]);
-				return true;
-			}
-		}
-		if (k === 'j') {
-			return moveFocus(+1);
-		}
-		if (k === 'k') {
-			return moveFocus(-1);
 		}
 		if (k === 'd') {
 			const id = asNumber(getData(document.activeElement)?.tab);
 			if (id != null) {
-				moveFocus(1);
 				chrome.tabs.remove(id);
 				return true;
 			}
 			return;
-		}
-		if (k === 'a') {
-			return focus('.tab.audible');
 		}
 	});
 
@@ -125,6 +124,14 @@ export function PopupApp() {
 	);
 }
 
+function getActionTab() {
+	const active = document.activeElement as HTMLElement | null;
+	if (active?.classList.contains('tab')) {
+		return active;
+	}
+	return document.querySelector<HTMLElement>('.tab.active');
+}
+
 function isInteractive(target: EventTarget | null) {
 	if (!target) {
 		return false;
@@ -151,10 +158,9 @@ function focus(selector: string) {
 	return true;
 }
 
-function moveFocus(to: number, opts?: { absolute?: boolean }) {
-	const focusable = document.querySelectorAll<HTMLElement>('input, a[href]');
-	const { activeElement } = document;
-	const i = activeElement ? Array.prototype.indexOf.call(focusable, activeElement) : -1;
+function focusTab(to: number, opts?: { absolute?: boolean }) {
+	const focusable = document.querySelectorAll<HTMLElement>('.tab');
+	const i = Array.prototype.indexOf.call(focusable, getActionTab());
 	const next = focusable[opts?.absolute ? to : ((focusable.length + i + to) % focusable.length)];
 	if (!next) {
 		return false;
