@@ -4,11 +4,41 @@ import path from 'node:path';
 import { version } from '../package.json';
 import type { ActionType } from './lib/Theme';
 
-export type Command = Exclude<keyof typeof manifest['commands'], `_${string}`>;
+export type Command = Exclude<keyof typeof commands, `_${string}`>;
 
 const target = process.env.TARGET as 'chrome' | 'firefox' | 'safari';
 const sidebar = `newtab.html?t=${'sidebar' satisfies ActionType}`;
-const manifest = {
+
+const commands = {
+	_execute_action: {
+		description: 'Show popup',
+		suggested_key: {
+			default: 'Ctrl+P',
+			mac: 'MacCtrl+P',
+		},
+	},
+	sidebar_action: {
+		description: 'Show sidebar',
+		suggested_key: {
+			default: 'Ctrl+S',
+			mac: 'MacCtrl+S',
+		},
+	},
+	move_tab_left: {
+		description: '__MSG_shortcut_move_tab_left__',
+	},
+	move_tab_right: {
+		description: '__MSG_shortcut_move_tab_right__',
+	},
+	duplicate_tab: {
+		description: '__MSG_shortcut_duplicate_tab__',
+	},
+	pin_tab: {
+		description: '__MSG_shortcut_pin_tab__',
+	},
+} satisfies chrome.runtime.ManifestV3['commands'];
+
+const manifest: chrome.runtime.ManifestV3 = {
 	manifest_version: 3,
 	version,
 	name: '__MSG_ext_name__',
@@ -43,29 +73,19 @@ const manifest = {
 		} satisfies browser._manifest._WebExtensionManifestSidebarAction
 		: undefined,
 	side_panel: target === 'chrome' ? { default_path: sidebar } : undefined,
-	commands: {
-		_execute_action: {
-			description: 'Show popup',
-			suggested_key: { default: 'MacCtrl+P' },
+	commands,
+};
+
+if (target === 'firefox') {
+	manifest.browser_specific_settings = {
+		gecko: {
+			id: 'tabattack@jannesmeyer.com',
+			data_collection_permissions: {
+				required: ['none'],
+			},
 		},
-		_execute_sidebar_action: {
-			description: 'Show sidebar',
-			suggested_key: { default: 'MacCtrl+S' },
-		},
-		move_tab_left: {
-			description: '__MSG_shortcut_move_tab_left__',
-		},
-		move_tab_right: {
-			description: '__MSG_shortcut_move_tab_right__',
-		},
-		duplicate_tab: {
-			description: '__MSG_shortcut_duplicate_tab__',
-		},
-		pin_tab: {
-			description: '__MSG_shortcut_pin_tab__',
-		},
-	},
-	browser_specific_settings: target === 'firefox' ? { gecko: { id: 'tabattack@jannesmeyer.com' } } : undefined,
-} satisfies chrome.runtime.ManifestV3;
+	} satisfies browser._manifest.BrowserSpecificSettings;
+	manifest.commands = Object.fromEntries(Object.entries(commands).map(([k, v]) => [(k as Command) === 'sidebar_action' ? `_execute_${k}` : k, v]));
+}
 
 writeFile(path.join(import.meta.dirname, '../dist/manifest.json'), JSON.stringify(manifest, undefined, 2));

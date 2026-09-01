@@ -1,9 +1,15 @@
 import { throwError } from '../lib/throwError';
 import type { Command } from '../manifest';
 
-chrome.commands.onCommand.addListener(c => commands[c as Command]());
+chrome.commands.onCommand.addListener((c, tab) => commands[c as Command](tab));
 
-const commands: Record<Command, () => unknown> = {
+const commands: Record<Command, (tab: chrome.tabs.Tab | undefined) => unknown> = {
+	sidebar_action: (tab) => {
+		if (!tab) {
+			return;
+		}
+		chrome.sidePanel.open({ windowId: tab.windowId });
+	},
 	pin_tab: async () => {
 		for (const { id, pinned } of await chrome.tabs.query({ lastFocusedWindow: true, highlighted: true })) {
 			if (id == null || id === chrome.tabs.TAB_ID_NONE) {

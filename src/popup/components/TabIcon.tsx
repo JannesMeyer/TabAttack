@@ -46,6 +46,6 @@ const memo = React.memo(function TabIcon({ loading, favIconUrl, url, ...props }:
 	}
 	const u = new URL(faviconBaseUrl);
 	u.searchParams.set('pageUrl', url);
-	u.searchParams.set('size', '16');
+	u.searchParams.set('size', (16 * devicePixelRatio).toString());
 	return <img {...props} src={u.toString()} onError={() => setError(true)} />;
 });
