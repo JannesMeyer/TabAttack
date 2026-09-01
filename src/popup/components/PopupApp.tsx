@@ -1,4 +1,3 @@
-import './PopupApp.css';
 import React from 'react';
 import { useSnapshot } from 'valtio';
 import { DndProvider } from '../../lib/dnd';
@@ -41,11 +40,8 @@ export function PopupApp() {
 			return;
 		}
 
-		const { target, ctrlKey } = ev;
-		if (k === 'Escape') {
-			return focus('input');
-		}
-		const interactive = isInteractive(target);
+		const { ctrlKey } = ev;
+		const interactive = isInteractive(ev.target);
 		if (k === 'ArrowDown' || (!interactive || ctrlKey) && k === 'j') {
 			return focusTab(+1);
 		}
