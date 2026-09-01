@@ -48,22 +48,23 @@ export function PopupApp() {
 		if (k === 'ArrowUp' || (!interactive || ctrlKey) && k === 'k') {
 			return focusTab(-1);
 		}
-		if (k === 'ArrowRight' || (!interactive || ctrlKey) && k === 'l') {
-			getActionTab()?.click();
-			return true;
+		if ((!interactive && k === 'ArrowRight') || (!interactive || ctrlKey) && k === 'l') {
+			const tab = getFocusedTab();
+			if (tab) {
+				tab.click();
+				return true;
+			}
+			return;
 		}
 
 		// Everything below should not apply in interactive inputs
 		if (interactive) {
 			return;
 		}
-		if (k === ' ') {
-			const id = asNumber(getData(getActionTab())?.tab);
-			if (id != null) {
-				// TODO: Store highlighted state
-			}
-			return true;
-		}
+		// TODO: Implement selection
+		// if (k === ' ') {
+		// 	const id = asNumber(getData(getActionTab())?.tab);
+		// }
 		if (k === '/' || k === 'f') {
 			return focus('input');
 		}
@@ -120,12 +121,11 @@ export function PopupApp() {
 	);
 }
 
-function getActionTab() {
-	const active = document.activeElement as HTMLElement | null;
-	if (active?.classList.contains('tab')) {
-		return active;
-	}
-	return document.querySelector<HTMLElement>('.tab.active');
+const tabClassName = 'tab';
+
+function getFocusedTab() {
+	const { activeElement } = document;
+	return activeElement?.classList.contains(tabClassName) ? activeElement as HTMLElement : undefined;
 }
 
 function isInteractive(target: EventTarget | null) {
@@ -155,8 +155,17 @@ function focus(selector: string) {
 }
 
 function focusTab(to: number, opts?: { absolute?: boolean }) {
+	const focused = getFocusedTab();
+	if (!focused) {
+		const active = document.querySelector<HTMLElement>(`.${tabClassName}.active`);
+		if (!active) {
+			return false;
+		}
+		active.focus();
+		return true;
+	}
 	const focusable = document.querySelectorAll<HTMLElement>('.tab');
-	const i = Array.prototype.indexOf.call(focusable, getActionTab());
+	const i = Array.prototype.indexOf.call(focusable, focused);
 	const next = focusable[opts?.absolute ? to : ((focusable.length + i + to) % focusable.length)];
 	if (!next) {
 		return false;
