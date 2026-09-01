@@ -4,8 +4,8 @@
 
 Get the extension here:
 
-- [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tabattack2/)
-- [Chrome](https://chrome.google.com/webstore/detail/tabattack/ginflokhdahakklidfjlogllkkhokidj)
+- [Firefox](https://addons.mozilla.org/firefox/addon/tabattack/)
+- [Chrome](https://chrome.google.com/webstore/detail/tabattack/ginflokhdahakklidfjlogllkkhokidj) (Temporarily unavailable while the Manifest v3 version is awaiting approval)
 
 ## Building
 
